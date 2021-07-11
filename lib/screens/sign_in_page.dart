@@ -1,3 +1,4 @@
+import 'package:domapp/screens/wrapper_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,7 @@ TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
 class SignInPage extends StatelessWidget {
-  static String route = 'SignInPage';
+  static const String route = 'SignInPage';
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -66,28 +67,32 @@ class SignInPage extends StatelessWidget {
                           fontSize: 16),
                     ),
                     SizedBox(height: size.height * 0.02),
-                    Container(
-                      // margin: EdgeInsets.only(bottom: size.height * 0.1),
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      alignment: Alignment.center,
-                      width: size.width * 0.9,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: kWhite.withOpacity(0.55),
-                            blurRadius: 4,
-                            offset: Offset(0, 4),
-                          )
-                        ],
-                        color: kWhite,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        'Sign In',
-                        style: TextStyle(
-                            color: kDarkBackgroundColour,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
+                    InkWell(
+                      onTap: () =>
+                          Navigator.pushNamed(context, WrapperPage.route),
+                      child: Container(
+                        // margin: EdgeInsets.only(bottom: size.height * 0.1),
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        alignment: Alignment.center,
+                        width: size.width * 0.9,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: kWhite.withOpacity(0.55),
+                              blurRadius: 1,
+                              offset: Offset(0, 4),
+                            )
+                          ],
+                          color: kWhite,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          'Sign In',
+                          style: TextStyle(
+                              color: kDarkBackgroundColour,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18),
+                        ),
                       ),
                     )
                   ],

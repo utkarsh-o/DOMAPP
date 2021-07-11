@@ -1,9 +1,9 @@
-import 'package:domapp/cache/local_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../cache/constants.dart';
+import '../cache/local_data.dart';
 
 List<Color> colorList = [kRed, kYellow, kGreen];
 List<String> sortMethods = [
@@ -17,7 +17,7 @@ String? selectedSort = sortMethods.first;
 TextEditingController filterController = TextEditingController();
 
 class ProfessorOpinionsPage extends StatefulWidget {
-  static String route = 'ProfessorOpinionsPage';
+  static const String route = 'ProfessorOpinionsPage';
 
   @override
   _ProfessorOpinionsPageState createState() => _ProfessorOpinionsPageState();
@@ -200,7 +200,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
             BoxShadow(
                 color: kBlue.withOpacity(0.65),
                 offset: Offset(0, 3),
-                blurRadius: 3),
+                blurRadius: 1),
           ]),
       child: Column(
         children: [
@@ -217,7 +217,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     BoxShadow(
                         color: kDarkBackgroundColour.withOpacity(0.45),
                         offset: Offset(0, 4),
-                        blurRadius: 4),
+                        blurRadius: 1),
                   ],
                 ),
                 child: DropdownButton(
@@ -257,7 +257,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     BoxShadow(
                         color: kDarkBackgroundColour.withOpacity(0.45),
                         offset: Offset(0, 4),
-                        blurRadius: 4),
+                        blurRadius: 1),
                   ],
                 ),
                 child: DropdownButton(
@@ -296,7 +296,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
               boxShadow: [
                 BoxShadow(
                     color: kDarkBackgroundColour.withOpacity(0.45),
-                    blurRadius: 4,
+                    blurRadius: 1,
                     offset: Offset(0, 4))
               ],
               borderRadius: BorderRadius.circular(10),

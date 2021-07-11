@@ -12,7 +12,7 @@ List<String> lessonNames = [
 ];
 
 class SlidesPage extends StatelessWidget {
-  static String route = 'SlidesPage';
+  static const String route = 'SlidesPage';
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -72,7 +72,7 @@ class SlidesPage extends StatelessWidget {
                           boxShadow: [
                             BoxShadow(
                               color: kYellow.withOpacity(0.65),
-                              blurRadius: 4,
+                              blurRadius: 1,
                               offset: Offset(0, 4),
                             )
                           ],
@@ -111,7 +111,7 @@ class SlidesPage extends StatelessWidget {
                                           color: kDarkBackgroundColour
                                               .withOpacity(0.45),
                                           offset: Offset(0, 4),
-                                          blurRadius: 4),
+                                          blurRadius: 1),
                                     ],
                                   ),
                                   child: SvgPicture.asset(
@@ -153,7 +153,7 @@ class SlidesPage extends StatelessWidget {
                                             color: kDarkBackgroundColour
                                                 .withOpacity(0.45),
                                             offset: Offset(0, 4),
-                                            blurRadius: 4),
+                                            blurRadius: 1),
                                       ],
                                     ),
                                     child: Row(
@@ -185,7 +185,7 @@ class SlidesPage extends StatelessWidget {
                                             color: kDarkBackgroundColour
                                                 .withOpacity(0.45),
                                             offset: Offset(0, 4),
-                                            blurRadius: 4),
+                                            blurRadius: 1),
                                       ],
                                     ),
                                     child: SvgPicture.asset(
@@ -233,7 +233,7 @@ class _SortFavouriteAddWrapperState extends State<SortFavouriteAddWrapper> {
               BoxShadow(
                   color: kBlue.withOpacity(0.65),
                   offset: Offset(0, 3),
-                  blurRadius: 3),
+                  blurRadius: 1),
             ]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -248,7 +248,7 @@ class _SortFavouriteAddWrapperState extends State<SortFavouriteAddWrapper> {
                   BoxShadow(
                       color: kDarkBackgroundColour.withOpacity(0.45),
                       offset: Offset(0, 4),
-                      blurRadius: 4),
+                      blurRadius: 1),
                 ],
               ),
               child: DropdownButton(
@@ -290,7 +290,7 @@ class _SortFavouriteAddWrapperState extends State<SortFavouriteAddWrapper> {
                   BoxShadow(
                       color: kDarkBackgroundColour.withOpacity(0.45),
                       offset: Offset(0, 4),
-                      blurRadius: 4),
+                      blurRadius: 1),
                 ],
               ),
               child: SvgPicture.asset('assets/icons/star_filled.svg'),
@@ -304,7 +304,7 @@ class _SortFavouriteAddWrapperState extends State<SortFavouriteAddWrapper> {
                   BoxShadow(
                       color: kDarkBackgroundColour.withOpacity(0.45),
                       offset: Offset(0, 4),
-                      blurRadius: 4),
+                      blurRadius: 1),
                 ],
               ),
               child: SvgPicture.asset('assets/icons/add_file.svg'),

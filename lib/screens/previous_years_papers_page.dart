@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class PreviousYearsPapersPage extends StatelessWidget {
-  static String route = 'PreviousYearsPage';
+  static const String route = 'PreviousYearsPage';
   @override
   Widget build(BuildContext context) {
     List<String> yearList = [
@@ -75,7 +75,7 @@ class PreviousYearsPapersPage extends StatelessWidget {
                         BoxShadow(
                             color: kRed.withOpacity(0.65),
                             offset: Offset(0, 3),
-                            blurRadius: 3),
+                            blurRadius: 1),
                       ]),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,7 +99,7 @@ class PreviousYearsPapersPage extends StatelessWidget {
                             BoxShadow(
                                 color: kDarkBackgroundColour.withOpacity(0.45),
                                 offset: Offset(0, 4),
-                                blurRadius: 4),
+                                blurRadius: 1),
                           ],
                         ),
                         child:
@@ -132,7 +132,7 @@ class YellowContainer extends StatelessWidget {
             color: index == 0
                 ? kDarkBackgroundColour.withOpacity(0.35)
                 : kYellow.withOpacity(0.35),
-            blurRadius: 4,
+            blurRadius: 1,
             offset: Offset(0, 4),
           )
         ],
@@ -170,7 +170,7 @@ class YellowContainer extends StatelessWidget {
                         BoxShadow(
                             color: kDarkBackgroundColour.withOpacity(0.45),
                             offset: Offset(0, 4),
-                            blurRadius: 4),
+                            blurRadius: 1),
                       ],
                     ),
                     child: SvgPicture.asset('assets/icons/expand_right.svg'),
@@ -210,7 +210,7 @@ class GreenContainer extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: kGreen.withOpacity(0.65),
-            blurRadius: 4,
+            blurRadius: 1,
             offset: Offset(0, 4),
           )
         ],
@@ -240,7 +240,7 @@ class GreenContainer extends StatelessWidget {
                     BoxShadow(
                         color: kDarkBackgroundColour.withOpacity(0.45),
                         offset: Offset(0, 4),
-                        blurRadius: 4),
+                        blurRadius: 1),
                   ],
                 ),
                 child: DropdownButton(
@@ -281,7 +281,7 @@ class GreenContainer extends StatelessWidget {
                     BoxShadow(
                         color: kDarkBackgroundColour.withOpacity(0.45),
                         offset: Offset(0, 4),
-                        blurRadius: 4),
+                        blurRadius: 1),
                   ],
                 ),
                 child: DropdownButton(
@@ -321,7 +321,7 @@ class GreenContainer extends StatelessWidget {
                     BoxShadow(
                         color: kDarkBackgroundColour.withOpacity(0.45),
                         offset: Offset(0, 4),
-                        blurRadius: 4),
+                        blurRadius: 1),
                   ],
                 ),
                 child: SvgPicture.asset('assets/icons/expand_right.svg'),
@@ -347,7 +347,7 @@ class GreenContainer extends StatelessWidget {
                             BoxShadow(
                                 color: kDarkBackgroundColour.withOpacity(0.45),
                                 offset: Offset(0, 4),
-                                blurRadius: 4),
+                                blurRadius: 1),
                           ],
                         ),
                         child: SvgPicture.asset('assets/icons/star_filled.svg'),
@@ -362,7 +362,7 @@ class GreenContainer extends StatelessWidget {
                             BoxShadow(
                                 color: kDarkBackgroundColour.withOpacity(0.45),
                                 offset: Offset(0, 4),
-                                blurRadius: 4),
+                                blurRadius: 1),
                           ],
                         ),
                         child: SvgPicture.asset('assets/icons/add_file.svg'),
@@ -380,7 +380,7 @@ class GreenContainer extends StatelessWidget {
                             BoxShadow(
                                 color: kDarkBackgroundColour.withOpacity(0.45),
                                 offset: Offset(0, 4),
-                                blurRadius: 4),
+                                blurRadius: 1),
                           ],
                         ),
                         child: Row(
@@ -411,7 +411,7 @@ class GreenContainer extends StatelessWidget {
                             BoxShadow(
                                 color: kDarkBackgroundColour.withOpacity(0.45),
                                 offset: Offset(0, 4),
-                                blurRadius: 4),
+                                blurRadius: 1),
                           ],
                         ),
                         child: Row(

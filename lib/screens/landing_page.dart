@@ -1,11 +1,11 @@
-import 'package:domapp/screens/sign_in_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../screens/sign_in_page.dart';
 import '../cache/constants.dart';
 
 class LandingPage extends StatelessWidget {
-  static String route = 'LandingPage';
+  static const String route = 'LandingPage';
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -96,7 +96,7 @@ class SignInRegisterButton extends StatelessWidget {
                   ? [
                       BoxShadow(
                         color: kWhite.withOpacity(0.55),
-                        blurRadius: 4,
+                        blurRadius: 1,
                         offset: Offset(0, 4),
                       )
                     ]

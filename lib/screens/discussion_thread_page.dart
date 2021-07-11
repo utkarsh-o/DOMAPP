@@ -11,7 +11,7 @@ String? selectedSort = sortMethods.first;
 List<Comment> comments = commentList;
 
 class DiscussionThreadPage extends StatelessWidget {
-  static String route = 'DiscussionThreadPage';
+  static const String route = 'DiscussionThreadPage';
   Post post;
   DiscussionThreadPage({required this.post});
   @override
@@ -46,7 +46,7 @@ class DiscussionThreadPage extends StatelessWidget {
                           BoxShadow(
                               color: kBlue.withOpacity(0.65),
                               offset: Offset(0, 3),
-                              blurRadius: 3),
+                              blurRadius: 1),
                         ]),
                     padding: EdgeInsets.all(10),
                     child: Row(
@@ -176,7 +176,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
             BoxShadow(
                 color: kBlue.withOpacity(0.65),
                 offset: Offset(0, 3),
-                blurRadius: 3),
+                blurRadius: 1),
           ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,7 +191,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                 BoxShadow(
                     color: kDarkBackgroundColour.withOpacity(0.45),
                     offset: Offset(0, 4),
-                    blurRadius: 4),
+                    blurRadius: 1),
               ],
             ),
             child: DropdownButton(
@@ -236,7 +236,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                       BoxShadow(
                           color: kDarkBackgroundColour.withOpacity(0.45),
                           offset: Offset(0, 4),
-                          blurRadius: 4),
+                          blurRadius: 1),
                     ],
                   ),
                   child: SvgPicture.asset('assets/icons/star_filled.svg'),
@@ -251,7 +251,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                       BoxShadow(
                           color: kDarkBackgroundColour.withOpacity(0.45),
                           offset: Offset(0, 4),
-                          blurRadius: 4),
+                          blurRadius: 1),
                     ],
                   ),
                   child: SvgPicture.asset('assets/icons/heart_filled.svg'),
@@ -266,7 +266,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                       BoxShadow(
                           color: kDarkBackgroundColour.withOpacity(0.45),
                           offset: Offset(0, 4),
-                          blurRadius: 4),
+                          blurRadius: 1),
                     ],
                   ),
                   child: SvgPicture.asset('assets/icons/share.svg'),
@@ -299,7 +299,7 @@ class PostWrapper extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: kYellow,
-                  blurRadius: 4,
+                  blurRadius: 1,
                   offset: Offset(0, 4),
                 ),
               ],
@@ -326,7 +326,7 @@ class PostWrapper extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: kRed,
-                blurRadius: 4,
+                blurRadius: 1,
                 offset: Offset(0, 4),
               ),
             ],
