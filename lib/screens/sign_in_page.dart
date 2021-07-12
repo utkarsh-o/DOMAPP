@@ -1,4 +1,4 @@
-import 'package:domapp/screens/wrapper_page.dart';
+import 'package:domapp/screens/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -68,8 +68,7 @@ class SignInPage extends StatelessWidget {
                     ),
                     SizedBox(height: size.height * 0.02),
                     InkWell(
-                      onTap: () =>
-                          Navigator.pushNamed(context, WrapperPage.route),
+                      onTap: () => Navigator.pushNamed(context, HomePage.route),
                       child: Container(
                         // margin: EdgeInsets.only(bottom: size.height * 0.1),
                         padding: EdgeInsets.symmetric(vertical: 20),

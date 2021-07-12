@@ -1,4 +1,4 @@
-package com.example.domapp
+package com.domapp.bits
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,3 +1,4 @@
+import 'package:domapp/cache/local_data.dart';
 import 'package:domapp/screens/previous_years_papers_page.dart';
 import 'package:domapp/screens/slides_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,97 +19,91 @@ class _AcademicsPageState extends State<AcademicsPage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Padding(
-        padding: kOuterPadding.add(EdgeInsets.symmetric(horizontal: 20)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 30),
-              child: InkWell(
-                onTap: () => Navigator.of(context).pop,
-                child: SvgPicture.asset(
-                  'assets/icons/options_button_titlebar.svg',
-                  color: kWhite,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 30),
+          child: InkWell(
+            onTap: () => Navigator.of(context).pop,
+            child: SvgPicture.asset(
+              'assets/icons/options_button_titlebar.svg',
+              color: kWhite,
+            ),
+          ),
+        ),
+        SortAddWrapper(),
+        SizedBox(height: size.height * 0.03),
+        selectedCoursesList(),
+        BreakLine(),
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                decoration: BoxDecoration(
+                    color: kRed,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                          color: kRed.withOpacity(0.65),
+                          offset: Offset(0, 3),
+                          blurRadius: 1),
+                    ]),
+                child: Text(
+                  'SG Estimator',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: kDarkBackgroundColour),
                 ),
               ),
-            ),
-            SortAddWrapper(),
-            SizedBox(height: size.height * 0.03),
-            selectedCoursesList(),
-            BreakLine(),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                    decoration: BoxDecoration(
-                        color: kRed,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                              color: kRed.withOpacity(0.65),
-                              offset: Offset(0, 3),
-                              blurRadius: 1),
-                        ]),
-                    child: Text(
-                      'SG Estimator',
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                    color: kRed,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                          color: kRed.withOpacity(0.65),
+                          offset: Offset(0, 3),
+                          blurRadius: 1),
+                    ]),
+                child: Row(
+                  children: [
+                    Text(
+                      'Forum',
                       style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                           color: kDarkBackgroundColour),
                     ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                        color: kRed,
-                        borderRadius: BorderRadius.circular(10),
+                    SizedBox(
+                      width: size.width * 0.03,
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(7),
+                        color: kWhite,
                         boxShadow: [
                           BoxShadow(
-                              color: kRed.withOpacity(0.65),
-                              offset: Offset(0, 3),
+                              color: kDarkBackgroundColour.withOpacity(0.45),
+                              offset: Offset(0, 4),
                               blurRadius: 1),
-                        ]),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Forum',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: kDarkBackgroundColour),
-                        ),
-                        SizedBox(
-                          width: size.width * 0.03,
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(7),
-                            color: kWhite,
-                            boxShadow: [
-                              BoxShadow(
-                                  color:
-                                      kDarkBackgroundColour.withOpacity(0.45),
-                                  offset: Offset(0, 4),
-                                  blurRadius: 1),
-                            ],
-                          ),
-                          child: SvgPicture.asset('assets/icons/incognito.svg'),
-                        ),
-                      ],
+                        ],
+                      ),
+                      child: SvgPicture.asset('assets/icons/incognito.svg'),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            )
-          ],
-        ),
-      ),
+            ],
+          ),
+        )
+      ],
     );
   }
 }

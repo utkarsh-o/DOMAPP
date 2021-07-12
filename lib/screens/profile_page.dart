@@ -1,82 +1,76 @@
-import 'package:domapp/components/custom_navigation_bar.dart';
-import 'package:domapp/screens/landing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../cache/constants.dart';
+import '../screens/landing_page.dart';
 
 class ProfilePage extends StatelessWidget {
   static const String route = "ProfilePage";
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Padding(
-        padding: kOuterPadding.add(EdgeInsets.symmetric(horizontal: 20)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        TitleBarWrapper(),
+        Column(
           children: [
-            TitleBarWrapper(),
+            Container(
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: kWhite,
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 4),
+                    blurRadius: 1,
+                    color: kWhite.withOpacity(0.45),
+                  )
+                ],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: SvgPicture.asset(
+                'assets/avatars/female2.svg',
+                height: size.height * 0.16,
+              ),
+            ),
+            SizedBox(height: size.height * 0.01),
             Column(
               children: [
-                Container(
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: kWhite,
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset(0, 4),
-                        blurRadius: 1,
-                        color: kWhite.withOpacity(0.45),
-                      )
-                    ],
-                    borderRadius: BorderRadius.circular(8),
+                Text(
+                  'Vaani Mishra',
+                  style: TextStyle(
+                      fontFamily: 'Satisfy', fontSize: 36, color: kWhite),
+                ),
+                Text(
+                  '@vnMishra',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: kWhite.withOpacity(0.6),
+                    fontWeight: FontWeight.w600,
                   ),
-                  child: SvgPicture.asset(
-                    'assets/avatars/female2.svg',
-                    height: size.height * 0.16,
-                  ),
-                ),
-                SizedBox(height: size.height * 0.01),
-                Column(
-                  children: [
-                    Text(
-                      'Vaani Mishra',
-                      style: TextStyle(
-                          fontFamily: 'Satisfy', fontSize: 36, color: kWhite),
-                    ),
-                    Text(
-                      '@vnMishra',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: kWhite.withOpacity(0.6),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                BottomButton(
-                  title: 'FeedBack',
-                  color: kGreen,
-                ),
-                BottomButton(
-                  title: 'Starred',
-                  color: kYellow,
-                ),
-                BottomButton(
-                  title: 'Activities',
-                  color: kRed,
                 ),
               ],
             ),
           ],
         ),
-      ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            BottomButton(
+              title: 'FeedBack',
+              color: kGreen,
+            ),
+            BottomButton(
+              title: 'Starred',
+              color: kYellow,
+            ),
+            BottomButton(
+              title: 'Activities',
+              color: kRed,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

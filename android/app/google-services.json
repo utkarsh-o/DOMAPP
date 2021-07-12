@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "575924446241",
+    "project_id": "domapp-45ddd",
+    "storage_bucket": "domapp-45ddd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:575924446241:android:13e73c9b69ad711ce92f60",
+        "android_client_info": {
+          "package_name": "com.domapp.bits"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "575924446241-88p4240btjuse500a1apav13sk7t4g9k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Fn6MpggYONsjb61oEcJyGuCYNrMMKs4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "575924446241-88p4240btjuse500a1apav13sk7t4g9k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

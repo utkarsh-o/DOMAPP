@@ -1,3 +1,4 @@
+import 'package:domapp/cache/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_navigation_bar.dart';
@@ -6,13 +7,13 @@ import '../screens/profile_page.dart';
 import '../screens/utilities_page.dart';
 import 'discussion_forum_page.dart';
 
-class WrapperPage extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _WrapperPageState createState() => _WrapperPageState();
-  static const String route = 'WrapperPage';
+  _HomePageState createState() => _HomePageState();
+  static const String route = 'HomePage';
 }
 
-class _WrapperPageState extends State<WrapperPage> {
+class _HomePageState extends State<HomePage> {
   String activeRoute = AcademicsPage.route;
 
   Widget buildPage(String route) {
@@ -39,7 +40,12 @@ class _WrapperPageState extends State<WrapperPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: buildPage(activeRoute),
+      body: SafeArea(
+        child: Padding(
+          padding: kOuterPadding,
+          child: buildPage(activeRoute),
+        ),
+      ),
       bottomNavigationBar: CustomNavigationBar(
         activePage: activeRoute,
         callback: changePage,
