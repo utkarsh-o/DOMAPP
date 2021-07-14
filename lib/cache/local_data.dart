@@ -11,10 +11,38 @@ String getAvatarByID(int avatarID, String gender) => gender == 'male'
     ? 'assets/avatars/male$avatarID.svg'
     : 'assets/avatars/female$avatarID.svg';
 
+List<AdminAction> adminActionsList = [
+  AdminAction(
+    title: 'Added Professor',
+    user: getUserByUID(5),
+    approvals: 3,
+    reports: 0,
+  ),
+  AdminAction(
+    title: 'Slides Mis-tagged',
+    user: getUserByUID(6),
+    approvals: 4,
+    reports: 1,
+  ),
+  AdminAction(
+    title: 'Buggy Question Paper',
+    user: getUserByUID(7),
+    approvals: 1,
+    reports: 1,
+  ),
+  AdminAction(
+    title: 'Added Course',
+    user: getUserByUID(9),
+    approvals: 5,
+    reports: 0,
+  ),
+];
+
 List<User> userList = [
   User(
     firstName: 'Pulkit',
     lastName: 'Agarwal',
+    type: 'member',
     gender: 'male',
     avatarID: 1,
     UID: 1,
@@ -23,6 +51,7 @@ List<User> userList = [
   User(
     firstName: 'Vishal',
     lastName: 'Gupta',
+    type: 'member',
     avatarID: 2,
     UID: 2,
     gender: 'male',
@@ -31,6 +60,7 @@ List<User> userList = [
   User(
     firstName: 'Akshat',
     lastName: 'Singh',
+    type: 'member',
     avatarID: 1,
     UID: 3,
     gender: 'male',
@@ -39,10 +69,56 @@ List<User> userList = [
   User(
     firstName: 'Vaani',
     lastName: 'Mishra',
+    type: 'member',
     avatarID: 2,
     UID: 4,
     gender: 'female',
     userName: 'vnMishra',
+  ),
+  User(
+    firstName: 'Jeevan',
+    lastName: 'Nv',
+    type: 'admin',
+    avatarID: 1,
+    UID: 5,
+    gender: 'male',
+    userName: 'jvNv',
+  ),
+  User(
+    firstName: 'Dhruv',
+    lastName: 'Chovatiay',
+    type: 'admin',
+    avatarID: 1,
+    UID: 6,
+    gender: 'male',
+    userName: 'dhChovatiya',
+  ),
+  User(
+    firstName: 'Aviral',
+    lastName: 'Srivastava',
+    type: 'admin',
+    avatarID: 1,
+    UID: 7,
+    gender: 'male',
+    userName: 'avSrivastava',
+  ),
+  User(
+    firstName: 'Aryan',
+    lastName: 'Jain',
+    type: 'admin',
+    avatarID: 1,
+    UID: 8,
+    gender: 'male',
+    userName: 'arJain',
+  ),
+  User(
+    firstName: 'Harshit',
+    lastName: 'Khasnis',
+    type: 'member',
+    avatarID: 1,
+    UID: 9,
+    gender: 'male',
+    userName: 'hrKhasnis',
   ),
 ];
 User getUserByUID(int uid) =>
@@ -60,6 +136,57 @@ List<Comment> commentList = [
     text:
         'But it is not hygienic I mean you bring all the dirt from outside. doesn\'t make sense to me at all.',
   )
+];
+
+List<DiscussionReply> replyList = [
+  DiscussionReply(
+    text: 'Has anyone got any idea how to solve this question ?',
+    tag: 'Question 3',
+    thumbsDown: 0,
+    thumbsUP: 2,
+    user: getUserByUID(4),
+  ),
+  DiscussionReply(
+    text:
+        'The equation seems to be a derivative of fourier series of sin(sec(x)), check out my approach - ',
+    tag: 'Question 3',
+    thumbsDown: 1,
+    thumbsUP: 6,
+    attachmentUrl: 'www.google.com',
+    user: getUserByUID(2),
+  ),
+  DiscussionReply(
+    text: 'Has anyone got any idea how to solve this question ?',
+    tag: 'Question 3',
+    thumbsDown: 0,
+    thumbsUP: 2,
+    user: getUserByUID(4),
+  ),
+  DiscussionReply(
+    text:
+        'The equation seems to be a derivative of fourier series of sin(sec(x)), check out my approach - ',
+    tag: 'Question 3',
+    thumbsDown: 1,
+    thumbsUP: 6,
+    attachmentUrl: 'www.google.com',
+    user: getUserByUID(2),
+  ),
+  DiscussionReply(
+    text: 'Has anyone got any idea how to solve this question ?',
+    tag: 'Question 3',
+    thumbsDown: 0,
+    thumbsUP: 2,
+    user: getUserByUID(4),
+  ),
+  DiscussionReply(
+    text:
+        'The equation seems to be a derivative of fourier series of sin(sec(x)), check out my approach - ',
+    tag: 'Question 3',
+    thumbsDown: 1,
+    thumbsUP: 6,
+    attachmentUrl: 'www.google.com',
+    user: getUserByUID(2),
+  ),
 ];
 
 List<Post> postList = [
@@ -107,28 +234,14 @@ List<Professor> professorList = [
       branches: ['M.Sc. Math', 'M.Sc. Physics'],
       uid: '2'),
   Professor(
-      name: 'Bonnie Berger', branches: ['M.Sc. Math', 'B.E. CSE'], uid: '3'),
-  Professor(
-      name: 'Tristan Collins',
-      branches: ['M.Sc. Math', 'M.Sc. Economics'],
-      uid: '4'),
-  Professor(
-      name: 'Michale Artin',
-      branches: ['M.Sc. Math', 'B.E. CSE', 'M.Sc. Physics'],
-      uid: '5'),
-  Professor(
-      name: 'Herman Chernoff',
-      branches: ['M.Sc. Math', 'M.Sc. Physics'],
-      uid: '6'),
-  Professor(
     name: 'Bonnie Berger',
     branches: ['M.Sc. Math', 'B.E. CSE'],
-    uid: '7',
+    uid: '3',
   ),
   Professor(
       name: 'Tristan Collins',
       branches: ['M.Sc. Math', 'M.Sc. Economics'],
-      uid: '8'),
+      uid: '4'),
   Professor(
     name: 'Lakshmi Subramaniam',
     branches: ['Humanities'],
@@ -163,6 +276,14 @@ Course? getCourseByBranchandID({required Branch branch, required int id}) {
   }
 }
 
+List<String> branchList = [
+  'All',
+  'M.Sc. Math',
+  'M.Sc. Chem',
+  'CSE',
+  'Mechanical',
+  'Humanities'
+];
 String getBranchName(Branch branch) {
   switch (branch) {
     case Branch.Mathematics:

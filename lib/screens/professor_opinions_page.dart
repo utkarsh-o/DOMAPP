@@ -13,7 +13,6 @@ List<String> sortMethods = [
   'Alphabetically',
   'Joining Year',
 ];
-List<String> branchList = ['M.Sc. Math', 'M.Sc. Chem', 'CSE', 'Mechanical'];
 String? selectedBranch = branchList.first;
 String? selectedSort = sortMethods.first;
 TextEditingController filterController = TextEditingController();

@@ -33,14 +33,40 @@ class Comment {
   });
 }
 
+class DiscussionReply {
+  String text, tag;
+  String? attachmentUrl;
+  User user;
+  int thumbsUP, thumbsDown;
+  DiscussionReply(
+      {required this.text,
+      required this.tag,
+      this.attachmentUrl,
+      required this.thumbsDown,
+      required this.thumbsUP,
+      required this.user});
+}
+
+class AdminAction {
+  String title;
+  User user;
+  int approvals, reports;
+  AdminAction(
+      {required this.title,
+      required this.user,
+      required this.approvals,
+      required this.reports});
+}
+
 class User {
-  String firstName, lastName, userName, gender;
+  String firstName, lastName, userName, gender, type;
   int avatarID, UID;
   User(
       {required this.firstName,
       required this.avatarID,
       required this.UID,
       required this.gender,
+      required this.type,
       required this.lastName,
       required this.userName});
   String get fullName => '$firstName $lastName';

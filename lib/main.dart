@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../screens/add_course_page.dart';
+import '../screens/add_professor_page.dart';
+import '../screens/admin_panel_page.dart';
+import '../screens/solution_discussion_page.dart';
 import '../screens/choose_course_page.dart';
 import '../screens/course_review_page.dart';
 import '../screens/selected_course_review_page.dart';
@@ -39,8 +43,12 @@ class Domapp extends StatelessWidget {
         SelectedCourseReviewPage.route: (context) => SelectedCourseReviewPage(),
         SelectedProfessorReviewPage.route: (context) =>
             SelectedProfessorReviewPage(),
+        SolutionDiscussionThread.route: (context) => SolutionDiscussionThread(),
+        AdminPanelPage.route: (context) => AdminPanelPage(),
+        AddCoursePage.route: (context) => AddCoursePage(),
+        AddProfessorPage.route: (context) => AddProfessorPage(),
       },
-      initialRoute: HomePage.route,
+      initialRoute: AddProfessorPage.route,
     );
   }
 }

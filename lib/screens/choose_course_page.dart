@@ -14,14 +14,6 @@ List<String> sortMethods = [
   'Alphabetically',
   'Joining Year',
 ];
-List<String> branchList = [
-  'All',
-  'M.Sc. Math',
-  'M.Sc. Chem',
-  'CSE',
-  'Mechanical',
-  'Humanities'
-];
 
 String? selectedBranch = branchList.first;
 String? selectedSort = sortMethods.first;
