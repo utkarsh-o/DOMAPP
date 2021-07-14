@@ -1,12 +1,12 @@
-import 'package:domapp/cache/local_data.dart';
-import 'package:domapp/screens/previous_years_papers_page.dart';
-import 'package:domapp/screens/slides_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../cache/local_data.dart';
+import '../screens/choose_course_page.dart';
+import '../screens/previous_years_papers_page.dart';
+import '../screens/slides_page.dart';
 import '../cache/constants.dart';
-import '../components/custom_navigation_bar.dart';
 
 class AcademicsPage extends StatefulWidget {
   static const String route = 'AcademicsPage';
@@ -35,74 +35,7 @@ class _AcademicsPageState extends State<AcademicsPage> {
         SortAddWrapper(),
         SizedBox(height: size.height * 0.03),
         selectedCoursesList(),
-        BreakLine(),
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                decoration: BoxDecoration(
-                    color: kRed,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                          color: kRed.withOpacity(0.65),
-                          offset: Offset(0, 3),
-                          blurRadius: 1),
-                    ]),
-                child: Text(
-                  'SG Estimator',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                      color: kDarkBackgroundColour),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                    color: kRed,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                          color: kRed.withOpacity(0.65),
-                          offset: Offset(0, 3),
-                          blurRadius: 1),
-                    ]),
-                child: Row(
-                  children: [
-                    Text(
-                      'Forum',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: kDarkBackgroundColour),
-                    ),
-                    SizedBox(
-                      width: size.width * 0.03,
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(7),
-                        color: kWhite,
-                        boxShadow: [
-                          BoxShadow(
-                              color: kDarkBackgroundColour.withOpacity(0.45),
-                              offset: Offset(0, 4),
-                              blurRadius: 1),
-                        ],
-                      ),
-                      child: SvgPicture.asset('assets/icons/incognito.svg'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )
+        // BreakLine(),
       ],
     );
   }
@@ -116,8 +49,6 @@ class selectedCoursesList extends StatelessWidget {
     return Expanded(
       child: ListView.separated(
         physics: BouncingScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
         separatorBuilder: (BuildContext context, int index) {
           return SizedBox(height: 15);
         },
@@ -126,11 +57,11 @@ class selectedCoursesList extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
             // height: 50,
             decoration: BoxDecoration(
-              color: listColours[index % 3],
+              color: colourList[index % 3],
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                    color: listColours[index % 3].withOpacity(0.65),
+                    color: colourList[index % 3].withOpacity(0.65),
                     offset: Offset(0, 3),
                     blurRadius: 1),
               ],
@@ -139,7 +70,7 @@ class selectedCoursesList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  courseNames[index],
+                  pickedCourses[index]!.title,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: kDarkBackgroundColour.withOpacity(0.8),
@@ -241,7 +172,7 @@ class selectedCoursesList extends StatelessWidget {
             ),
           );
         },
-        itemCount: courseNames.length,
+        itemCount: pickedCourses.length,
       ),
     );
   }
@@ -318,19 +249,22 @@ class _SortAddWrapperState extends State<SortAddWrapper> {
                 ),
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7),
-                color: kWhite,
-                boxShadow: [
-                  BoxShadow(
-                      color: kDarkBackgroundColour.withOpacity(0.45),
-                      offset: Offset(0, 4),
-                      blurRadius: 1),
-                ],
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, ChooseCoursePage.route),
+              child: Container(
+                padding: EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(7),
+                  color: kWhite,
+                  boxShadow: [
+                    BoxShadow(
+                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        offset: Offset(0, 4),
+                        blurRadius: 1),
+                  ],
+                ),
+                child: SvgPicture.asset('assets/icons/add_file.svg'),
               ),
-              child: SvgPicture.asset('assets/icons/add_file.svg'),
             ),
             Container(
               padding: EdgeInsets.all(6),

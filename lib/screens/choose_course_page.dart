@@ -1,9 +1,13 @@
-import 'package:domapp/cache/local_data.dart';
-import 'package:domapp/cache/models.dart';
+import 'package:domapp/screens/academics_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../cache/constants.dart';
+import '../cache/local_data.dart';
+import '../cache/models.dart';
+import '../screens/selected_course_review_page.dart';
+import '../screens/selected_professor_review_page.dart';
+import 'home_page.dart';
 
 List<String> sortMethods = [
   'Rating',
@@ -11,6 +15,7 @@ List<String> sortMethods = [
   'Joining Year',
 ];
 List<String> branchList = [
+  'All',
   'M.Sc. Math',
   'M.Sc. Chem',
   'CSE',
@@ -20,7 +25,6 @@ List<String> branchList = [
 
 String? selectedBranch = branchList.first;
 String? selectedSort = sortMethods.first;
-TextEditingController filterController = TextEditingController();
 
 enum ButtonType {
   professorReview,
@@ -37,6 +41,15 @@ class ChooseCoursePage extends StatefulWidget {
 }
 
 class _ChooseCoursePageState extends State<ChooseCoursePage> {
+  void pickerCallback(Course currentCourse) {
+    setState(() {
+      if (pickedCourses.contains(currentCourse))
+        pickedCourses.remove(currentCourse);
+      else
+        pickedCourses.add(currentCourse);
+    });
+  }
+
   String query = '';
   List<Course> filteredCourses = courseList;
 
@@ -53,7 +66,10 @@ class _ChooseCoursePageState extends State<ChooseCoursePage> {
               Container(
                 margin: EdgeInsets.symmetric(vertical: 30),
                 child: InkWell(
-                  onTap: () => Navigator.of(context).pop(context),
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
+                    return HomePage();
+                  })),
                   child: SvgPicture.asset(
                     'assets/icons/back_button_titlebar.svg',
                     color: kWhite,
@@ -69,102 +85,9 @@ class _ChooseCoursePageState extends State<ChooseCoursePage> {
                 ),
               ),
               SortFilterWrapper(onChanged: searchCourse),
-              Expanded(
-                child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      Course currentCourse = filteredCourses[index];
-                      return Container(
-                        decoration: BoxDecoration(
-                            color: listColours[index % 3],
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 1,
-                                offset: Offset(0, 4),
-                                color: listColours[index % 3].withOpacity(0.45),
-                              )
-                            ]),
-                        padding: EdgeInsets.all(15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              currentCourse.title,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: kDarkBackgroundColour.withOpacity(0.8),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: IntrinsicHeight(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          currentCourse.professor.name,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 11,
-                                            color: kDarkBackgroundColour
-                                                .withOpacity(0.6),
-                                          ),
-                                        ),
-                                        Text(
-                                          '${currentCourse.getIDName()} F${currentCourse.idNumber}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 11,
-                                            color: kDarkBackgroundColour
-                                                .withOpacity(0.6),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        ListItemBottomButton(
-                                          buttonType:
-                                              ButtonType.professorReview,
-                                        ),
-                                        SizedBox(width: size.width * 0.02),
-                                        ListItemBottomButton(
-                                          buttonType: ButtonType.courseReview,
-                                        ),
-                                        SizedBox(width: size.width * 0.02),
-                                        ListItemBottomButton(
-                                          buttonType: pickedCourses
-                                                  .contains(currentCourse)
-                                              ? ButtonType.pickedCourse
-                                              : ButtonType.unpickedCourse,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        height: size.height * 0.02,
-                      );
-                    },
-                    itemCount: filteredCourses.length),
+              CourseListBuilder(
+                filteredCourses: filteredCourses,
+                pickerCallback: pickerCallback,
               )
             ],
           ),
@@ -190,22 +113,136 @@ class _ChooseCoursePageState extends State<ChooseCoursePage> {
   }
 }
 
+class CourseListBuilder extends StatelessWidget {
+  const CourseListBuilder({
+    Key? key,
+    required this.filteredCourses,
+    required this.pickerCallback,
+  }) : super(key: key);
+
+  final List<Course> filteredCourses;
+  final Function pickerCallback;
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Expanded(
+      child: ListView.separated(
+          physics: BouncingScrollPhysics(),
+          itemBuilder: (context, index) {
+            Course currentCourse = filteredCourses[index];
+            return Container(
+              decoration: BoxDecoration(
+                  color: colourList[index % 3],
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 1,
+                      offset: Offset(0, 4),
+                      color: colourList[index % 3].withOpacity(0.45),
+                    )
+                  ]),
+              padding: EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    currentCourse.title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: kDarkBackgroundColour.withOpacity(0.8),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentCourse.professor.name,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 11,
+                                  color: kDarkBackgroundColour.withOpacity(0.6),
+                                ),
+                              ),
+                              Text(
+                                '${currentCourse.getIDName()} F${currentCourse.idNumber}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 11,
+                                  color: kDarkBackgroundColour.withOpacity(0.6),
+                                ),
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              ListItemBottomButton(
+                                buttonType: ButtonType.professorReview,
+                              ),
+                              SizedBox(width: size.width * 0.02),
+                              ListItemBottomButton(
+                                buttonType: ButtonType.courseReview,
+                              ),
+                              SizedBox(width: size.width * 0.02),
+                              ListItemBottomButton(
+                                buttonType:
+                                    pickedCourses.contains(currentCourse)
+                                        ? ButtonType.pickedCourse
+                                        : ButtonType.unpickedCourse,
+                                callback: () => pickerCallback(currentCourse),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return SizedBox(
+              height: size.height * 0.02,
+            );
+          },
+          itemCount: filteredCourses.length),
+    );
+  }
+}
+
 class ListItemBottomButton extends StatelessWidget {
   final ButtonType buttonType;
   Function? callback;
   ListItemBottomButton({required this.buttonType, this.callback});
-  getCourseReview() {}
-  getProfessorReview() {}
-  Function? getOnTap() {
+
+  getCourseReview(BuildContext context) =>
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return SelectedCourseReviewPage();
+      }));
+  getProfessorReview(BuildContext context) =>
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return SelectedProfessorReviewPage();
+      }));
+  getOnTap(BuildContext context) {
     switch (buttonType) {
       case ButtonType.courseReview:
-        return getCourseReview();
+        return getCourseReview(context);
       case ButtonType.professorReview:
-        return getProfessorReview();
+        return getProfessorReview(context);
       case ButtonType.pickedCourse:
-        return callback;
+        return callback!();
       case ButtonType.unpickedCourse:
-        return callback;
+        return callback!();
     }
   }
 
@@ -225,7 +262,7 @@ class ListItemBottomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: getOnTap,
+      onTap: () => getOnTap(context),
       child: Container(
         padding: EdgeInsets.all(6),
         decoration: BoxDecoration(
@@ -255,6 +292,7 @@ class SortFilterWrapper extends StatefulWidget {
 }
 
 class _SortFilterWrapperState extends State<SortFilterWrapper> {
+  TextEditingController filterController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

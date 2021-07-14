@@ -1,3 +1,5 @@
+import 'package:domapp/screens/academics_page.dart';
+import 'package:domapp/screens/selected_course_review_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -97,76 +99,79 @@ class CourseListBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              width: 10,
-              color: listColours[index % 3],
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 10),
-                  Text(
-                    currentCourse.title,
-                    style: TextStyle(
-                        fontFamily: 'Satisfy', fontSize: 18, color: kWhite),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    '${currentCourse.branch} || ${currentCourse.type}',
-                    style: TextStyle(fontSize: 12, color: kWhite),
-                  ),
-                ],
+    return InkWell(
+      onTap: () => Navigator.pushNamed(context, SelectedCourseReviewPage.route),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                width: 10,
+                color: colourList[index % 3],
               ),
-            ),
-            Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+              SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: SvgPicture.asset(
-                        'assets/icons/thumbs_up_filled.svg',
-                        color: listColours[index % 3],
-                      ),
-                    ),
+                    SizedBox(height: 10),
                     Text(
-                      ' 41',
+                      currentCourse.title,
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: listColours[index % 3]),
-                    )
+                          fontFamily: 'Satisfy', fontSize: 18, color: kWhite),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      '${currentCourse.branch} || ${currentCourse.type}',
+                      style: TextStyle(fontSize: 12, color: kWhite),
+                    ),
                   ],
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: Text(
-                    '96 %',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white.withOpacity(0.6),
-                      fontSize: 12,
+              ),
+              Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: SvgPicture.asset(
+                          'assets/icons/thumbs_up_filled.svg',
+                          color: colourList[index % 3],
+                        ),
+                      ),
+                      Text(
+                        ' 41',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: colourList[index % 3]),
+                      )
+                    ],
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    child: Text(
+                      '96 %',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white.withOpacity(0.6),
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  child:
-                      SvgPicture.asset('assets/icons/thumbs_down_hollow.svg'),
-                )
-              ],
-            )
-          ],
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    child:
+                        SvgPicture.asset('assets/icons/thumbs_down_hollow.svg'),
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

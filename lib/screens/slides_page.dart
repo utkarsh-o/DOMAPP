@@ -19,7 +19,7 @@ class SlidesPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: kOuterPadding.add(EdgeInsets.symmetric(horizontal: 20)),
+          padding: kOuterPadding,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,

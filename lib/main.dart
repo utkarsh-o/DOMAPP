@@ -1,9 +1,9 @@
-import 'package:domapp/screens/choose_course_page.dart';
-import 'package:domapp/screens/course_review_page.dart';
-import 'package:domapp/screens/selected_course_review_page.dart';
-import 'package:domapp/screens/selected_professor_review_page.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/choose_course_page.dart';
+import '../screens/course_review_page.dart';
+import '../screens/selected_course_review_page.dart';
+import '../screens/selected_professor_review_page.dart';
 import '../screens/home_page.dart';
 import '../screens/previous_years_papers_page.dart';
 import '../screens/professor_opinions_page.dart';
@@ -40,7 +40,7 @@ class Domapp extends StatelessWidget {
         SelectedProfessorReviewPage.route: (context) =>
             SelectedProfessorReviewPage(),
       },
-      initialRoute: SelectedCourseReviewPage.route,
+      initialRoute: HomePage.route,
     );
   }
 }

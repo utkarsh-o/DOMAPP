@@ -3,28 +3,69 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'models.dart';
 
-List<Color> listColours = [kRed, kYellow, kGreen];
+List<Color> colourList = [kRed, kYellow, kGreen];
+
+User user = getUserByUID(4);
+
+String getAvatarByID(int avatarID, String gender) => gender == 'male'
+    ? 'assets/avatars/male$avatarID.svg'
+    : 'assets/avatars/female$avatarID.svg';
+
+List<User> userList = [
+  User(
+    firstName: 'Pulkit',
+    lastName: 'Agarwal',
+    gender: 'male',
+    avatarID: 1,
+    UID: 1,
+    userName: 'pkAgarwal',
+  ),
+  User(
+    firstName: 'Vishal',
+    lastName: 'Gupta',
+    avatarID: 2,
+    UID: 2,
+    gender: 'male',
+    userName: 'vsGupta',
+  ),
+  User(
+    firstName: 'Akshat',
+    lastName: 'Singh',
+    avatarID: 1,
+    UID: 3,
+    gender: 'male',
+    userName: 'akSingh',
+  ),
+  User(
+    firstName: 'Vaani',
+    lastName: 'Mishra',
+    avatarID: 2,
+    UID: 4,
+    gender: 'female',
+    userName: 'vnMishra',
+  ),
+];
+User getUserByUID(int uid) =>
+    userList.where((User user) => user.UID == uid).first;
 
 List<Comment> commentList = [
   Comment(
-      authorName: 'Vishal Gupta',
-      likes: 4,
-      text: 'They don’t wanna take the time and energy to do so',
-      authorUsername: '@vsGupta',
-      authorGender: 'male'),
+    author: getUserByUID(2),
+    likes: 4,
+    text: 'They don’t wanna take the time and energy to do so',
+  ),
   Comment(
-      authorName: 'Vaani Mishra',
-      likes: 1,
-      text:
-          'But it is not hygienic I mean you bring all the dirt from outside. doesn\'t make sense to me at all.',
-      authorUsername: '@vnMishra',
-      authorGender: 'female')
+    author: getUserByUID(4),
+    likes: 1,
+    text:
+        'But it is not hygienic I mean you bring all the dirt from outside. doesn\'t make sense to me at all.',
+  )
 ];
 
 List<Post> postList = [
   Post(
     title: 'How are thoughts made ?',
-    authorName: 'Vishal Gupta',
+    author: getUserByUID(2),
     dateCreated: DateTime.parse('2021-06-10'),
     tags: ['math', 'algebra', 'wtfIsThis'],
     likes: 11,
@@ -32,7 +73,7 @@ List<Post> postList = [
   ),
   Post(
     title: 'Why do people wear shoes in the house ?',
-    authorName: 'Akshat Singh',
+    author: getUserByUID(3),
     dateCreated: DateTime.parse('2021-06-16'),
     tags: ['ece', 'comSys', 'brainDead'],
     likes: 6,
@@ -40,7 +81,7 @@ List<Post> postList = [
   ),
   Post(
     title: 'Does anybody else just stare into the void ?',
-    authorName: 'Pulkit Agarwal',
+    author: getUserByUID(1),
     dateCreated: DateTime.parse('2021-06-03'),
     tags: ['mech', 'hydraulics', 'notStupid'],
     likes: 12,
@@ -48,7 +89,7 @@ List<Post> postList = [
   ),
   Post(
     title: 'What is it like to be the fuckup in the family ?',
-    authorName: 'Vaani Mishra',
+    author: getUserByUID(4),
     dateCreated: DateTime.parse('2021-06-03'),
     likes: 33,
     comments: 47,

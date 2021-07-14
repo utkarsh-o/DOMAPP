@@ -66,40 +66,7 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
               SizedBox(
                 height: size.height * 0.02,
               ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Indicator(
-                    color: kRed,
-                    text: 'Interesting',
-                    isSquare: false,
-                    size: touchedIndex == 0 ? 18 : 16,
-                    textColor: touchedIndex == 0 ? Colors.white : kWhite,
-                  ),
-                  Indicator(
-                    color: kYellow,
-                    text: 'Scoring',
-                    isSquare: false,
-                    size: touchedIndex == 1 ? 18 : 16,
-                    textColor: touchedIndex == 1 ? Colors.white : kWhite,
-                  ),
-                  Indicator(
-                    color: kGreen,
-                    text: 'Useful',
-                    isSquare: false,
-                    size: touchedIndex == 2 ? 18 : 16,
-                    textColor: touchedIndex == 2 ? Colors.white : kWhite,
-                  ),
-                  Indicator(
-                    color: kBlue,
-                    text: 'Others',
-                    isSquare: false,
-                    size: touchedIndex == 3 ? 18 : 16,
-                    textColor: touchedIndex == 3 ? Colors.white : kWhite,
-                  ),
-                ],
-              ),
+              ChartIndicatorsWrapper(touchedIndex: touchedIndex),
               const SizedBox(height: 18),
               Expanded(
                 child: PieChart(
@@ -129,78 +96,7 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
               ),
               SortStarLikeShareWrapper(),
               SizedBox(height: size.height * 0.02),
-              Expanded(
-                child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      Color color = index < 3 ? listColours[index] : kBlue;
-                      return Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: color,
-                          boxShadow: [
-                            BoxShadow(
-                                color: color.withOpacity(0.45),
-                                blurRadius: 1,
-                                offset: Offset(0, 4))
-                          ],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: Text(
-                                pickedTags1[index].title,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                    color:
-                                        kDarkBackgroundColour.withOpacity(0.8)),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(7),
-                                color: kWhite,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: kDarkBackgroundColour
-                                          .withOpacity(0.45),
-                                      offset: Offset(0, 4),
-                                      blurRadius: 1),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icons/plus_filled.svg',
-                                    color: kRed,
-                                    height: 15,
-                                  ),
-                                  SizedBox(width: size.width * 0.02),
-                                  Text(
-                                    pickedTags1[index].votes.toString(),
-                                    style: TextStyle(
-                                        color: kRed,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return SizedBox(
-                        height: size.height * 0.02,
-                      );
-                    },
-                    itemCount: pickedTags1.length),
-              )
+              TagListWrapper()
             ],
           ),
         ),
@@ -262,6 +158,131 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
             throw Error();
         }
       },
+    );
+  }
+}
+
+class TagListWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return Expanded(
+      child: ListView.separated(
+          physics: BouncingScrollPhysics(),
+          itemBuilder: (context, index) {
+            Color color = index < 3 ? colourList[index] : kBlue;
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              decoration: BoxDecoration(
+                color: color,
+                boxShadow: [
+                  BoxShadow(
+                      color: color.withOpacity(0.45),
+                      blurRadius: 1,
+                      offset: Offset(0, 4))
+                ],
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: Text(
+                      pickedTags1[index].title,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: kDarkBackgroundColour.withOpacity(0.8)),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7),
+                      color: kWhite,
+                      boxShadow: [
+                        BoxShadow(
+                            color: kDarkBackgroundColour.withOpacity(0.45),
+                            offset: Offset(0, 4),
+                            blurRadius: 1),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/plus_filled.svg',
+                          color: kRed,
+                          height: 15,
+                        ),
+                        SizedBox(width: size.width * 0.02),
+                        Text(
+                          pickedTags1[index].votes.toString(),
+                          style: TextStyle(
+                              color: kRed,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return SizedBox(
+              height: size.height * 0.02,
+            );
+          },
+          itemCount: pickedTags1.length),
+    );
+  }
+}
+
+class ChartIndicatorsWrapper extends StatelessWidget {
+  const ChartIndicatorsWrapper({
+    Key? key,
+    required this.touchedIndex,
+  }) : super(key: key);
+
+  final int touchedIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Indicator(
+          color: kRed,
+          text: 'Interesting',
+          isSquare: false,
+          size: touchedIndex == 0 ? 18 : 16,
+          textColor: touchedIndex == 0 ? Colors.white : kWhite,
+        ),
+        Indicator(
+          color: kYellow,
+          text: 'Scoring',
+          isSquare: false,
+          size: touchedIndex == 1 ? 18 : 16,
+          textColor: touchedIndex == 1 ? Colors.white : kWhite,
+        ),
+        Indicator(
+          color: kGreen,
+          text: 'Useful',
+          isSquare: false,
+          size: touchedIndex == 2 ? 18 : 16,
+          textColor: touchedIndex == 2 ? Colors.white : kWhite,
+        ),
+        Indicator(
+          color: kBlue,
+          text: 'Others',
+          isSquare: false,
+          size: touchedIndex == 3 ? 18 : 16,
+          textColor: touchedIndex == 3 ? Colors.white : kWhite,
+        ),
+      ],
     );
   }
 }

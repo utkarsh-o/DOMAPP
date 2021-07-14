@@ -1,3 +1,4 @@
+import 'package:domapp/cache/models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -20,7 +21,7 @@ class DiscussionThreadPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: kOuterPadding.add(EdgeInsets.symmetric(horizontal: 20)),
+          padding: kOuterPadding,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,21 +90,19 @@ class DiscussionThreadPage extends StatelessWidget {
                             Row(
                               children: [
                                 SvgPicture.asset(
-                                  selectedComment.authorGender == 'male'
-                                      ? 'assets/avatars/male2.svg'
-                                      : 'assets/avatars/female1.svg',
+                                  selectedComment.author.avatar,
                                   height: 30,
                                 ),
                                 SizedBox(width: size.width * 0.02),
                                 Text(
-                                  selectedComment.authorName,
+                                  selectedComment.author.fullName,
                                   style: TextStyle(
                                       color: kWhite,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(width: size.width * 0.02),
                                 Text(
-                                  selectedComment.authorUsername,
+                                  selectedComment.author.userName,
                                   style: TextStyle(
                                       color: kWhite.withOpacity(0.6),
                                       fontSize: 11,
@@ -354,7 +353,7 @@ class PostInfoWrapper extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SvgPicture.asset(
-              'assets/avatars/male1.svg',
+              post.author.avatar,
               height: 40,
             ),
             SizedBox(width: size.width * 0.03),
@@ -368,7 +367,7 @@ class PostInfoWrapper extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            post.authorName,
+                            post.author.fullName,
                             style: TextStyle(
                               color: kWhite,
                               fontSize: 17,
@@ -377,7 +376,7 @@ class PostInfoWrapper extends StatelessWidget {
                           ),
                           SizedBox(width: size.width * 0.02),
                           Text(
-                            '@${post.authorName}',
+                            '@${post.author.userName}',
                             style: TextStyle(
                               fontSize: 12,
                               color: kWhite.withOpacity(0.6),

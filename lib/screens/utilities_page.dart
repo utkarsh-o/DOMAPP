@@ -1,8 +1,8 @@
+import 'package:domapp/screens/course_review_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '/components/custom_navigation_bar.dart';
 import '/screens/professor_opinions_page.dart';
 import '../cache/constants.dart';
 
@@ -79,23 +79,51 @@ class UtilitiesPage extends StatelessWidget {
             ],
           ),
         ),
+        InkWell(
+          onTap: () => Navigator.pushNamed(context, CourseReviewPage.route),
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            decoration: BoxDecoration(
+                color: kRed,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                      color: kRed.withOpacity(0.65),
+                      blurRadius: 1,
+                      offset: Offset(0, 4))
+                ]),
+            child: Row(
+              children: [
+                SvgPicture.asset('assets/icons/course.svg'),
+                SizedBox(width: size.width * 0.06),
+                Text(
+                  'Course Review',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: kDarkBackgroundColour.withOpacity(0.7)),
+                )
+              ],
+            ),
+          ),
+        ),
         Container(
           padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
           decoration: BoxDecoration(
-              color: kRed,
+              color: kGreen,
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                    color: kRed.withOpacity(0.65),
+                    color: kGreen.withOpacity(0.65),
                     blurRadius: 1,
                     offset: Offset(0, 4))
               ]),
           child: Row(
             children: [
-              SvgPicture.asset('assets/icons/course.svg'),
+              SvgPicture.asset('assets/icons/areaChart.svg'),
               SizedBox(width: size.width * 0.06),
               Text(
-                'Course Review',
+                'SG / CG Estimator',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,

@@ -1,3 +1,5 @@
+import 'package:domapp/cache/local_data.dart';
+
 class Professor {
   String name, uid;
   List<String> branches;
@@ -5,13 +7,14 @@ class Professor {
 }
 
 class Post {
-  String title, authorName;
+  String title;
+  User author;
   List<String> tags;
   DateTime dateCreated;
   int likes, comments;
   Post({
     required this.title,
-    required this.authorName,
+    required this.author,
     required this.dateCreated,
     required this.tags,
     required this.likes,
@@ -20,23 +23,28 @@ class Post {
 }
 
 class Comment {
-  String authorName, authorUsername, text, authorGender;
+  String text;
+  User author;
   int likes;
-  Comment(
-      {required this.authorName,
-      required this.likes,
-      required this.text,
-      required this.authorUsername,
-      required this.authorGender});
+  Comment({
+    required this.author,
+    required this.likes,
+    required this.text,
+  });
 }
 
 class User {
-  String firstName, lastName, userName;
+  String firstName, lastName, userName, gender;
+  int avatarID, UID;
   User(
       {required this.firstName,
+      required this.avatarID,
+      required this.UID,
+      required this.gender,
       required this.lastName,
       required this.userName});
   String get fullName => '$firstName $lastName';
+  String get avatar => getAvatarByID(avatarID, gender);
 }
 
 enum Branch {

@@ -20,7 +20,7 @@ class PreviousYearsPapersPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: kOuterPadding.add(EdgeInsets.symmetric(horizontal: 20)),
+          padding: kOuterPadding,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,

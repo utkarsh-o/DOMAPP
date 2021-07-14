@@ -68,40 +68,40 @@ class _SelectedProfessorReviewPageState
               SizedBox(
                 height: size.height * 0.02,
               ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Indicator(
-                    color: kRed,
-                    text: pickedTags2[0].title,
-                    isSquare: false,
-                    size: touchedIndex == 0 ? 18 : 16,
-                    textColor: touchedIndex == 0 ? Colors.white : kWhite,
-                  ),
-                  Indicator(
-                    color: kYellow,
-                    text: pickedTags2[1].title,
-                    isSquare: false,
-                    size: touchedIndex == 1 ? 18 : 16,
-                    textColor: touchedIndex == 1 ? Colors.white : kWhite,
-                  ),
-                  Indicator(
-                    color: kGreen,
-                    text: pickedTags2[2].title,
-                    isSquare: false,
-                    size: touchedIndex == 2 ? 18 : 16,
-                    textColor: touchedIndex == 2 ? Colors.white : kWhite,
-                  ),
-                  Indicator(
-                    color: kBlue,
-                    text: 'Others',
-                    isSquare: false,
-                    size: touchedIndex == 3 ? 18 : 16,
-                    textColor: touchedIndex == 3 ? Colors.white : kWhite,
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisSize: MainAxisSize.max,
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: <Widget>[
+              //     Indicator(
+              //       color: kRed,
+              //       text: pickedTags2[0].title,
+              //       isSquare: false,
+              //       size: touchedIndex == 0 ? 18 : 16,
+              //       textColor: touchedIndex == 0 ? Colors.white : kWhite,
+              //     ),
+              //     Indicator(
+              //       color: kYellow,
+              //       text: pickedTags2[1].title,
+              //       isSquare: false,
+              //       size: touchedIndex == 1 ? 18 : 16,
+              //       textColor: touchedIndex == 1 ? Colors.white : kWhite,
+              //     ),
+              //     Indicator(
+              //       color: kGreen,
+              //       text: pickedTags2[2].title,
+              //       isSquare: false,
+              //       size: touchedIndex == 2 ? 18 : 16,
+              //       textColor: touchedIndex == 2 ? Colors.white : kWhite,
+              //     ),
+              //     Indicator(
+              //       color: kBlue,
+              //       text: 'Others',
+              //       isSquare: false,
+              //       size: touchedIndex == 3 ? 18 : 16,
+              //       textColor: touchedIndex == 3 ? Colors.white : kWhite,
+              //     ),
+              //   ],
+              // ),
               const SizedBox(height: 18),
               Expanded(
                 child: PieChart(
@@ -203,8 +203,9 @@ class BuildTagsList extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Expanded(
       child: ListView.separated(
+          physics: BouncingScrollPhysics(),
           itemBuilder: (context, index) {
-            Color color = index < 3 ? listColours[index] : kBlue;
+            Color color = index < 3 ? colourList[index] : kBlue;
             return Container(
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               decoration: BoxDecoration(

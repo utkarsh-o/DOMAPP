@@ -4,10 +4,10 @@ import 'package:intl/intl.dart';
 
 import '../cache/constants.dart';
 import '../cache/local_data.dart';
-import '../components/custom_navigation_bar.dart';
+import '../cache/models.dart';
+import '../screens/professor_opinions_page.dart';
 import 'discussion_thread_page.dart';
 
-List<Color> colorList = [kRed, kYellow, kGreen];
 List<String> sortMethods = [
   'Rating',
   'Alphabetically',
@@ -33,85 +33,80 @@ class _DiscussionForumPageState extends State<DiscussionForumPage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Padding(
-        padding: kOuterPadding.add(EdgeInsets.symmetric(horizontal: 20)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 30),
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(context),
-                    child: SvgPicture.asset(
-                      'assets/icons/options_button_titlebar.svg',
-                      color: kWhite,
-                    ),
-                  ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 30),
+              child: InkWell(
+                onTap: () => Navigator.of(context).pop(context),
+                child: SvgPicture.asset(
+                  'assets/icons/options_button_titlebar.svg',
+                  color: kWhite,
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: kBlue,
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: [
-                        BoxShadow(
-                            color: kBlue.withOpacity(0.65),
-                            offset: Offset(0, 3),
-                            blurRadius: 1),
-                      ]),
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icons/create_post.svg',
-                        height: 20,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: size.width * 0.015),
-                      Text(
-                        'Create Post',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.w600),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              'Discussion Forum',
-              style: TextStyle(
-                color: kWhite,
-                fontWeight: FontWeight.w800,
-                fontSize: 30,
               ),
             ),
-            SortFilterWrapper(onChanged: searchPosts),
-            Expanded(
-              child: ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return PostListBuilder(
-                      filteredPosts: filteredPosts,
-                      index: index,
-                    );
-                  },
-                  itemCount: filteredPosts.length),
-            )
+            Container(
+              decoration: BoxDecoration(
+                  color: kBlue,
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: [
+                    BoxShadow(
+                        color: kBlue.withOpacity(0.65),
+                        offset: Offset(0, 3),
+                        blurRadius: 1),
+                  ]),
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/icons/create_post.svg',
+                    height: 20,
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: size.width * 0.015),
+                  Text(
+                    'Create Post',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w600),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
-      ),
+        Text(
+          'Discussion Forum',
+          style: TextStyle(
+            color: kWhite,
+            fontWeight: FontWeight.w800,
+            fontSize: 30,
+          ),
+        ),
+        SortFilterWrapper(onChanged: searchPosts),
+        Expanded(
+          child: ListView.builder(
+              physics: BouncingScrollPhysics(),
+              itemBuilder: (context, index) {
+                return PostListBuilder(
+                  filteredPosts: filteredPosts,
+                  index: index,
+                );
+              },
+              itemCount: filteredPosts.length),
+        )
+      ],
     );
   }
 
   void searchPosts(String query) {
     final result = postList.where((post) {
       final titleLower = post.title.toLowerCase();
-      final authorLower = post.authorName.toLowerCase();
+      final authorLower = post.author.fullName.toLowerCase();
       final tagLower = post.tags.join(' ').toLowerCase();
       final searchLower = query.toLowerCase();
 
@@ -127,6 +122,94 @@ class _DiscussionForumPageState extends State<DiscussionForumPage> {
   }
 }
 
+class professorListBuilder extends StatelessWidget {
+  const professorListBuilder({
+    Key? key,
+    required this.filteredProfessors,
+    required this.index,
+  }) : super(key: key);
+
+  final List<Professor> filteredProfessors;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: 10,
+              color: colorList[index % 3],
+            ),
+            SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  Text(
+                    filteredProfessors[index].name,
+                    style: TextStyle(
+                        fontFamily: 'Satisfy', fontSize: 18, color: kWhite),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    filteredProfessors[index].branches.join(' || '),
+                    style: TextStyle(fontSize: 12, color: kWhite),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: SvgPicture.asset(
+                        'assets/icons/thumbs_up_filled.svg',
+                        color: colorList[index % 3],
+                      ),
+                    ),
+                    Text(
+                      ' 41',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: colorList[index % 3]),
+                    )
+                  ],
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 5),
+                  child: Text(
+                    '96 %',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white.withOpacity(0.6),
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child:
+                      SvgPicture.asset('assets/icons/thumbs_down_hollow.svg'),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class PostListBuilder extends StatelessWidget {
   const PostListBuilder({
     Key? key,
@@ -139,7 +222,7 @@ class PostListBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedColor = colorList[index % 3];
+    final selectedColor = colourList[index % 3];
     final selectedPost = filteredPosts[index];
     return InkWell(
       onTap: () =>
@@ -175,7 +258,7 @@ class PostListBuilder extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          selectedPost.authorName,
+                          selectedPost.author.userName,
                           style: TextStyle(fontSize: 12, color: kWhite),
                         ),
                         SizedBox(width: 10),

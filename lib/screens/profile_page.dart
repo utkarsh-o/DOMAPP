@@ -1,3 +1,4 @@
+import 'package:domapp/cache/local_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -29,7 +30,7 @@ class ProfilePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: SvgPicture.asset(
-                'assets/avatars/female2.svg',
+                user.avatar,
                 height: size.height * 0.16,
               ),
             ),
@@ -37,12 +38,12 @@ class ProfilePage extends StatelessWidget {
             Column(
               children: [
                 Text(
-                  'Vaani Mishra',
+                  user.fullName,
                   style: TextStyle(
                       fontFamily: 'Satisfy', fontSize: 36, color: kWhite),
                 ),
                 Text(
-                  '@vnMishra',
+                  '@${user.userName}',
                   style: TextStyle(
                     fontSize: 13,
                     color: kWhite.withOpacity(0.6),
