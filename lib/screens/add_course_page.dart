@@ -30,7 +30,7 @@ class AddCoursePage extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 30),
                     child: InkWell(
-                      onTap: () => Navigator.of(context).pop,
+                      onTap: () => Navigator.of(context).pop(context),
                       child: SvgPicture.asset(
                         'assets/icons/back_button_titlebar.svg',
                         color: kWhite,

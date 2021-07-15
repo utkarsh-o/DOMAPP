@@ -245,22 +245,27 @@ List<Professor> professorList = [
   Professor(
     name: 'Lakshmi Subramaniam',
     branches: ['Humanities'],
-    uid: '9',
+    uid: '5',
   ),
   Professor(
     name: 'Nilak Dutta',
     branches: ['Humanities'],
-    uid: '10',
+    uid: '6',
   ),
   Professor(
     name: 'R P Pradhan',
     branches: ['Humanities'],
-    uid: '11',
+    uid: '7',
   ),
   Professor(
     name: 'Rayson K. Alex',
     branches: ['Humanities'],
-    uid: '12',
+    uid: '8',
+  ),
+  Professor(
+    name: 'Basavadatta Mitra',
+    branches: ['Humanities'],
+    uid: '9',
   ),
 ];
 
@@ -284,6 +289,14 @@ List<String> branchList = [
   'Mechanical',
   'Humanities'
 ];
+List<String> sessionList = [
+  '2018-19',
+  '2019-20',
+  '2020-21',
+  '2021-22',
+  '2022-23',
+];
+List<String> evaluativeList = ['Compre', 'Mid-Sem', 'Test-1', 'Test-2'];
 String getBranchName(Branch branch) {
   switch (branch) {
     case Branch.Mathematics:
@@ -317,21 +330,21 @@ List<Course> courseList = [
   ),
   Course(
     title: 'Urban Modernity and Renewal of Paris',
-    professor: getProfessorByUID('10'),
+    professor: getProfessorByUID('5'),
     branch: Branch.Humanities,
     idNumber: 374,
     type: 'Elective',
   ),
   Course(
     title: 'International Relations',
-    professor: getProfessorByUID('11'),
+    professor: getProfessorByUID('6'),
     branch: Branch.Humanities,
     idNumber: 365,
     type: 'Elective',
   ),
   Course(
     title: 'Ecocriticism',
-    professor: getProfessorByUID('12'),
+    professor: getProfessorByUID('7'),
     branch: Branch.Humanities,
     idNumber: 420,
     type: 'Elective',

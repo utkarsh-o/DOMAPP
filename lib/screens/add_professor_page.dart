@@ -21,7 +21,7 @@ class AddProfessorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      // onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         body: SafeArea(
           child: Padding(
@@ -35,7 +35,7 @@ class AddProfessorPage extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 30),
                     child: InkWell(
-                      onTap: () => Navigator.of(context).pop,
+                      onTap: () => Navigator.of(context).pop(context),
                       child: SvgPicture.asset(
                         'assets/icons/back_button_titlebar.svg',
                         color: kWhite,

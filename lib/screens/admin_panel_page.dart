@@ -1,9 +1,13 @@
+import 'package:domapp/screens/add_course_page.dart';
+import 'package:domapp/screens/add_professor_page.dart';
+import 'package:domapp/screens/professor_opinions_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../cache/constants.dart';
 import '../cache/models.dart';
 import '../cache/local_data.dart';
+import 'course_review_page.dart';
 
 class AdminPanelPage extends StatelessWidget {
   static const String route = 'AdminPanelPage';
@@ -21,9 +25,12 @@ class AdminPanelPage extends StatelessWidget {
                 margin: EdgeInsets.symmetric(vertical: 30),
                 child: InkWell(
                   onTap: () => Navigator.of(context).pop,
-                  child: SvgPicture.asset(
-                    'assets/icons/back_button_titlebar.svg',
-                    color: kWhite,
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).pop(context),
+                    child: SvgPicture.asset(
+                      'assets/icons/back_button_titlebar.svg',
+                      color: kWhite,
+                    ),
                   ),
                 ),
               ),
@@ -37,63 +44,8 @@ class AdminPanelPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               InkWell(
-                // onTap: () =>
-                //     Navigator.pushNamed(context, ProfessorOpinionsPage.route),
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  decoration: BoxDecoration(
-                      color: kGreen,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                            color: kGreen.withOpacity(0.65),
-                            blurRadius: 1,
-                            offset: Offset(0, 4))
-                      ]),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset('assets/icons/professor.svg'),
-                      SizedBox(width: size.width * 0.06),
-                      Text(
-                        'Professor Opinions',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: kDarkBackgroundColour.withOpacity(0.7)),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 15),
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                decoration: BoxDecoration(
-                    color: kYellow,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                          color: kYellow.withOpacity(0.65),
-                          blurRadius: 1,
-                          offset: Offset(0, 4))
-                    ]),
-                child: Row(
-                  children: [
-                    SvgPicture.asset('assets/icons/timetable.svg'),
-                    SizedBox(width: size.width * 0.06),
-                    Text(
-                      'Time Table Checker',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: kDarkBackgroundColour.withOpacity(0.7)),
-                    )
-                  ],
-                ),
-              ),
-              InkWell(
-                // onTap: () =>
-                //     Navigator.pushNamed(context, CourseReviewPage.route),
+                onTap: () =>
+                    Navigator.pushNamed(context, AddProfessorPage.route),
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   decoration: BoxDecoration(
@@ -107,10 +59,68 @@ class AdminPanelPage extends StatelessWidget {
                       ]),
                   child: Row(
                     children: [
+                      SvgPicture.asset('assets/icons/professor.svg'),
+                      SizedBox(width: size.width * 0.06),
+                      Text(
+                        'Add Professor',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: kDarkBackgroundColour.withOpacity(0.7)),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () => Navigator.pushNamed(context, AddCoursePage.route),
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  decoration: BoxDecoration(
+                      color: kYellow,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                            color: kYellow.withOpacity(0.65),
+                            blurRadius: 1,
+                            offset: Offset(0, 4))
+                      ]),
+                  child: Row(
+                    children: [
                       SvgPicture.asset('assets/icons/course.svg'),
                       SizedBox(width: size.width * 0.06),
                       Text(
-                        'Course Review',
+                        'Add Course',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: kDarkBackgroundColour.withOpacity(0.7)),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () =>
+                    Navigator.pushNamed(context, CourseReviewPage.route),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  decoration: BoxDecoration(
+                      color: kGreen,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                            color: kGreen.withOpacity(0.65),
+                            blurRadius: 1,
+                            offset: Offset(0, 4))
+                      ]),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset('assets/icons/timetable.svg'),
+                      SizedBox(width: size.width * 0.06),
+                      Text(
+                        'Raise a Ticket',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,

@@ -1,21 +1,17 @@
 import 'package:domapp/cache/constants.dart';
+import 'package:domapp/screens/solution_discussion_page.dart';
+import 'package:domapp/screens/upload_question_paper_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+
+import '../cache/local_data.dart';
 
 class PreviousYearsPapersPage extends StatelessWidget {
   static const String route = 'PreviousYearsPage';
   @override
   Widget build(BuildContext context) {
-    List<String> yearList = [
-      '2018-19',
-      '2019-20',
-      '2020-21',
-      '2021-22',
-      '2022-23',
-    ];
-    List<String> evaluativesList = ['Compre', 'Mid-Sem', 'Test-1', 'Test-2'];
-    String? selectedEvaluative = evaluativesList.first;
-    String? selectedYear = yearList.first;
+    String? selectedEvaluative = evaluativeList.first;
+    String? selectedSession = sessionList.first;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -56,10 +52,10 @@ class PreviousYearsPapersPage extends StatelessWidget {
                       width: size.width * 0.845,
                       child: YellowContainer(index: 0)),
                   GreenContainer(
-                      selectedYear: selectedYear,
-                      yearList: yearList,
+                      selectedYear: selectedSession,
+                      yearList: sessionList,
                       selectedEvaluative: selectedEvaluative,
-                      evaluativesList: evaluativesList),
+                      evaluativesList: evaluativeList),
                 ],
               ),
               Center(
@@ -77,35 +73,40 @@ class PreviousYearsPapersPage extends StatelessWidget {
                             offset: Offset(0, 3),
                             blurRadius: 1),
                       ]),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Solution Discussion',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: kDarkBackgroundColour),
-                      ),
-                      SizedBox(
-                        width: size.width * 0.03,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(7),
-                          color: kWhite,
-                          boxShadow: [
-                            BoxShadow(
-                                color: kDarkBackgroundColour.withOpacity(0.45),
-                                offset: Offset(0, 4),
-                                blurRadius: 1),
-                          ],
+                  child: InkWell(
+                    onTap: () => Navigator.pushNamed(
+                        context, SolutionDiscussionThread.route),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Solution Discussion',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: kDarkBackgroundColour),
                         ),
-                        child:
-                            SvgPicture.asset('assets/icons/expand_right.svg'),
-                      ),
-                    ],
+                        SizedBox(
+                          width: size.width * 0.03,
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(7),
+                            color: kWhite,
+                            boxShadow: [
+                              BoxShadow(
+                                  color:
+                                      kDarkBackgroundColour.withOpacity(0.45),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 1),
+                            ],
+                          ),
+                          child:
+                              SvgPicture.asset('assets/icons/expand_right.svg'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -353,19 +354,24 @@ class GreenContainer extends StatelessWidget {
                         child: SvgPicture.asset('assets/icons/star_filled.svg'),
                       ),
                       SizedBox(width: size.width * 0.04),
-                      Container(
-                        padding: EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(7),
-                          color: kWhite,
-                          boxShadow: [
-                            BoxShadow(
-                                color: kDarkBackgroundColour.withOpacity(0.45),
-                                offset: Offset(0, 4),
-                                blurRadius: 1),
-                          ],
+                      InkWell(
+                        onTap: () => Navigator.pushNamed(
+                            context, UploadQuestionPaperPage.route),
+                        child: Container(
+                          padding: EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(7),
+                            color: kWhite,
+                            boxShadow: [
+                              BoxShadow(
+                                  color:
+                                      kDarkBackgroundColour.withOpacity(0.45),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 1),
+                            ],
+                          ),
+                          child: SvgPicture.asset('assets/icons/add_file.svg'),
                         ),
-                        child: SvgPicture.asset('assets/icons/add_file.svg'),
                       ),
                     ],
                   ),

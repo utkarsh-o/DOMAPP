@@ -1,3 +1,4 @@
+import 'package:domapp/screens/admin_panel_page.dart';
 import 'package:domapp/screens/course_review_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,15 +16,51 @@ class UtilitiesPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          margin: EdgeInsets.symmetric(vertical: 30),
-          child: InkWell(
-            onTap: () => Navigator.of(context).pop,
-            child: SvgPicture.asset(
-              'assets/icons/options_button_titlebar.svg',
-              color: kWhite,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 30),
+              child: InkWell(
+                onTap: () => Navigator.of(context).pop,
+                child: SvgPicture.asset(
+                  'assets/icons/options_button_titlebar.svg',
+                  color: kWhite,
+                ),
+              ),
             ),
-          ),
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, AdminPanelPage.route),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: kWhite,
+                    borderRadius: BorderRadius.circular(6),
+                    boxShadow: [
+                      BoxShadow(
+                          color: kWhite.withOpacity(0.65),
+                          offset: Offset(0, 3),
+                          blurRadius: 1),
+                    ]),
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/admin.svg',
+                      height: 20,
+                      color: kDarkBackgroundColour,
+                    ),
+                    SizedBox(width: size.width * 0.015),
+                    Text(
+                      'Admin Panel',
+                      style: TextStyle(
+                          color: kDarkBackgroundColour,
+                          fontWeight: FontWeight.w600),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
         InkWell(
           onTap: () =>

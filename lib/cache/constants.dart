@@ -24,3 +24,5 @@ String disclaimerText =
     'All the information provided above is true to the best of my knowledge, and I have double checkes for typographical mistakes and other non-intentinal errors.';
 String addProfessorWarning =
     'please refer the faculty seciton of institute webite for correct spellings and other information';
+String uploadDisclaimer =
+    'I have double checked the uploaded file, and all the relevant information provided in the form is true to the best of my knowledge. ';

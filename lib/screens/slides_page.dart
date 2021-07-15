@@ -1,3 +1,4 @@
+import 'package:domapp/screens/upload_slide_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -295,19 +296,22 @@ class _SortFavouriteAddWrapperState extends State<SortFavouriteAddWrapper> {
               ),
               child: SvgPicture.asset('assets/icons/star_filled.svg'),
             ),
-            Container(
-              padding: EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7),
-                color: kWhite,
-                boxShadow: [
-                  BoxShadow(
-                      color: kDarkBackgroundColour.withOpacity(0.45),
-                      offset: Offset(0, 4),
-                      blurRadius: 1),
-                ],
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, UploadSlidePage.route),
+              child: Container(
+                padding: EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(7),
+                  color: kWhite,
+                  boxShadow: [
+                    BoxShadow(
+                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        offset: Offset(0, 4),
+                        blurRadius: 1),
+                  ],
+                ),
+                child: SvgPicture.asset('assets/icons/add_file.svg'),
               ),
-              child: SvgPicture.asset('assets/icons/add_file.svg'),
             ),
           ],
         ),

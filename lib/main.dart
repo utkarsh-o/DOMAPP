@@ -1,3 +1,5 @@
+import 'package:domapp/screens/upload_question_paper_page.dart';
+import 'package:domapp/screens/upload_slide_page.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/add_course_page.dart';
@@ -47,8 +49,10 @@ class Domapp extends StatelessWidget {
         AdminPanelPage.route: (context) => AdminPanelPage(),
         AddCoursePage.route: (context) => AddCoursePage(),
         AddProfessorPage.route: (context) => AddProfessorPage(),
+        UploadQuestionPaperPage.route: (context) => UploadQuestionPaperPage(),
+        UploadSlidePage.route: (context) => UploadSlidePage(),
       },
-      initialRoute: AddProfessorPage.route,
+      initialRoute: HomePage.route,
     );
   }
 }
