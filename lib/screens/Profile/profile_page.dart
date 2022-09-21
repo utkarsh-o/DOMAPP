@@ -1,9 +1,12 @@
 import 'package:domapp/cache/local_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
-import '../cache/constants.dart';
-import '../screens/landing_page.dart';
+import '../../cache/constants.dart';
+import '../landing_page.dart';
+import '../../screens/Login_SignUp/helpers/helper.dart';
 
 class ProfilePage extends StatelessWidget {
   static const String route = "ProfilePage";
@@ -101,7 +104,7 @@ class BottomButton extends StatelessWidget {
         textAlign: TextAlign.center,
         style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: kDarkBackgroundColour.withOpacity(0.8),
+            color: kColorBackgroundDark.withOpacity(0.8),
             fontSize: 18),
       ),
     );
@@ -159,7 +162,12 @@ class TitleBarWrapper extends StatelessWidget {
                   ]),
               padding: EdgeInsets.all(10),
               child: InkWell(
-                onTap: () => Navigator.pushNamed(context, LandingPage.route),
+                onTap: () async {
+                  final provider =
+                      Provider.of<GoogleSignInProvider>(context, listen: false);
+                  await provider.googleLogout();
+                },
+                // onTap: () => FirebaseAuth.instance.signOut(),
                 child: Row(
                   children: [
                     SvgPicture.asset(

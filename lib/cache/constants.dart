@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
-Color kDarkBackgroundColour = Color(0XFF18171F);
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<ScaffoldMessengerState> snackbarKey =
+    GlobalKey<ScaffoldMessengerState>();
+
+const int USER_BOX = 1;
+const int COURSE_BOX = 2;
+Color kColorBackgroundDark = Color(0XFF18171F);
 const Color kWhite = Color(0XFFE3E3E3);
 const Color kBlue = Color(0XFF0AAEE6);
 const Color kGreen = Color(0XFF9DC78E);

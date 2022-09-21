@@ -30,7 +30,7 @@ class SlidesPage extends StatelessWidget {
                 child: InkWell(
                   onTap: () => Navigator.of(context).pop(context),
                   child: SvgPicture.asset(
-                    'assets/icons/back_button_titlebar.svg',
+                    'assets/icons/back_button_title_bar.svg',
                     color: kWhite,
                   ),
                 ),
@@ -93,7 +93,7 @@ class SlidesPage extends StatelessWidget {
                                         lessonNames[index],
                                         // overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                            color: kDarkBackgroundColour
+                                            color: kColorBackgroundDark
                                                 .withOpacity(0.8),
                                             fontWeight: FontWeight.bold,
                                             fontSize: 17),
@@ -109,7 +109,7 @@ class SlidesPage extends StatelessWidget {
                                     color: kWhite,
                                     boxShadow: [
                                       BoxShadow(
-                                          color: kDarkBackgroundColour
+                                          color: kColorBackgroundDark
                                               .withOpacity(0.45),
                                           offset: Offset(0, 4),
                                           blurRadius: 1),
@@ -129,7 +129,7 @@ class SlidesPage extends StatelessWidget {
                                   Text(
                                     'Prof. Mudrankit Pandey',
                                     style: TextStyle(
-                                        color: kDarkBackgroundColour
+                                        color: kColorBackgroundDark
                                             .withOpacity(0.5),
                                         fontWeight: FontWeight.bold,
                                         fontSize: 11),
@@ -138,7 +138,7 @@ class SlidesPage extends StatelessWidget {
                                   Text(
                                     '2021',
                                     style: TextStyle(
-                                        color: kDarkBackgroundColour
+                                        color: kColorBackgroundDark
                                             .withOpacity(0.5),
                                         fontWeight: FontWeight.bold,
                                         fontSize: 11),
@@ -151,7 +151,7 @@ class SlidesPage extends StatelessWidget {
                                       color: kWhite,
                                       boxShadow: [
                                         BoxShadow(
-                                            color: kDarkBackgroundColour
+                                            color: kColorBackgroundDark
                                                 .withOpacity(0.45),
                                             offset: Offset(0, 4),
                                             blurRadius: 1),
@@ -183,7 +183,7 @@ class SlidesPage extends StatelessWidget {
                                       color: kWhite,
                                       boxShadow: [
                                         BoxShadow(
-                                            color: kDarkBackgroundColour
+                                            color: kColorBackgroundDark
                                                 .withOpacity(0.45),
                                             offset: Offset(0, 4),
                                             blurRadius: 1),
@@ -247,7 +247,7 @@ class _SortFavouriteAddWrapperState extends State<SortFavouriteAddWrapper> {
                 color: kWhite,
                 boxShadow: [
                   BoxShadow(
-                      color: kDarkBackgroundColour.withOpacity(0.45),
+                      color: kColorBackgroundDark.withOpacity(0.45),
                       offset: Offset(0, 4),
                       blurRadius: 1),
                 ],
@@ -260,7 +260,7 @@ class _SortFavouriteAddWrapperState extends State<SortFavouriteAddWrapper> {
                 style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: kDarkBackgroundColour,
+                    color: kColorBackgroundDark,
                     fontFamily: 'Montserrat'),
                 isExpanded: true,
                 isDense: true,
@@ -289,7 +289,7 @@ class _SortFavouriteAddWrapperState extends State<SortFavouriteAddWrapper> {
                 color: kWhite,
                 boxShadow: [
                   BoxShadow(
-                      color: kDarkBackgroundColour.withOpacity(0.45),
+                      color: kColorBackgroundDark.withOpacity(0.45),
                       offset: Offset(0, 4),
                       blurRadius: 1),
                 ],
@@ -305,7 +305,7 @@ class _SortFavouriteAddWrapperState extends State<SortFavouriteAddWrapper> {
                   color: kWhite,
                   boxShadow: [
                     BoxShadow(
-                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        color: kColorBackgroundDark.withOpacity(0.45),
                         offset: Offset(0, 4),
                         blurRadius: 1),
                   ],

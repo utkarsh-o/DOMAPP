@@ -1,34 +1,31 @@
-import 'package:domapp/screens/academics_page.dart';
-import 'package:domapp/screens/selected_course_review_page.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:domapp/screens/Utilities/selected_professor_review_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../cache/constants.dart';
-import '../cache/local_data.dart';
-import '../cache/models.dart';
+import '../../cache/constants.dart';
+import '../../cache/local_data.dart';
+import '../../cache/models.dart';
 
+List<Color> colorList = [kRed, kYellow, kGreen];
 List<String> sortMethods = [
   'Rating',
   'Alphabetically',
   'Joining Year',
 ];
+String? selectedBranch = branchList.first;
 String? selectedSort = sortMethods.first;
 TextEditingController filterController = TextEditingController();
-List<String> timeFrames = ['Today', 'This Week', 'This Month', 'All Time'];
-String? selectedTimeFrame = timeFrames.first;
 
-class CourseReviewPage extends StatefulWidget {
-  static const String route = 'CourseReviewPage';
+class ProfessorOpinionsPage extends StatefulWidget {
+  static const String route = 'ProfessorOpinionsPage';
 
   @override
-  _CourseReviewPageState createState() => _CourseReviewPageState();
+  _ProfessorOpinionsPageState createState() => _ProfessorOpinionsPageState();
 }
 
-class _CourseReviewPageState extends State<CourseReviewPage> {
+class _ProfessorOpinionsPageState extends State<ProfessorOpinionsPage> {
   String query = '';
-  List<Course> filteredCourses = courseList;
-
+  List<Professor> filteredProfessors = professorList;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +33,7 @@ class _CourseReviewPageState extends State<CourseReviewPage> {
         child: Padding(
           padding: kOuterPadding,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
@@ -43,30 +41,30 @@ class _CourseReviewPageState extends State<CourseReviewPage> {
                 child: InkWell(
                   onTap: () => Navigator.of(context).pop(context),
                   child: SvgPicture.asset(
-                    'assets/icons/back_button_titlebar.svg',
+                    'assets/icons/back_button_title_bar.svg',
                     color: kWhite,
                   ),
                 ),
               ),
               Text(
-                'Course Reviews',
+                'Professor Opinions',
                 style: TextStyle(
                   color: kWhite,
                   fontWeight: FontWeight.w800,
                   fontSize: 30,
                 ),
               ),
-              SortFilterWrapper(onChanged: searchCourses),
+              SortFilterWrapper(onChanged: searchProfessor),
               Expanded(
                 child: ListView.builder(
                     physics: BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
-                      return CourseListBuilder(
-                        currentCourse: filteredCourses[index],
+                      return professorListBuilder(
+                        filteredProfessors: filteredProfessors,
                         index: index,
                       );
                     },
-                    itemCount: filteredCourses.length),
+                    itemCount: filteredProfessors.length),
               )
             ],
           ),
@@ -75,32 +73,38 @@ class _CourseReviewPageState extends State<CourseReviewPage> {
     );
   }
 
-  void searchCourses(String query) {
-    final result = courseList.where((course) {
-      final titleLower = course.title.toLowerCase();
-      final branchLower = getBranchName(course.branch).toLowerCase();
+  void searchProfessor(String query) {
+    final result = professorList.where((professor) {
+      final nameLower = professor.name.toLowerCase();
+      final branchesLower = professor.branches.join(' ').toLowerCase();
       final searchLower = query.toLowerCase();
 
-      return titleLower.contains(searchLower) ||
-          branchLower.contains(searchLower);
+      return nameLower.contains(searchLower) ||
+          branchesLower.contains(searchLower);
     }).toList();
 
     setState(() {
       this.query = query;
-      this.filteredCourses = result;
+      this.filteredProfessors = result;
     });
   }
 }
 
-class CourseListBuilder extends StatelessWidget {
-  final Course currentCourse;
+class professorListBuilder extends StatelessWidget {
+  const professorListBuilder({
+    Key? key,
+    required this.filteredProfessors,
+    required this.index,
+  }) : super(key: key);
+
+  final List<Professor> filteredProfessors;
   final int index;
-  CourseListBuilder({required this.currentCourse, required this.index});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, SelectedCourseReviewPage.route),
+      onTap: () =>
+          Navigator.pushNamed(context, SelectedProfessorReviewPage.route),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: IntrinsicHeight(
@@ -110,7 +114,7 @@ class CourseListBuilder extends StatelessWidget {
             children: [
               Container(
                 width: 10,
-                color: colourList[index % 3],
+                color: colorList[index % 3],
               ),
               SizedBox(width: 20),
               Expanded(
@@ -120,13 +124,13 @@ class CourseListBuilder extends StatelessWidget {
                   children: [
                     SizedBox(height: 10),
                     Text(
-                      currentCourse.title,
+                      filteredProfessors[index].name,
                       style: TextStyle(
                           fontFamily: 'Satisfy', fontSize: 18, color: kWhite),
                     ),
                     SizedBox(height: 5),
                     Text(
-                      '${currentCourse.branch} || ${currentCourse.type}',
+                      filteredProfessors[index].branches.join(' || '),
                       style: TextStyle(fontSize: 12, color: kWhite),
                     ),
                   ],
@@ -141,14 +145,14 @@ class CourseListBuilder extends StatelessWidget {
                         margin: EdgeInsets.only(top: 10),
                         child: SvgPicture.asset(
                           'assets/icons/thumbs_up_filled.svg',
-                          color: colourList[index % 3],
+                          color: colorList[index % 3],
                         ),
                       ),
                       Text(
                         ' 41',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: colourList[index % 3]),
+                            color: colorList[index % 3]),
                       )
                     ],
                   ),
@@ -215,7 +219,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                   color: kWhite,
                   boxShadow: [
                     BoxShadow(
-                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        color: kColorBackgroundDark.withOpacity(0.45),
                         offset: Offset(0, 4),
                         blurRadius: 1),
                   ],
@@ -228,7 +232,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: kDarkBackgroundColour,
+                      color: kColorBackgroundDark,
                       fontFamily: 'Montserrat'),
                   isExpanded: true,
                   isDense: true,
@@ -255,7 +259,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                   color: kWhite,
                   boxShadow: [
                     BoxShadow(
-                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        color: kColorBackgroundDark.withOpacity(0.45),
                         offset: Offset(0, 4),
                         blurRadius: 1),
                   ],
@@ -268,12 +272,12 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: kDarkBackgroundColour,
+                      color: kColorBackgroundDark,
                       fontFamily: 'Montserrat'),
                   isExpanded: true,
                   isDense: true,
-                  value: selectedTimeFrame,
-                  items: timeFrames.map((value) {
+                  value: selectedBranch,
+                  items: branchList.map((value) {
                     return DropdownMenuItem<String>(
                       child: Text(value),
                       value: value,
@@ -281,7 +285,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                   }).toList(),
                   onChanged: (String? value) {
                     setState(() {
-                      selectedTimeFrame = value;
+                      selectedBranch = value;
                     });
                   },
                   underline: Container(height: 0),
@@ -295,7 +299,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                    color: kDarkBackgroundColour.withOpacity(0.45),
+                    color: kColorBackgroundDark.withOpacity(0.45),
                     blurRadius: 1,
                     offset: Offset(0, 4))
               ],
@@ -321,17 +325,16 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     width: 0,
                   ),
                 ),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                contentPadding: EdgeInsets.symmetric(horizontal: 5),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: kDarkBackgroundColour,
+                  color: kColorBackgroundDark,
                 ),
                 suffixIcon: filterController.text != ''
                     ? GestureDetector(
                         child: Icon(
                           Icons.close,
-                          color: kDarkBackgroundColour,
+                          color: kColorBackgroundDark,
                         ),
                         onTap: () {
                           filterController.clear();
@@ -342,13 +345,13 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     : null,
                 hintText: 'Search by name or branch',
                 hintStyle: TextStyle(
-                  color: kDarkBackgroundColour.withOpacity(0.3),
+                  color: kColorBackgroundDark.withOpacity(0.3),
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
                 ),
               ),
               style: TextStyle(
-                color: kDarkBackgroundColour.withOpacity(0.7),
+                color: kColorBackgroundDark.withOpacity(0.7),
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
               ),

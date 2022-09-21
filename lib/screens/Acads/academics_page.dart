@@ -1,12 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../cache/local_data.dart';
-import '../screens/choose_course_page.dart';
-import '../screens/previous_years_papers_page.dart';
-import '../screens/slides_page.dart';
-import '../cache/constants.dart';
+import '../../cache/local_data.dart';
+import 'choose_course_page.dart';
+import 'previous_years_papers_page.dart';
+import '../slides_page.dart';
+import '../../cache/constants.dart';
 
 class AcademicsPage extends StatefulWidget {
   static const String route = 'AcademicsPage';
@@ -34,14 +33,14 @@ class _AcademicsPageState extends State<AcademicsPage> {
         ),
         SortAddWrapper(),
         SizedBox(height: size.height * 0.03),
-        selectedCoursesList(),
+        SelectedCoursesList(),
         // BreakLine(),
       ],
     );
   }
 }
 
-class selectedCoursesList extends StatelessWidget {
+class SelectedCoursesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -73,7 +72,7 @@ class selectedCoursesList extends StatelessWidget {
                   pickedCourses[index]!.title,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: kDarkBackgroundColour.withOpacity(0.8),
+                      color: kColorBackgroundDark.withOpacity(0.8),
                       fontSize: 16),
                 ),
                 SizedBox(height: size.height * 0.01),
@@ -91,7 +90,7 @@ class selectedCoursesList extends StatelessWidget {
                           color: kWhite,
                           boxShadow: [
                             BoxShadow(
-                                color: kDarkBackgroundColour.withOpacity(0.45),
+                                color: kColorBackgroundDark.withOpacity(0.45),
                                 offset: Offset(0, 4),
                                 blurRadius: 1),
                           ],
@@ -113,7 +112,7 @@ class selectedCoursesList extends StatelessWidget {
                           color: kWhite,
                           boxShadow: [
                             BoxShadow(
-                                color: kDarkBackgroundColour.withOpacity(0.45),
+                                color: kColorBackgroundDark.withOpacity(0.45),
                                 offset: Offset(0, 4),
                                 blurRadius: 1),
                           ],
@@ -138,7 +137,7 @@ class selectedCoursesList extends StatelessWidget {
                         color: kWhite,
                         boxShadow: [
                           BoxShadow(
-                              color: kDarkBackgroundColour.withOpacity(0.45),
+                              color: kColorBackgroundDark.withOpacity(0.45),
                               offset: Offset(0, 4),
                               blurRadius: 1),
                         ],
@@ -156,7 +155,7 @@ class selectedCoursesList extends StatelessWidget {
                         color: kWhite,
                         boxShadow: [
                           BoxShadow(
-                              color: kDarkBackgroundColour.withOpacity(0.45),
+                              color: kColorBackgroundDark.withOpacity(0.45),
                               offset: Offset(0, 4),
                               blurRadius: 1),
                         ],
@@ -214,7 +213,7 @@ class _SortAddWrapperState extends State<SortAddWrapper> {
                 color: kWhite,
                 boxShadow: [
                   BoxShadow(
-                      color: kDarkBackgroundColour.withOpacity(0.45),
+                      color: kColorBackgroundDark.withOpacity(0.45),
                       offset: Offset(0, 4),
                       blurRadius: 1),
                 ],
@@ -227,7 +226,7 @@ class _SortAddWrapperState extends State<SortAddWrapper> {
                 style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: kDarkBackgroundColour,
+                    color: kColorBackgroundDark,
                     fontFamily: 'Montserrat'),
                 isExpanded: true,
                 isDense: true,
@@ -258,7 +257,7 @@ class _SortAddWrapperState extends State<SortAddWrapper> {
                   color: kWhite,
                   boxShadow: [
                     BoxShadow(
-                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        color: kColorBackgroundDark.withOpacity(0.45),
                         offset: Offset(0, 4),
                         blurRadius: 1),
                   ],
@@ -273,7 +272,7 @@ class _SortAddWrapperState extends State<SortAddWrapper> {
                 color: kWhite,
                 boxShadow: [
                   BoxShadow(
-                      color: kDarkBackgroundColour.withOpacity(0.45),
+                      color: kColorBackgroundDark.withOpacity(0.45),
                       offset: Offset(0, 4),
                       blurRadius: 1),
                 ],

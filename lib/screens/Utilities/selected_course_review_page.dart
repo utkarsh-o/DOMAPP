@@ -1,12 +1,11 @@
 import 'package:domapp/components/indicator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../cache/constants.dart';
-import '../cache/local_data.dart';
-import '../cache/models.dart';
+import '../../cache/constants.dart';
+import '../../cache/local_data.dart';
+import '../../cache/models.dart';
 
 class SelectedCourseReviewPage extends StatefulWidget {
   static const String route = 'SelectedCourseReviewPage';
@@ -17,7 +16,7 @@ class SelectedCourseReviewPage extends StatefulWidget {
 }
 
 class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
-  Course? course = getCourseByBranchandID(branch: Branch.Mathematics, id: 213);
+  Course? course = getCourseByBranchAndID(branch: Branch.Mathematics, id: 213);
 
   int touchedIndex = -1;
 
@@ -37,7 +36,7 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
                 child: InkWell(
                   onTap: () => Navigator.of(context).pop(context),
                   child: SvgPicture.asset(
-                    'assets/icons/back_button_titlebar.svg',
+                    'assets/icons/back_button_title_bar.svg',
                     color: kWhite,
                   ),
                 ),
@@ -194,7 +193,7 @@ class TagListWrapper extends StatelessWidget {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
-                          color: kDarkBackgroundColour.withOpacity(0.8)),
+                          color: kColorBackgroundDark.withOpacity(0.8)),
                     ),
                   ),
                   Container(
@@ -204,7 +203,7 @@ class TagListWrapper extends StatelessWidget {
                       color: kWhite,
                       boxShadow: [
                         BoxShadow(
-                            color: kDarkBackgroundColour.withOpacity(0.45),
+                            color: kColorBackgroundDark.withOpacity(0.45),
                             offset: Offset(0, 4),
                             blurRadius: 1),
                       ],
@@ -320,7 +319,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
               color: kWhite,
               boxShadow: [
                 BoxShadow(
-                    color: kDarkBackgroundColour.withOpacity(0.45),
+                    color: kColorBackgroundDark.withOpacity(0.45),
                     offset: Offset(0, 4),
                     blurRadius: 1),
               ],
@@ -348,7 +347,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                 color: kWhite,
                 boxShadow: [
                   BoxShadow(
-                      color: kDarkBackgroundColour.withOpacity(0.45),
+                      color: kColorBackgroundDark.withOpacity(0.45),
                       offset: Offset(0, 4),
                       blurRadius: 1),
                 ],
@@ -358,13 +357,13 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                   Text(
                     'Create Tag',
                     style: TextStyle(
-                        color: kDarkBackgroundColour,
+                        color: kColorBackgroundDark,
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: size.width * 0.02),
                   SvgPicture.asset(
                     'assets/icons/insert.svg',
-                    color: kDarkBackgroundColour,
+                    color: kColorBackgroundDark,
                     height: 20,
                   ),
                 ],
@@ -380,7 +379,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                     color: kWhite,
                     boxShadow: [
                       BoxShadow(
-                          color: kDarkBackgroundColour.withOpacity(0.45),
+                          color: kColorBackgroundDark.withOpacity(0.45),
                           offset: Offset(0, 4),
                           blurRadius: 1),
                     ],
@@ -422,7 +421,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                     color: kWhite,
                     boxShadow: [
                       BoxShadow(
-                          color: kDarkBackgroundColour.withOpacity(0.45),
+                          color: kColorBackgroundDark.withOpacity(0.45),
                           offset: Offset(0, 4),
                           blurRadius: 1),
                     ],

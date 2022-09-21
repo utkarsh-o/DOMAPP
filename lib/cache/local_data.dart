@@ -275,10 +275,9 @@ getProfessorByUID(String uid) {
   }
 }
 
-Course? getCourseByBranchandID({required Branch branch, required int id}) {
-  for (var crs in courseList) {
-    if (crs.branch == branch && crs.idNumber == id) return crs;
-  }
+Course? getCourseByBranchAndID({required Branch branch, required int id}) {
+  return courseList
+      .firstWhere((Course c) => c.branch == branch && c.idNumber == id);
 }
 
 List<String> branchList = [
@@ -394,7 +393,7 @@ List<Course> courseList = [
 ];
 
 List<Course?> pickedCourses = [
-  getCourseByBranchandID(branch: Branch.Humanities, id: 233)
+  getCourseByBranchAndID(branch: Branch.Humanities, id: 233)
 ];
 
 List<Tag> pickedTags1 = [

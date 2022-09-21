@@ -1,11 +1,14 @@
 import 'package:domapp/cache/constants.dart';
+import 'package:domapp/screens/Login_SignUp/sign_in_page.dart';
+import 'package:domapp/screens/landing_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_navigation_bar.dart';
-import '../screens/academics_page.dart';
-import '../screens/profile_page.dart';
-import '../screens/utilities_page.dart';
-import 'discussion_forum_page.dart';
+import 'Acads/academics_page.dart';
+import 'Profile/profile_page.dart';
+import 'Utilities/utilities_page.dart';
+import 'Forum/discussion_forum_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -39,17 +42,26 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: kOuterPadding,
-          child: buildPage(activeRoute),
-        ),
-      ),
-      bottomNavigationBar: CustomNavigationBar(
-        activePage: activeRoute,
-        callback: changePage,
-      ),
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        return Scaffold(
+          body: SafeArea(
+            child: snapshot.hasData
+                ? Padding(
+                    padding: kOuterPadding,
+                    child: buildPage(activeRoute),
+                  )
+                : LandingPage(),
+          ),
+          bottomNavigationBar: snapshot.hasData
+              ? CustomNavigationBar(
+                  activePage: activeRoute,
+                  callback: changePage,
+                )
+              : null,
+        );
+      },
     );
   }
 }

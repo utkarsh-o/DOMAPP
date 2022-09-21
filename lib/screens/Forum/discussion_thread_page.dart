@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
-import '../cache/constants.dart';
-import '../cache/local_data.dart';
+import '../../cache/constants.dart';
+import '../../cache/local_data.dart';
 
 List<String> sortMethods = ['Chronologically', 'Popularity'];
 String? selectedSort = sortMethods.first;
@@ -34,7 +34,7 @@ class DiscussionThreadPage extends StatelessWidget {
                     child: InkWell(
                       onTap: () => Navigator.of(context).pop(context),
                       child: SvgPicture.asset(
-                        'assets/icons/back_button_titlebar.svg',
+                        'assets/icons/back_button_title_bar.svg',
                         color: kWhite,
                       ),
                     ),
@@ -188,7 +188,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
               color: kWhite,
               boxShadow: [
                 BoxShadow(
-                    color: kDarkBackgroundColour.withOpacity(0.45),
+                    color: kColorBackgroundDark.withOpacity(0.45),
                     offset: Offset(0, 4),
                     blurRadius: 1),
               ],
@@ -201,7 +201,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
               style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: kDarkBackgroundColour,
+                  color: kColorBackgroundDark,
                   fontFamily: 'Montserrat'),
               isExpanded: true,
               isDense: true,
@@ -233,7 +233,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                     color: kWhite,
                     boxShadow: [
                       BoxShadow(
-                          color: kDarkBackgroundColour.withOpacity(0.45),
+                          color: kColorBackgroundDark.withOpacity(0.45),
                           offset: Offset(0, 4),
                           blurRadius: 1),
                     ],
@@ -248,7 +248,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                     color: kWhite,
                     boxShadow: [
                       BoxShadow(
-                          color: kDarkBackgroundColour.withOpacity(0.45),
+                          color: kColorBackgroundDark.withOpacity(0.45),
                           offset: Offset(0, 4),
                           blurRadius: 1),
                     ],
@@ -263,7 +263,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
                     color: kWhite,
                     boxShadow: [
                       BoxShadow(
-                          color: kDarkBackgroundColour.withOpacity(0.45),
+                          color: kColorBackgroundDark.withOpacity(0.45),
                           offset: Offset(0, 4),
                           blurRadius: 1),
                     ],
@@ -322,7 +322,7 @@ class PostWrapper extends StatelessWidget {
             '#E.C.E.  #comSys  #brainDead  #obamaCare',
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: kDarkBackgroundColour.withOpacity(0.6)),
+                color: kColorBackgroundDark.withOpacity(0.6)),
           ),
         ),
       ],

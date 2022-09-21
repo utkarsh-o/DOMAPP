@@ -1,9 +1,13 @@
 import 'package:domapp/screens/home_page.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:domapp/cache/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+
+import 'helpers/helper.dart';
 
 TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
@@ -27,7 +31,7 @@ class SignInPage extends StatelessWidget {
                   child: InkWell(
                     onTap: () => Navigator.of(context).pop,
                     child: SvgPicture.asset(
-                      'assets/icons/back_button_titlebar.svg',
+                      'assets/icons/back_button_title_bar.svg',
                       color: kWhite,
                     ),
                   ),
@@ -73,16 +77,25 @@ class SigninWrapper extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'forgot password',
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: kWhite.withOpacity(0.4),
-              fontSize: 16),
+        InkWell(
+          onTap: () {},
+          child: Text(
+            'forgot password',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: kWhite.withOpacity(0.4),
+                fontSize: 16),
+          ),
         ),
         SizedBox(height: size.height * 0.02),
         InkWell(
-          onTap: () => Navigator.pushNamed(context, HomePage.route),
+          onTap: () async {
+            print('test');
+            print(emailController.text);
+            print(passwordController.text);
+            await signInWithEmail(
+                email: emailController.text, password: passwordController.text);
+          },
           child: Container(
             // margin: EdgeInsets.only(bottom: size.height * 0.1),
             padding: EdgeInsets.symmetric(vertical: 20),
@@ -102,12 +115,53 @@ class SigninWrapper extends StatelessWidget {
             child: Text(
               'Sign In',
               style: TextStyle(
-                  color: kDarkBackgroundColour,
+                  color: kColorBackgroundDark,
                   fontWeight: FontWeight.bold,
                   fontSize: 18),
             ),
           ),
-        )
+        ),
+        InkWell(
+          onTap: () async {
+            final provider =
+                Provider.of<GoogleSignInProvider>(context, listen: false);
+            await provider.googleLogin();
+          },
+          child: Container(
+            margin: EdgeInsets.only(top: 20),
+            padding: EdgeInsets.symmetric(vertical: 20),
+            alignment: Alignment.center,
+            width: size.width * 0.9,
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: kWhite.withOpacity(0.55),
+                  blurRadius: 1,
+                  offset: Offset(0, 4),
+                )
+              ],
+              color: kWhite,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.google,
+                ),
+                SizedBox(width: 15),
+                Text(
+                  'Sign In with Google',
+                  style: TextStyle(
+                    color: kColorBackgroundDark,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -119,12 +173,7 @@ class EmailPasswordWrapper extends StatefulWidget {
 }
 
 class _EmailPasswordWrapperState extends State<EmailPasswordWrapper> {
-  bool obscureText = true;
-  showPasswordCallback() {
-    setState(() {
-      obscureText = !obscureText;
-    });
-  }
+  final obscureText = ValueNotifier<bool>(true);
 
   @override
   Widget build(BuildContext context) {
@@ -164,48 +213,53 @@ class _EmailPasswordWrapperState extends State<EmailPasswordWrapper> {
               )),
         ),
         SizedBox(height: size.height * 0.04),
-        TextFormField(
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: Color(0XFF706F75),
-          ),
-          controller: passwordController,
-          obscureText: obscureText,
-          decoration: InputDecoration(
-              suffixIcon: Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child: InkWell(
-                  onTap: showPasswordCallback,
-                  child: SvgPicture.asset(
-                    'assets/icons/show_password.svg',
-                  ),
-                ),
-              ),
-              suffixIconConstraints: BoxConstraints(maxHeight: 40),
-              fillColor: Color(0XFF1D1C23),
-              filled: true,
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
-                  color: Color(0XFF413F49),
-                  width: 2.0,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
-                  color: Color(0XFF413F49),
-                  width: 2.0,
-                ),
-              ),
-              contentPadding: EdgeInsets.all(20),
-              hintText: 'Password',
-              hintStyle: TextStyle(
-                fontSize: 15.0,
+        ValueListenableBuilder(
+          valueListenable: obscureText,
+          builder: (BuildContext context, bool value, Widget? child) {
+            return TextFormField(
+              style: TextStyle(
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: Color(0XFF706F75),
-              )),
+              ),
+              controller: passwordController,
+              obscureText: obscureText.value,
+              decoration: InputDecoration(
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(right: 15.0),
+                    child: InkWell(
+                      onTap: () => obscureText.value = !value,
+                      child: SvgPicture.asset(
+                        'assets/icons/show_password.svg',
+                      ),
+                    ),
+                  ),
+                  suffixIconConstraints: BoxConstraints(maxHeight: 40),
+                  fillColor: Color(0XFF1D1C23),
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(
+                      color: Color(0XFF413F49),
+                      width: 2.0,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(
+                      color: Color(0XFF413F49),
+                      width: 2.0,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.all(20),
+                  hintText: 'Password',
+                  hintStyle: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0XFF706F75),
+                  )),
+            );
+          },
         ),
       ],
     );

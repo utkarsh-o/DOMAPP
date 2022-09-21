@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../cache/constants.dart';
-import '../screens/profile_page.dart';
-import '../screens/academics_page.dart';
-import '../screens/discussion_forum_page.dart';
-import '../screens/utilities_page.dart';
+import '../screens/Profile/profile_page.dart';
+import '../screens/Acads/academics_page.dart';
+import '../screens/Forum/discussion_forum_page.dart';
+import '../screens/Utilities/utilities_page.dart';
 
 class CustomNavigationBar extends StatelessWidget {
   Function callback;

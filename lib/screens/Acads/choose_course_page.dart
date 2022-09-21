@@ -1,13 +1,12 @@
-import 'package:domapp/screens/academics_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../cache/constants.dart';
-import '../cache/local_data.dart';
-import '../cache/models.dart';
-import '../screens/selected_course_review_page.dart';
-import '../screens/selected_professor_review_page.dart';
-import 'home_page.dart';
+import '../../cache/constants.dart';
+import '../../cache/local_data.dart';
+import '../../cache/models.dart';
+import '../Utilities/selected_course_review_page.dart';
+import '../Utilities/selected_professor_review_page.dart';
+import '../home_page.dart';
 
 List<String> sortMethods = [
   'Rating',
@@ -63,7 +62,7 @@ class _ChooseCoursePageState extends State<ChooseCoursePage> {
                     return HomePage();
                   })),
                   child: SvgPicture.asset(
-                    'assets/icons/back_button_titlebar.svg',
+                    'assets/icons/back_button_title_bar.svg',
                     color: kWhite,
                   ),
                 ),
@@ -143,7 +142,7 @@ class CourseListBuilder extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: kDarkBackgroundColour.withOpacity(0.8),
+                      color: kColorBackgroundDark.withOpacity(0.8),
                     ),
                   ),
                   Padding(
@@ -162,7 +161,7 @@ class CourseListBuilder extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 11,
-                                  color: kDarkBackgroundColour.withOpacity(0.6),
+                                  color: kColorBackgroundDark.withOpacity(0.6),
                                 ),
                               ),
                               Text(
@@ -170,7 +169,7 @@ class CourseListBuilder extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 11,
-                                  color: kDarkBackgroundColour.withOpacity(0.6),
+                                  color: kColorBackgroundDark.withOpacity(0.6),
                                 ),
                               )
                             ],
@@ -262,7 +261,7 @@ class ListItemBottomButton extends StatelessWidget {
           color: kWhite,
           boxShadow: [
             BoxShadow(
-                color: kDarkBackgroundColour.withOpacity(0.45),
+                color: kColorBackgroundDark.withOpacity(0.45),
                 offset: Offset(0, 4),
                 blurRadius: 1),
           ],
@@ -315,7 +314,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     color: kWhite,
                     boxShadow: [
                       BoxShadow(
-                          color: kDarkBackgroundColour.withOpacity(0.45),
+                          color: kColorBackgroundDark.withOpacity(0.45),
                           offset: Offset(0, 4),
                           blurRadius: 1),
                     ],
@@ -328,7 +327,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: kDarkBackgroundColour,
+                        color: kColorBackgroundDark,
                         fontFamily: 'Montserrat'),
                     isExpanded: true,
                     isDense: true,
@@ -358,7 +357,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     color: kWhite,
                     boxShadow: [
                       BoxShadow(
-                          color: kDarkBackgroundColour.withOpacity(0.45),
+                          color: kColorBackgroundDark.withOpacity(0.45),
                           offset: Offset(0, 4),
                           blurRadius: 1),
                     ],
@@ -371,7 +370,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: kDarkBackgroundColour,
+                        color: kColorBackgroundDark,
                         fontFamily: 'Montserrat'),
                     isExpanded: true,
                     isDense: true,
@@ -398,7 +397,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                   color: kWhite,
                   boxShadow: [
                     BoxShadow(
-                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        color: kColorBackgroundDark.withOpacity(0.45),
                         offset: Offset(0, 4),
                         blurRadius: 1),
                   ],
@@ -413,7 +412,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                    color: kDarkBackgroundColour.withOpacity(0.45),
+                    color: kColorBackgroundDark.withOpacity(0.45),
                     blurRadius: 1,
                     offset: Offset(0, 4))
               ],
@@ -443,13 +442,13 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: kDarkBackgroundColour,
+                  color: kColorBackgroundDark,
                 ),
                 suffixIcon: filterController.text != ''
                     ? GestureDetector(
                         child: Icon(
                           Icons.close,
-                          color: kDarkBackgroundColour,
+                          color: kColorBackgroundDark,
                         ),
                         onTap: () {
                           filterController.clear();
@@ -460,13 +459,13 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     : null,
                 hintText: 'Search by name or professor',
                 hintStyle: TextStyle(
-                  color: kDarkBackgroundColour.withOpacity(0.3),
+                  color: kColorBackgroundDark.withOpacity(0.3),
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
                 ),
               ),
               style: TextStyle(
-                color: kDarkBackgroundColour.withOpacity(0.7),
+                color: kColorBackgroundDark.withOpacity(0.7),
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
               ),

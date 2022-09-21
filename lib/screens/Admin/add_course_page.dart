@@ -1,5 +1,5 @@
-import '../cache/constants.dart';
-import '../cache/local_data.dart';
+import '../../cache/constants.dart';
+import '../../cache/local_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -32,7 +32,7 @@ class AddCoursePage extends StatelessWidget {
                     child: InkWell(
                       onTap: () => Navigator.of(context).pop(context),
                       child: SvgPicture.asset(
-                        'assets/icons/back_button_titlebar.svg',
+                        'assets/icons/back_button_title_bar.svg',
                         color: kWhite,
                       ),
                     ),
@@ -81,7 +81,7 @@ class AddCoursePage extends StatelessWidget {
                                 ),
                                 child: SvgPicture.asset(
                                   'assets/icons/verify_filled.svg',
-                                  color: kDarkBackgroundColour.withOpacity(0.8),
+                                  color: kColorBackgroundDark.withOpacity(0.8),
                                   height: 20,
                                 ),
                               ),
@@ -121,7 +121,7 @@ class AddCoursePage extends StatelessWidget {
                             child: Text(
                               'Sign In',
                               style: TextStyle(
-                                  color: kDarkBackgroundColour,
+                                  color: kColorBackgroundDark,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18),
                             ),
@@ -175,7 +175,7 @@ class _ProfessorWrapperState extends State<ProfessorWrapper> {
             ),
             margin: EdgeInsets.symmetric(vertical: 8),
             child: DropdownButton(
-              dropdownColor: kDarkBackgroundColour,
+              dropdownColor: kColorBackgroundDark,
               icon: SvgPicture.asset(
                 'assets/icons/expand_down.svg',
                 color: kWhite,
@@ -252,7 +252,7 @@ class _DepartmentCourseIDWrapperState extends State<DepartmentCourseIDWrapper> {
               ),
               margin: EdgeInsets.symmetric(vertical: 8),
               child: DropdownButton(
-                dropdownColor: kDarkBackgroundColour,
+                dropdownColor: kColorBackgroundDark,
                 icon: SvgPicture.asset(
                   'assets/icons/expand_down.svg',
                   color: kWhite,

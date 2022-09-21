@@ -1,10 +1,10 @@
-import 'package:domapp/screens/admin_panel_page.dart';
-import 'package:domapp/screens/course_review_page.dart';
+import 'package:domapp/screens/Admin/admin_panel_page.dart';
+import 'package:domapp/screens/Utilities/course_review_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../cache/constants.dart';
+import '../../cache/constants.dart';
 import 'professor_opinions_page.dart';
 
 class UtilitiesPage extends StatelessWidget {
@@ -47,13 +47,13 @@ class UtilitiesPage extends StatelessWidget {
                     SvgPicture.asset(
                       'assets/icons/admin.svg',
                       height: 20,
-                      color: kDarkBackgroundColour,
+                      color: kColorBackgroundDark,
                     ),
                     SizedBox(width: size.width * 0.015),
                     Text(
                       'Admin Panel',
                       style: TextStyle(
-                          color: kDarkBackgroundColour,
+                          color: kColorBackgroundDark,
                           fontWeight: FontWeight.w600),
                     )
                   ],
@@ -85,7 +85,7 @@ class UtilitiesPage extends StatelessWidget {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: kDarkBackgroundColour.withOpacity(0.7)),
+                      color: kColorBackgroundDark.withOpacity(0.7)),
                 )
               ],
             ),
@@ -111,7 +111,7 @@ class UtilitiesPage extends StatelessWidget {
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
-                    color: kDarkBackgroundColour.withOpacity(0.7)),
+                    color: kColorBackgroundDark.withOpacity(0.7)),
               )
             ],
           ),
@@ -138,7 +138,7 @@ class UtilitiesPage extends StatelessWidget {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: kDarkBackgroundColour.withOpacity(0.7)),
+                      color: kColorBackgroundDark.withOpacity(0.7)),
                 )
               ],
             ),
@@ -164,7 +164,7 @@ class UtilitiesPage extends StatelessWidget {
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
-                    color: kDarkBackgroundColour.withOpacity(0.7)),
+                    color: kColorBackgroundDark.withOpacity(0.7)),
               )
             ],
           ),
@@ -195,7 +195,7 @@ class UtilitiesPage extends StatelessWidget {
                     Text(
                       'Menus',
                       style: TextStyle(
-                          color: kDarkBackgroundColour.withOpacity(0.7),
+                          color: kColorBackgroundDark.withOpacity(0.7),
                           fontWeight: FontWeight.w800,
                           fontSize: 15),
                     )
@@ -222,7 +222,7 @@ class UtilitiesPage extends StatelessWidget {
                     Text(
                       'Polls',
                       style: TextStyle(
-                          color: kDarkBackgroundColour.withOpacity(0.7),
+                          color: kColorBackgroundDark.withOpacity(0.7),
                           fontWeight: FontWeight.w800,
                           fontSize: 16),
                     )
@@ -249,7 +249,7 @@ class UtilitiesPage extends StatelessWidget {
                     Text(
                       'Tests',
                       style: TextStyle(
-                          color: kDarkBackgroundColour.withOpacity(0.7),
+                          color: kColorBackgroundDark.withOpacity(0.7),
                           fontWeight: FontWeight.w800,
                           fontSize: 16),
                     )

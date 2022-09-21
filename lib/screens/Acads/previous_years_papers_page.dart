@@ -4,7 +4,7 @@ import 'package:domapp/screens/upload_question_paper_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../cache/local_data.dart';
+import '../../cache/local_data.dart';
 
 class PreviousYearsPapersPage extends StatelessWidget {
   static const String route = 'PreviousYearsPage';
@@ -26,7 +26,7 @@ class PreviousYearsPapersPage extends StatelessWidget {
                 child: InkWell(
                   onTap: () => Navigator.of(context).pop(context),
                   child: SvgPicture.asset(
-                    'assets/icons/back_button_titlebar.svg',
+                    'assets/icons/back_button_title_bar.svg',
                     color: kWhite,
                   ),
                 ),
@@ -84,7 +84,7 @@ class PreviousYearsPapersPage extends StatelessWidget {
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
-                              color: kDarkBackgroundColour),
+                              color: kColorBackgroundDark),
                         ),
                         SizedBox(
                           width: size.width * 0.03,
@@ -96,8 +96,7 @@ class PreviousYearsPapersPage extends StatelessWidget {
                             color: kWhite,
                             boxShadow: [
                               BoxShadow(
-                                  color:
-                                      kDarkBackgroundColour.withOpacity(0.45),
+                                  color: kColorBackgroundDark.withOpacity(0.45),
                                   offset: Offset(0, 4),
                                   blurRadius: 1),
                             ],
@@ -131,7 +130,7 @@ class YellowContainer extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: index == 0
-                ? kDarkBackgroundColour.withOpacity(0.35)
+                ? kColorBackgroundDark.withOpacity(0.35)
                 : kYellow.withOpacity(0.35),
             blurRadius: 1,
             offset: Offset(0, 4),
@@ -148,7 +147,7 @@ class YellowContainer extends StatelessWidget {
               Text(
                 index == 1 ? 'Test - 1' : 'Mid - Sem',
                 style: TextStyle(
-                    color: kDarkBackgroundColour.withOpacity(0.8),
+                    color: kColorBackgroundDark.withOpacity(0.8),
                     fontWeight: FontWeight.bold,
                     fontSize: 15),
               ),
@@ -157,7 +156,7 @@ class YellowContainer extends StatelessWidget {
                   Text(
                     index == 1 ? 'Feburary 2,2021' : 'March 7, 2021',
                     style: TextStyle(
-                        color: kDarkBackgroundColour.withOpacity(0.8),
+                        color: kColorBackgroundDark.withOpacity(0.8),
                         fontWeight: FontWeight.bold,
                         fontSize: 15),
                   ),
@@ -169,7 +168,7 @@ class YellowContainer extends StatelessWidget {
                       color: kWhite,
                       boxShadow: [
                         BoxShadow(
-                            color: kDarkBackgroundColour.withOpacity(0.45),
+                            color: kColorBackgroundDark.withOpacity(0.45),
                             offset: Offset(0, 4),
                             blurRadius: 1),
                       ],
@@ -223,7 +222,7 @@ class GreenContainer extends StatelessWidget {
           Text(
             'Supra Molecular Structures',
             style: TextStyle(
-                color: kDarkBackgroundColour.withOpacity(0.8),
+                color: kColorBackgroundDark.withOpacity(0.8),
                 fontWeight: FontWeight.bold,
                 fontSize: 18),
           ),
@@ -239,7 +238,7 @@ class GreenContainer extends StatelessWidget {
                   color: kWhite,
                   boxShadow: [
                     BoxShadow(
-                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        color: kColorBackgroundDark.withOpacity(0.45),
                         offset: Offset(0, 4),
                         blurRadius: 1),
                   ],
@@ -252,7 +251,7 @@ class GreenContainer extends StatelessWidget {
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: kDarkBackgroundColour,
+                      color: kColorBackgroundDark,
                       fontFamily: 'Montserrat'),
                   isExpanded: true,
                   isDense: true,
@@ -280,7 +279,7 @@ class GreenContainer extends StatelessWidget {
                   color: kWhite,
                   boxShadow: [
                     BoxShadow(
-                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        color: kColorBackgroundDark.withOpacity(0.45),
                         offset: Offset(0, 4),
                         blurRadius: 1),
                   ],
@@ -293,7 +292,7 @@ class GreenContainer extends StatelessWidget {
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: kDarkBackgroundColour,
+                      color: kColorBackgroundDark,
                       fontFamily: 'Montserrat'),
                   isExpanded: true,
                   isDense: true,
@@ -320,7 +319,7 @@ class GreenContainer extends StatelessWidget {
                   color: kWhite,
                   boxShadow: [
                     BoxShadow(
-                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        color: kColorBackgroundDark.withOpacity(0.45),
                         offset: Offset(0, 4),
                         blurRadius: 1),
                   ],
@@ -346,7 +345,7 @@ class GreenContainer extends StatelessWidget {
                           color: kWhite,
                           boxShadow: [
                             BoxShadow(
-                                color: kDarkBackgroundColour.withOpacity(0.45),
+                                color: kColorBackgroundDark.withOpacity(0.45),
                                 offset: Offset(0, 4),
                                 blurRadius: 1),
                           ],
@@ -364,8 +363,7 @@ class GreenContainer extends StatelessWidget {
                             color: kWhite,
                             boxShadow: [
                               BoxShadow(
-                                  color:
-                                      kDarkBackgroundColour.withOpacity(0.45),
+                                  color: kColorBackgroundDark.withOpacity(0.45),
                                   offset: Offset(0, 4),
                                   blurRadius: 1),
                             ],
@@ -384,7 +382,7 @@ class GreenContainer extends StatelessWidget {
                           color: kWhite,
                           boxShadow: [
                             BoxShadow(
-                                color: kDarkBackgroundColour.withOpacity(0.45),
+                                color: kColorBackgroundDark.withOpacity(0.45),
                                 offset: Offset(0, 4),
                                 blurRadius: 1),
                           ],
@@ -415,7 +413,7 @@ class GreenContainer extends StatelessWidget {
                           color: kWhite,
                           boxShadow: [
                             BoxShadow(
-                                color: kDarkBackgroundColour.withOpacity(0.45),
+                                color: kColorBackgroundDark.withOpacity(0.45),
                                 offset: Offset(0, 4),
                                 blurRadius: 1),
                           ],

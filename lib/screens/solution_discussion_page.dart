@@ -260,7 +260,7 @@ class _ReplyWrapperState extends State<ReplyWrapper> {
                     color: kWhite,
                     boxShadow: [
                       BoxShadow(
-                          color: kDarkBackgroundColour.withOpacity(0.45),
+                          color: kColorBackgroundDark.withOpacity(0.45),
                           offset: Offset(0, 4),
                           blurRadius: 1),
                     ],
@@ -284,7 +284,7 @@ class _ReplyWrapperState extends State<ReplyWrapper> {
                     color: kWhite,
                     boxShadow: [
                       BoxShadow(
-                          color: kDarkBackgroundColour.withOpacity(0.45),
+                          color: kColorBackgroundDark.withOpacity(0.45),
                           offset: Offset(0, 4),
                           blurRadius: 1),
                     ],
@@ -302,7 +302,7 @@ class _ReplyWrapperState extends State<ReplyWrapper> {
                   color: kWhite,
                   boxShadow: [
                     BoxShadow(
-                        color: kDarkBackgroundColour.withOpacity(0.45),
+                        color: kColorBackgroundDark.withOpacity(0.45),
                         offset: Offset(0, 4),
                         blurRadius: 1),
                   ],
@@ -463,7 +463,7 @@ class HeaderWrapper extends StatelessWidget {
           child: Text(
             'CHEM F110   Compre   2020-21   May 12 2020   ATH: 33/60/31',
             style: TextStyle(
-              color: kDarkBackgroundColour.withOpacity(0.6),
+              color: kColorBackgroundDark.withOpacity(0.6),
               fontSize: 11,
               fontWeight: FontWeight.bold,
             ),
@@ -482,7 +482,7 @@ class TitleBar extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 30),
         child: SvgPicture.asset(
-          'assets/icons/back_button_titlebar.svg',
+          'assets/icons/back_button_title_bar.svg',
           color: kWhite,
         ),
       ),
@@ -498,7 +498,7 @@ class Tags extends StatelessWidget {
     return Text(
       heading,
       style: TextStyle(
-        color: kDarkBackgroundColour.withOpacity(0.6),
+        color: kColorBackgroundDark.withOpacity(0.6),
         fontSize: 10,
         fontWeight: FontWeight.bold,
       ),
@@ -519,7 +519,7 @@ class QuestionPaperSolutionButton extends StatelessWidget {
         boxShadow: [
           BoxShadow(
               offset: Offset(0, 4),
-              color: kDarkBackgroundColour.withOpacity(0.45),
+              color: kColorBackgroundDark.withOpacity(0.45),
               blurRadius: 1)
         ],
         borderRadius: BorderRadius.circular(6),
@@ -532,7 +532,7 @@ class QuestionPaperSolutionButton extends StatelessWidget {
             heading,
             style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: kDarkBackgroundColour.withOpacity(0.8),
+                color: kColorBackgroundDark.withOpacity(0.8),
                 fontSize: 16),
           ),
         ],
@@ -574,7 +574,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
               color: kWhite,
               boxShadow: [
                 BoxShadow(
-                    color: kDarkBackgroundColour.withOpacity(0.45),
+                    color: kColorBackgroundDark.withOpacity(0.45),
                     offset: Offset(0, 4),
                     blurRadius: 1),
               ],
@@ -589,7 +589,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
               style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: kDarkBackgroundColour,
+                  color: kColorBackgroundDark,
                   fontFamily: 'Montserrat'),
               isExpanded: true,
               isDense: true,
@@ -616,7 +616,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
               color: kWhite,
               boxShadow: [
                 BoxShadow(
-                    color: kDarkBackgroundColour.withOpacity(0.45),
+                    color: kColorBackgroundDark.withOpacity(0.45),
                     offset: Offset(0, 4),
                     blurRadius: 1),
               ],
@@ -626,7 +626,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
               style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: kDarkBackgroundColour,
+                  color: kColorBackgroundDark,
                   fontFamily: 'Montserrat'),
             ),
           ),
@@ -638,7 +638,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
               color: kWhite,
               boxShadow: [
                 BoxShadow(
-                    color: kDarkBackgroundColour.withOpacity(0.45),
+                    color: kColorBackgroundDark.withOpacity(0.45),
                     offset: Offset(0, 4),
                     blurRadius: 1),
               ],
@@ -648,7 +648,7 @@ class _SortStarLikeShareWrapperState extends State<SortStarLikeShareWrapper> {
               style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: kDarkBackgroundColour,
+                  color: kColorBackgroundDark,
                   fontFamily: 'Montserrat'),
             ),
           )

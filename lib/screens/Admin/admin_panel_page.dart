@@ -1,12 +1,12 @@
-import 'package:domapp/screens/add_course_page.dart';
-import 'package:domapp/screens/add_professor_page.dart';
+import 'package:domapp/screens/Admin/add_course_page.dart';
+import 'package:domapp/screens/Admin/add_professor_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../cache/constants.dart';
-import '../cache/models.dart';
-import '../cache/local_data.dart';
-import 'course_review_page.dart';
+import '../../cache/constants.dart';
+import '../../cache/models.dart';
+import '../../cache/local_data.dart';
+import '../Utilities/course_review_page.dart';
 
 class AdminPanelPage extends StatelessWidget {
   static const String route = 'AdminPanelPage';
@@ -27,7 +27,7 @@ class AdminPanelPage extends StatelessWidget {
                   child: InkWell(
                     onTap: () => Navigator.of(context).pop(context),
                     child: SvgPicture.asset(
-                      'assets/icons/back_button_titlebar.svg',
+                      'assets/icons/back_button_title_bar.svg',
                       color: kWhite,
                     ),
                   ),
@@ -65,7 +65,7 @@ class AdminPanelPage extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            color: kDarkBackgroundColour.withOpacity(0.7)),
+                            color: kColorBackgroundDark.withOpacity(0.7)),
                       )
                     ],
                   ),
@@ -94,7 +94,7 @@ class AdminPanelPage extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            color: kDarkBackgroundColour.withOpacity(0.7)),
+                            color: kColorBackgroundDark.withOpacity(0.7)),
                       )
                     ],
                   ),
@@ -123,7 +123,7 @@ class AdminPanelPage extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            color: kDarkBackgroundColour.withOpacity(0.7)),
+                            color: kColorBackgroundDark.withOpacity(0.7)),
                       )
                     ],
                   ),

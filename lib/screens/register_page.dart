@@ -40,7 +40,7 @@ class RegisterPage extends StatelessWidget {
                   child: InkWell(
                     onTap: () => Navigator.of(context).pop(context),
                     child: SvgPicture.asset(
-                      'assets/icons/back_button_titlebar.svg',
+                      'assets/icons/back_button_title_bar.svg',
                       color: kWhite,
                     ),
                   ),
@@ -169,7 +169,7 @@ class RegisterPage extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
-                                            color: kDarkBackgroundColour,
+                                            color: kColorBackgroundDark,
                                           ),
                                           // controller: emailController,
                                           decoration: InputDecoration(
@@ -200,7 +200,7 @@ class RegisterPage extends StatelessWidget {
                                             hintStyle: TextStyle(
                                               fontSize: 15.0,
                                               fontWeight: FontWeight.w600,
-                                              color: kDarkBackgroundColour
+                                              color: kColorBackgroundDark
                                                   .withOpacity(0.5),
                                             ),
                                           ),
@@ -264,8 +264,7 @@ class RegisterPage extends StatelessWidget {
                                                   style: TextStyle(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w600,
-                                                    color:
-                                                        kDarkBackgroundColour,
+                                                    color: kColorBackgroundDark,
                                                   )),
                                               SvgPicture.asset(
                                                 'assets/icons/expand_right.svg',
@@ -310,7 +309,7 @@ class RegisterPage extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
-                                            color: kDarkBackgroundColour,
+                                            color: kColorBackgroundDark,
                                             // fontFamily: 'Montserrat'),
                                           ),
                                         ),
@@ -364,7 +363,7 @@ class RegisterPage extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
-                                            color: kDarkBackgroundColour,
+                                            color: kColorBackgroundDark,
                                           ),
                                           // controller: emailController,
                                           decoration: InputDecoration(
@@ -395,7 +394,7 @@ class RegisterPage extends StatelessWidget {
                                             hintStyle: TextStyle(
                                               fontSize: 15.0,
                                               fontWeight: FontWeight.w600,
-                                              color: kDarkBackgroundColour
+                                              color: kColorBackgroundDark
                                                   .withOpacity(0.5),
                                             ),
                                           ),
@@ -464,7 +463,7 @@ class SigninWrapper extends StatelessWidget {
                 child: Text(
                   'Sign In',
                   style: TextStyle(
-                      color: kDarkBackgroundColour,
+                      color: kColorBackgroundDark,
                       fontWeight: FontWeight.bold,
                       fontSize: 18),
                 ),

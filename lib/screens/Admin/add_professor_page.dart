@@ -36,7 +36,7 @@ class AddProfessorPage extends StatelessWidget {
                     child: InkWell(
                       onTap: () => Navigator.of(context).pop(context),
                       child: SvgPicture.asset(
-                        'assets/icons/back_button_titlebar.svg',
+                        'assets/icons/back_button_title_bar.svg',
                         color: kWhite,
                       ),
                     ),
@@ -121,7 +121,7 @@ class AddProfessorWrapper extends StatelessWidget {
                   ),
                   child: SvgPicture.asset(
                     'assets/icons/verify_filled.svg',
-                    color: kDarkBackgroundColour.withOpacity(0.8),
+                    color: kColorBackgroundDark.withOpacity(0.8),
                     height: 20,
                   ),
                 ),
@@ -160,7 +160,7 @@ class AddProfessorWrapper extends StatelessWidget {
               child: Text(
                 'Add Professor',
                 style: TextStyle(
-                    color: kDarkBackgroundColour,
+                    color: kColorBackgroundDark,
                     fontWeight: FontWeight.bold,
                     fontSize: 18),
               ),

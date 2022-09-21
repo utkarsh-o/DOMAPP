@@ -61,7 +61,7 @@ class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
                   child: InkWell(
                     onTap: () => Navigator.pop(context),
                     child: SvgPicture.asset(
-                      'assets/icons/back_button_titlebar.svg',
+                      'assets/icons/back_button_title_bar.svg',
                       color: kWhite,
                     ),
                   ),
@@ -227,7 +227,7 @@ class ConfirmButtonWrapper extends StatelessWidget {
                   ),
                   child: SvgPicture.asset(
                     'assets/icons/verify_filled.svg',
-                    color: kDarkBackgroundColour.withOpacity(0.8),
+                    color: kColorBackgroundDark.withOpacity(0.8),
                     height: 20,
                   ),
                 ),
@@ -266,7 +266,7 @@ class ConfirmButtonWrapper extends StatelessWidget {
               child: Text(
                 'Confirm',
                 style: TextStyle(
-                    color: kDarkBackgroundColour,
+                    color: kColorBackgroundDark,
                     fontWeight: FontWeight.bold,
                     fontSize: 18),
               ),
@@ -524,7 +524,7 @@ class _SessionTypeWrapperState extends State<SessionTypeWrapper> {
               ),
               margin: EdgeInsets.symmetric(vertical: 8),
               child: DropdownButton(
-                dropdownColor: kDarkBackgroundColour,
+                dropdownColor: kColorBackgroundDark,
                 icon: SvgPicture.asset(
                   'assets/icons/expand_down.svg',
                   color: kWhite,
@@ -582,7 +582,7 @@ class _SessionTypeWrapperState extends State<SessionTypeWrapper> {
               ),
               margin: EdgeInsets.symmetric(vertical: 8),
               child: DropdownButton(
-                dropdownColor: kDarkBackgroundColour,
+                dropdownColor: kColorBackgroundDark,
                 icon: SvgPicture.asset(
                   'assets/icons/expand_down.svg',
                   color: kWhite,

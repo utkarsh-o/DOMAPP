@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "575924446241-n2okoo5u36o882oqsmejc64d5q1rhb6t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.domapp.bits",
+            "certificate_hash": "f35d4f78fe8c55a5d5186f9ffef00e3388e2f9ef"
+          }
+        },
+        {
           "client_id": "575924446241-88p4240btjuse500a1apav13sk7t4g9k.apps.googleusercontent.com",
           "client_type": 3
         }
