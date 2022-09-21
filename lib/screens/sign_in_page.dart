@@ -56,51 +56,59 @@ class SignInPage extends StatelessWidget {
                 SizedBox(height: size.height * 0.08),
                 EmailPasswordWrapper(),
                 SizedBox(height: size.height * 0.18),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'forgot password',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: kWhite.withOpacity(0.4),
-                          fontSize: 16),
-                    ),
-                    SizedBox(height: size.height * 0.02),
-                    InkWell(
-                      onTap: () => Navigator.pushNamed(context, HomePage.route),
-                      child: Container(
-                        // margin: EdgeInsets.only(bottom: size.height * 0.1),
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        alignment: Alignment.center,
-                        width: size.width * 0.9,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: kWhite.withOpacity(0.55),
-                              blurRadius: 1,
-                              offset: Offset(0, 4),
-                            )
-                          ],
-                          color: kWhite,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          'Sign In',
-                          style: TextStyle(
-                              color: kDarkBackgroundColour,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        ),
-                      ),
-                    )
-                  ],
-                )
+                SigninWrapper()
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class SigninWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'forgot password',
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: kWhite.withOpacity(0.4),
+              fontSize: 16),
+        ),
+        SizedBox(height: size.height * 0.02),
+        InkWell(
+          onTap: () => Navigator.pushNamed(context, HomePage.route),
+          child: Container(
+            // margin: EdgeInsets.only(bottom: size.height * 0.1),
+            padding: EdgeInsets.symmetric(vertical: 20),
+            alignment: Alignment.center,
+            width: size.width * 0.9,
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: kWhite.withOpacity(0.55),
+                  blurRadius: 1,
+                  offset: Offset(0, 4),
+                )
+              ],
+              color: kWhite,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              'Sign In',
+              style: TextStyle(
+                  color: kDarkBackgroundColour,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
+            ),
+          ),
+        )
+      ],
     );
   }
 }

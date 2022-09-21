@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '/screens/professor_opinions_page.dart';
 import '../cache/constants.dart';
+import 'professor_opinions_page.dart';
 
 class UtilitiesPage extends StatelessWidget {
   static const String route = 'UtilitiesPage';

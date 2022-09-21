@@ -284,55 +284,45 @@ class PostWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return Stack(
-      clipBehavior: Clip.none,
+    return Column(
       children: [
-        Positioned(
-          bottom: -size.height * 0.045,
-          child: Container(
-            width: size.width * 0.854,
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: kYellow,
-              boxShadow: [
-                BoxShadow(
-                  color: kYellow,
-                  blurRadius: 1,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                SizedBox(height: size.height * 0.03),
-                Text(
-                  '#E.C.E.  #comSys  #brainDead  #obamaCare',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: kDarkBackgroundColour.withOpacity(0.6)),
-                ),
-              ],
-            ),
-          ),
-        ),
         Container(
           width: size.width * 0.854,
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           decoration: BoxDecoration(
             color: kRed,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(10),
+              topLeft: Radius.circular(10),
+            ),
+          ),
+          child: Text(
+            'I’m not trying to be judgemental but it’s so unsanitary (dirt from outside could come into the house if you just worked outside or if you step on something) and frankly in my opinion disrespectful to the main person of the house (my widowed grandma)',
+            style: TextStyle(color: kWhite, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Container(
+          width: size.width * 0.854,
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10),
+            ),
+            color: kYellow,
             boxShadow: [
               BoxShadow(
-                color: kRed,
+                color: kYellow,
                 blurRadius: 1,
                 offset: Offset(0, 4),
               ),
             ],
           ),
           child: Text(
-            'I’m not trying to be judgemental but it’s so unsanitary (dirt from outside could come into the house if you just worked outside or if you step on something) and frankly in my opinion disrespectful to the main person of the house (my widowed grandma)',
-            style: TextStyle(color: kWhite, fontWeight: FontWeight.bold),
+            '#E.C.E.  #comSys  #brainDead  #obamaCare',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: kDarkBackgroundColour.withOpacity(0.6)),
           ),
         ),
       ],

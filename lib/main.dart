@@ -1,22 +1,23 @@
-import 'package:domapp/screens/upload_question_paper_page.dart';
-import 'package:domapp/screens/upload_slide_page.dart';
 import 'package:flutter/material.dart';
 
-import '../screens/add_course_page.dart';
-import '../screens/add_professor_page.dart';
-import '../screens/admin_panel_page.dart';
-import '../screens/solution_discussion_page.dart';
-import '../screens/choose_course_page.dart';
-import '../screens/course_review_page.dart';
-import '../screens/selected_course_review_page.dart';
-import '../screens/selected_professor_review_page.dart';
-import '../screens/home_page.dart';
-import '../screens/previous_years_papers_page.dart';
-import '../screens/professor_opinions_page.dart';
-import '../screens/sign_in_page.dart';
-import '../screens/slides_page.dart';
-import '../cache/constants.dart';
-import '../screens/landing_page.dart';
+import 'screens/register_page.dart';
+import 'screens/upload_question_paper_page.dart';
+import 'screens/upload_slide_page.dart';
+import 'screens/add_course_page.dart';
+import 'screens/add_professor_page.dart';
+import 'screens/solution_discussion_page.dart';
+import 'screens/choose_course_page.dart';
+import 'screens/course_review_page.dart';
+import 'screens/admin_panel_page.dart';
+import 'screens/selected_course_review_page.dart';
+import 'screens/selected_professor_review_page.dart';
+import 'screens/home_page.dart';
+import 'screens/previous_years_papers_page.dart';
+import 'screens/professor_opinions_page.dart';
+import 'screens/sign_in_page.dart';
+import 'screens/slides_page.dart';
+import 'cache/constants.dart';
+import 'screens/landing_page.dart';
 
 void main() {
   runApp(Domapp());
@@ -51,8 +52,9 @@ class Domapp extends StatelessWidget {
         AddProfessorPage.route: (context) => AddProfessorPage(),
         UploadQuestionPaperPage.route: (context) => UploadQuestionPaperPage(),
         UploadSlidePage.route: (context) => UploadSlidePage(),
+        RegisterPage.route: (context) => RegisterPage(),
       },
-      initialRoute: HomePage.route,
+      initialRoute: RegisterPage.route,
     );
   }
 }

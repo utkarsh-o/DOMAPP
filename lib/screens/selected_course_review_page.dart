@@ -72,11 +72,12 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
                 child: PieChart(
                   PieChartData(
                       pieTouchData:
-                          PieTouchData(touchCallback: (pieTouchResponse) {
+                          PieTouchData(touchCallback: (_, pieTouchResponse) {
                         setState(() {
-                          final desiredTouch = pieTouchResponse.touchInput
+                          final desiredTouch = pieTouchResponse!.touchedSection
                                   is! PointerExitEvent &&
-                              pieTouchResponse.touchInput is! PointerUpEvent;
+                              pieTouchResponse.touchedSection
+                                  is! PointerUpEvent;
                           if (desiredTouch &&
                               pieTouchResponse.touchedSection != null) {
                             touchedIndex = pieTouchResponse

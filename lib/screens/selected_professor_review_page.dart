@@ -68,50 +68,51 @@ class _SelectedProfessorReviewPageState
               SizedBox(
                 height: size.height * 0.02,
               ),
-              // Row(
-              //   mainAxisSize: MainAxisSize.max,
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: <Widget>[
-              //     Indicator(
-              //       color: kRed,
-              //       text: pickedTags2[0].title,
-              //       isSquare: false,
-              //       size: touchedIndex == 0 ? 18 : 16,
-              //       textColor: touchedIndex == 0 ? Colors.white : kWhite,
-              //     ),
-              //     Indicator(
-              //       color: kYellow,
-              //       text: pickedTags2[1].title,
-              //       isSquare: false,
-              //       size: touchedIndex == 1 ? 18 : 16,
-              //       textColor: touchedIndex == 1 ? Colors.white : kWhite,
-              //     ),
-              //     Indicator(
-              //       color: kGreen,
-              //       text: pickedTags2[2].title,
-              //       isSquare: false,
-              //       size: touchedIndex == 2 ? 18 : 16,
-              //       textColor: touchedIndex == 2 ? Colors.white : kWhite,
-              //     ),
-              //     Indicator(
-              //       color: kBlue,
-              //       text: 'Others',
-              //       isSquare: false,
-              //       size: touchedIndex == 3 ? 18 : 16,
-              //       textColor: touchedIndex == 3 ? Colors.white : kWhite,
-              //     ),
-              //   ],
-              // ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Indicator(
+                    color: kRed,
+                    text: pickedTags2[0].title,
+                    isSquare: false,
+                    size: touchedIndex == 0 ? 18 : 16,
+                    textColor: touchedIndex == 0 ? Colors.white : kWhite,
+                  ),
+                  Indicator(
+                    color: kYellow,
+                    text: pickedTags2[1].title,
+                    isSquare: false,
+                    size: touchedIndex == 1 ? 18 : 16,
+                    textColor: touchedIndex == 1 ? Colors.white : kWhite,
+                  ),
+                  Indicator(
+                    color: kGreen,
+                    text: pickedTags2[2].title,
+                    isSquare: false,
+                    size: touchedIndex == 2 ? 18 : 16,
+                    textColor: touchedIndex == 2 ? Colors.white : kWhite,
+                  ),
+                  Indicator(
+                    color: kBlue,
+                    text: 'Others',
+                    isSquare: false,
+                    size: touchedIndex == 3 ? 18 : 16,
+                    textColor: touchedIndex == 3 ? Colors.white : kWhite,
+                  ),
+                ],
+              ),
               const SizedBox(height: 18),
               Expanded(
                 child: PieChart(
                   PieChartData(
                       pieTouchData:
-                          PieTouchData(touchCallback: (pieTouchResponse) {
+                          PieTouchData(touchCallback: (_, pieTouchResponse) {
                         setState(() {
-                          final desiredTouch = pieTouchResponse.touchInput
+                          final desiredTouch = pieTouchResponse!.touchedSection
                                   is! PointerExitEvent &&
-                              pieTouchResponse.touchInput is! PointerUpEvent;
+                              pieTouchResponse.touchedSection
+                                  is! PointerUpEvent;
                           if (desiredTouch &&
                               pieTouchResponse.touchedSection != null) {
                             touchedIndex = pieTouchResponse

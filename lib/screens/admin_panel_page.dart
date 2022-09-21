@@ -1,6 +1,5 @@
 import 'package:domapp/screens/add_course_page.dart';
 import 'package:domapp/screens/add_professor_page.dart';
-import 'package:domapp/screens/professor_opinions_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 

@@ -98,7 +98,7 @@ class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
                 ),
                 SizedBox(height: 20),
                 SessionTypeWrapper(),
-                TimeDatePickerWrapper(),
+                DatePickerWrapper(),
                 // SizedBox(height: 20),
                 PickPDFButton(
                   callback: startTimer,
@@ -321,12 +321,12 @@ class PickPDFButton extends StatelessWidget {
   }
 }
 
-class TimeDatePickerWrapper extends StatefulWidget {
+class DatePickerWrapper extends StatefulWidget {
   @override
-  _TimeDatePickerWrapperState createState() => _TimeDatePickerWrapperState();
+  _DatePickerWrapperState createState() => _DatePickerWrapperState();
 }
 
-class _TimeDatePickerWrapperState extends State<TimeDatePickerWrapper> {
+class _DatePickerWrapperState extends State<DatePickerWrapper> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

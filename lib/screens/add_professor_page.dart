@@ -1,6 +1,5 @@
 import 'package:domapp/cache/constants.dart';
 import 'package:domapp/cache/local_data.dart';
-import 'package:domapp/screens/selected_course_review_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 

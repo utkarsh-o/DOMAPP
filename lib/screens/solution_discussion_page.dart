@@ -443,6 +443,8 @@ class HeaderWrapper extends StatelessWidget {
           ),
         ),
         Container(
+          alignment: Alignment.center,
+          width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
@@ -458,15 +460,13 @@ class HeaderWrapper extends StatelessWidget {
               )
             ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Tags(heading: 'CHEM F110'),
-              Tags(heading: 'Compre'),
-              Tags(heading: '2020-21'),
-              Tags(heading: 'May 12 2020'),
-              Tags(heading: 'ATH: 33/60/51'),
-            ],
+          child: Text(
+            'CHEM F110   Compre   2020-21   May 12 2020   ATH: 33/60/31',
+            style: TextStyle(
+              color: kDarkBackgroundColour.withOpacity(0.6),
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
