@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../HiveDB/Course.dart';
 import '../../cache/local_data.dart';
+import '../Admin/helpers.dart';
 import 'choose_course_page.dart';
 import 'helper/helper.dart';
 import 'previous_years_papers_page.dart';
@@ -34,8 +35,8 @@ class _AcademicsPageState extends State<AcademicsPage> {
           margin: EdgeInsets.symmetric(vertical: 30),
           child: InkWell(
             onTap: () async {
-              Hive.box('papers').delete('LLo9Uq3r2D8yNobxCwEu');
-              Hive.box('papers').delete('yWzScYHOTVlBAc8CTNAs');
+              // Hive.box('papers').delete('LLo9Uq3r2D8yNobxCwEu');
+              // Hive.box('papers').delete('yWzScYHOTVlBAc8CTNAs');
             },
             child: SvgPicture.asset(
               'assets/icons/options_button_titlebar.svg',

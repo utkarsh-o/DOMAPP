@@ -10,6 +10,7 @@ import '../../cache/constants.dart';
 import '../../cache/models.dart';
 import '../../cache/local_data.dart';
 import '../Utilities/course_review_page.dart';
+import 'helpers.dart';
 
 class AdminPanelPage extends StatefulWidget {
   static const String route = 'AdminPanelPage';
@@ -25,6 +26,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     final userSnapshot =
         await FirebaseFirestore.instance.doc('Users/$userReference').get();
     final user = u.User.fromJSON(userSnapshot);
+    await updateAdminCount();
     return Approval.fromJson(snapshot, user);
   }
 
@@ -32,6 +34,7 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
   void initState() {
     approvalStream = FirebaseFirestore.instance
         .collection('Approvals')
+        .where('status', isEqualTo: 'pending')
         .snapshots()
         .asyncMap((QuerySnapshot snapshot) {
       return Future.wait(
@@ -205,8 +208,11 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
 class AdminApprovalListBuilder extends StatelessWidget {
   final Approval approval;
   final int index;
-  AdminApprovalListBuilder({required this.approval, required this.index});
-
+  late final numApprovals;
+  late final numRejects;
+  AdminApprovalListBuilder({required this.approval, required this.index})
+      : numApprovals = ValueNotifier(approval.accepts),
+        numRejects = ValueNotifier(approval.rejects);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -255,65 +261,83 @@ class AdminApprovalListBuilder extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7),
-                      color: kWhite,
-                      boxShadow: [
-                        BoxShadow(
-                            color: kWhite.withOpacity(0.45),
-                            offset: Offset(0, 4),
-                            blurRadius: 1),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/report_filled.svg',
-                          color: kRed,
-                          height: 20,
-                        ),
-                        SizedBox(width: size.width * 0.02),
-                        Text(
-                          approval.rejects.toString(),
-                          style: TextStyle(
-                              color: kRed,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14),
-                        )
-                      ],
+                  InkWell(
+                    onTap: () async {
+                      await updateAcceptsRejects(
+                        approval: approval,
+                        approvalUpdateType: ApprovalUpdateType.rejects,
+                        updatedValue: approval.rejects + 1,
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(7),
+                        color: kWhite,
+                        boxShadow: [
+                          BoxShadow(
+                              color: kWhite.withOpacity(0.45),
+                              offset: Offset(0, 4),
+                              blurRadius: 1),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/report_filled.svg',
+                            color: kRed,
+                            height: 20,
+                          ),
+                          SizedBox(width: size.width * 0.02),
+                          Text(
+                            approval.rejects.toString(),
+                            style: TextStyle(
+                                color: kRed,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(width: 20),
-                  Container(
-                    padding: EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7),
-                      color: kWhite,
-                      boxShadow: [
-                        BoxShadow(
-                            color: kWhite.withOpacity(0.45),
-                            offset: Offset(0, 4),
-                            blurRadius: 1),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/verify_filled.svg',
-                          color: kGreen,
-                          height: 20,
-                        ),
-                        SizedBox(width: size.width * 0.02),
-                        Text(
-                          approval.accepts.toString(),
-                          style: TextStyle(
-                              color: kGreen,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14),
-                        )
-                      ],
+                  InkWell(
+                    onTap: () async {
+                      await updateAcceptsRejects(
+                        approval: approval,
+                        approvalUpdateType: ApprovalUpdateType.accepts,
+                        updatedValue: approval.accepts + 1,
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(7),
+                        color: kWhite,
+                        boxShadow: [
+                          BoxShadow(
+                              color: kWhite.withOpacity(0.45),
+                              offset: Offset(0, 4),
+                              blurRadius: 1),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/verify_filled.svg',
+                            color: kGreen,
+                            height: 20,
+                          ),
+                          SizedBox(width: size.width * 0.02),
+                          Text(
+                            approval.accepts.toString(),
+                            style: TextStyle(
+                                color: kGreen,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ],

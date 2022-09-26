@@ -68,15 +68,22 @@ class GoogleSignInProvider extends ChangeNotifier {
         email: _user!.email,
         type: UserType.user,
       );
-      var collection = firestore.collection('Users');
-      var docSnapshot = await collection.doc(hiveUser.id).get();
-      if (docSnapshot.exists) {
-        Map<String, dynamic>? data = docSnapshot.data();
-        hiveUser.collegeID = data!['collegeID'];
-        hiveUser.photoUrl = data['photoUrl'];
+      final userCollection = firestore.collection('Users');
+      var docSnapshot =
+          await userCollection.where('email', isEqualTo: _user!.email).get();
+      if (docSnapshot.docs.length > 0) {
+        QueryDocumentSnapshot<Map<String, dynamic>>? data =
+            docSnapshot.docs.first;
+        hiveUser.collegeID = data.get('collegeID');
+        hiveUser.photoUrl = data.get('photoUrl');
+      } else {
+        //TODO:get BITS ID from user and update both firebase and hive user data
+        await firestore
+            .collection('Users')
+            .doc(hiveUser.id)
+            .set(hiveUser.toJSON());
       }
 
-      await userBox.put('user', hiveUser);
       await userBox.put('user', hiveUser);
     } on FirebaseAuthException catch (e) {
       print(e);

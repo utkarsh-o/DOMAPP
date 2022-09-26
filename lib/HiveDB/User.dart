@@ -42,4 +42,15 @@ class User extends HiveObject {
         type: snapshot.get('type'),
         email: snapshot.get('email'));
   }
+
+  Map<String, dynamic> toJSON() {
+    return {
+      'user': id,
+      'collegeID': collegeID,
+      'email': email,
+      'name': name,
+      'photoUrl': photoUrl,
+      'type': type,
+    };
+  }
 }
