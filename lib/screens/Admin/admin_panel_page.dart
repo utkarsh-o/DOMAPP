@@ -283,11 +283,18 @@ class AdminApprovalListBuilder extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          SvgPicture.asset(
-                            'assets/icons/report_filled.svg',
+                          Icon(
+                            approval.alreadyRejected
+                                ? Icons.dangerous_rounded
+                                : Icons.dangerous_outlined,
                             color: kRed,
-                            height: 20,
+                            size: 20,
                           ),
+                          // SvgPicture.asset(
+                          //   'assets/icons/report_filled.svg',
+                          //   color: kRed,
+                          //   height: 20,
+                          // ),
                           SizedBox(width: size.width * 0.02),
                           Text(
                             approval.rejects.toString(),
@@ -323,10 +330,12 @@ class AdminApprovalListBuilder extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          SvgPicture.asset(
-                            'assets/icons/verify_filled.svg',
+                          Icon(
+                            approval.alreadyAccepted
+                                ? Icons.check_circle
+                                : Icons.check_circle_outline,
                             color: kGreen,
-                            height: 20,
+                            size: 20,
                           ),
                           SizedBox(width: size.width * 0.02),
                           Text(

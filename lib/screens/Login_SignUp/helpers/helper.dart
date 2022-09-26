@@ -59,7 +59,7 @@ class GoogleSignInProvider extends ChangeNotifier {
       showCustomSnackBar(text: e.toString());
     }
 
-    final userBox = Hive.box('global');
+    final globalBox = Hive.box('global');
     try {
       h.User hiveUser = h.User(
         id: firebase.currentUser!.uid,
@@ -84,7 +84,7 @@ class GoogleSignInProvider extends ChangeNotifier {
             .set(hiveUser.toJSON());
       }
 
-      await userBox.put('user', hiveUser);
+      await globalBox.put('user', hiveUser);
     } on FirebaseAuthException catch (e) {
       print(e);
     }

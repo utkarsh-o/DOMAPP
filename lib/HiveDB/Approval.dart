@@ -37,20 +37,28 @@ class Approval extends HiveObject {
   @HiveField(7)
   dynamic referredObject;
 
-  Approval({
-    required this.uid,
-    required this.accepts,
-    required this.description,
-    required this.reference,
-    required this.rejects,
-    required this.approvalType,
-    required this.user,
-    required this.referredObject,
-  });
+  @HiveField(8)
+  bool alreadyAccepted;
+
+  @HiveField(9)
+  bool alreadyRejected;
+
+  Approval(
+      {required this.uid,
+      required this.accepts,
+      required this.description,
+      required this.reference,
+      required this.rejects,
+      required this.approvalType,
+      required this.user,
+      required this.referredObject,
+      required this.alreadyAccepted,
+      required this.alreadyRejected});
 
   factory Approval.fromJson(QueryDocumentSnapshot snapshot, u.User user,
       [Slide? slide, Paper? paper, p.Professor? professor, c.Course? course]) {
     final String approvalType = snapshot.get('type');
+    final u.User user = Hive.box('global').get('user');
     dynamic referredObject = ApprovalType.getReferredObject(
       approvalType: approvalType,
       slide: slide,
@@ -58,7 +66,11 @@ class Approval extends HiveObject {
       professor: professor,
       course: course,
     );
-
+    final List<String> acceptedUserUIDs =
+        snapshot.get('acceptedBy').cast<String>();
+    final List<String> rejectedUserUIDs =
+        snapshot.get('rejectedBy').cast<String>();
+    print(acceptedUserUIDs.runtimeType);
     return Approval(
       uid: snapshot.id,
       accepts: snapshot.get('accepts'),
@@ -68,6 +80,8 @@ class Approval extends HiveObject {
       approvalType: approvalType,
       user: user,
       referredObject: referredObject,
+      alreadyAccepted: acceptedUserUIDs.contains(user.id),
+      alreadyRejected: rejectedUserUIDs.contains(user.id),
     );
   }
 
@@ -83,6 +97,13 @@ class Approval extends HiveObject {
       'rejects': 0,
       'status': 'pending',
       'type': approvalType,
+      'acceptedBy': [],
+      'rejectedBy': [],
     };
+  }
+
+  @override
+  String toString() {
+    return 'Approval{accepts: $accepts, description: $description, rejects: $rejects, alreadyAccepted: $alreadyAccepted, alreadyRejected: $alreadyRejected}';
   }
 }

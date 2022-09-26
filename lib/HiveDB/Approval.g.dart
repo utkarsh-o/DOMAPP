@@ -25,13 +25,15 @@ class ApprovalAdapter extends TypeAdapter<Approval> {
       approvalType: fields[5] as String,
       user: fields[6] as u.User,
       referredObject: fields[7] as dynamic,
+      alreadyAccepted: fields[8] as bool,
+      alreadyRejected: fields[9] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Approval obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.uid)
       ..writeByte(1)
@@ -47,7 +49,11 @@ class ApprovalAdapter extends TypeAdapter<Approval> {
       ..writeByte(6)
       ..write(obj.user)
       ..writeByte(7)
-      ..write(obj.referredObject);
+      ..write(obj.referredObject)
+      ..writeByte(8)
+      ..write(obj.alreadyAccepted)
+      ..writeByte(9)
+      ..write(obj.alreadyRejected);
   }
 
   @override
