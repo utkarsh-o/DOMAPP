@@ -1,47 +1,53 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'User.dart';
+part of 'Course.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class UserAdapter extends TypeAdapter<User> {
+class CourseAdapter extends TypeAdapter<Course> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
-  User read(BinaryReader reader) {
+  Course read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return User(
-      id: fields[4] as String,
+    return Course(
       name: fields[0] as String,
-      photoUrl: fields[1] as String?,
-      email: fields[2] as String,
-      type: fields[5] as String,
-      collegeID: fields[3] as String,
+      branch: fields[1] as String,
+      credits: fields[5] as Credits,
+      comCode: fields[3] as int,
+      courseNo: fields[4] as String,
+      ic: fields[7] as p.Professor,
+      uid: fields[8] as String,
+      slides: (fields[6] as List).cast<Slide>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, User obj) {
+  void write(BinaryWriter writer, Course obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.photoUrl)
-      ..writeByte(2)
-      ..write(obj.email)
+      ..write(obj.branch)
       ..writeByte(3)
-      ..write(obj.collegeID)
+      ..write(obj.comCode)
       ..writeByte(4)
-      ..write(obj.id)
+      ..write(obj.courseNo)
       ..writeByte(5)
-      ..write(obj.type);
+      ..write(obj.credits)
+      ..writeByte(6)
+      ..write(obj.slides)
+      ..writeByte(7)
+      ..write(obj.ic)
+      ..writeByte(8)
+      ..write(obj.uid);
   }
 
   @override
@@ -50,7 +56,7 @@ class UserAdapter extends TypeAdapter<User> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserAdapter &&
+      other is CourseAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

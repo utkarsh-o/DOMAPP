@@ -25,6 +25,8 @@ class CourseReviewPage extends StatefulWidget {
   _CourseReviewPageState createState() => _CourseReviewPageState();
 }
 
+List<Course> courseList = [];
+
 class _CourseReviewPageState extends State<CourseReviewPage> {
   String query = '';
   List<Course> filteredCourses = courseList;
@@ -78,11 +80,12 @@ class _CourseReviewPageState extends State<CourseReviewPage> {
   void searchCourses(String query) {
     final result = courseList.where((course) {
       final titleLower = course.title.toLowerCase();
-      final branchLower = getBranchName(course.branch).toLowerCase();
+      // final branchLower = getBranchName(course.branch).toLowerCase();
       final searchLower = query.toLowerCase();
 
-      return titleLower.contains(searchLower) ||
-          branchLower.contains(searchLower);
+      return titleLower.contains(searchLower);
+      // return titleLower.contains(searchLower) ||
+      //     branchLower.contains(searchLower);
     }).toList();
 
     setState(() {

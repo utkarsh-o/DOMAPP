@@ -1,4 +1,10 @@
 import 'package:domapp/cache/local_data.dart';
+import 'package:hive/hive.dart';
+import '../HiveDB/Paper.dart';
+import '../HiveDB/Slide.dart';
+import '../HiveDB/User.dart' as u;
+import '../HiveDB/Course.dart' as c;
+import '../HiveDB/Professor.dart' as p;
 
 class Professor {
   String name, uid;
@@ -58,6 +64,137 @@ class AdminAction {
       required this.reports});
 }
 
+class Branch {
+  static String chemical = 'chemical';
+  static String eee = 'eee';
+  static String eni = 'eni';
+  static String ece = 'ece';
+  static String mechanical = 'mechanical';
+  static String computerScience = 'computerScience';
+  static String biology = 'biology';
+  static String chemistry = 'chemistry';
+  static String economics = 'economics';
+  static String mathematics = 'mathematics';
+  static String physics = 'physics';
+  static String humanities = 'humanities';
+  static String utility = 'utility';
+
+  static String getBranchFromName(String name) {
+    switch (name) {
+      case 'chemical':
+        return Branch.chemical;
+      case 'eee':
+        return Branch.eee;
+      case 'eni':
+        return Branch.eni;
+      case 'ece':
+        return Branch.ece;
+      case 'mechanical':
+        return Branch.mechanical;
+      case 'computerScience':
+        return Branch.computerScience;
+      case 'biology':
+        return Branch.biology;
+      case 'chemistry':
+        return Branch.chemistry;
+      case 'economics':
+        return Branch.economics;
+      case 'mathematics':
+        return Branch.mathematics;
+      case 'physics':
+        return Branch.physics;
+      case 'humanities':
+        return Branch.humanities;
+      default:
+        return '';
+    }
+  }
+}
+
+class PaperType {
+  static String all = 'all';
+  static String quiz = 'quiz';
+  static String test = 'test';
+  static String midSem = 'midSem';
+  static String comprehensive = 'comprehensive';
+  static String lab = 'lab';
+  static String assignment = 'assignment';
+
+  static String getPaperTypeFromString(String name) {
+    switch (name) {
+      case 'quiz':
+        return PaperType.quiz;
+      case 'test':
+        return PaperType.test;
+      case 'midSem':
+        return PaperType.midSem;
+      case 'comprehensive':
+        return PaperType.comprehensive;
+      case 'lab':
+        return PaperType.lab;
+      case 'assignment':
+        return PaperType.assignment;
+      default:
+        return '';
+    }
+  }
+
+  static List<String> paperTypes = [
+    quiz,
+    test,
+    midSem,
+    comprehensive,
+    lab,
+    assignment
+  ];
+}
+
+class SlideType {
+  static String lecture = 'lecture';
+  static String practical = 'practical';
+
+  static String getPaperTypeFromString(String name) {
+    switch (name) {
+      case 'lecture':
+        return SlideType.lecture;
+      case 'practical':
+        return SlideType.practical;
+      default:
+        return '';
+    }
+  }
+
+  static List<String> slideTypes = [lecture, practical];
+}
+
+class Session {
+  int year;
+  int sem;
+  DateTime date;
+  static final int startYear = 2012;
+
+  Session({required this.year, required this.sem})
+      : date = DateTime(
+            year,
+            sem == 1
+                ? 8
+                : 1); // chosen august to denote first sem and jan for the second sem
+
+  static List<int> yearList = [
+    for (int i = 0; i <= DateTime.now().year - startYear; i++) i + startYear
+  ];
+  static List<Session> sessions = [
+    for (int year in yearList)
+      for (int sem in [1, 2]) Session(year: year, sem: sem)
+  ];
+  @override
+  String toString() => '${this.year} (${this.sem == 1 ? 'I' : 'II'})';
+
+//  USE-CASE EXAMPLES
+//  1. SESSION DROPDOWN FOR UPLOAD-SLIDE PAGE
+//      Session.sessions.forEach((Session ssn) => print(ssn));
+}
+
 class User {
   String firstName, lastName, userName, gender, type;
   int avatarID, UID;
@@ -73,49 +210,140 @@ class User {
   String get avatar => getAvatarByID(avatarID, gender);
 }
 
-enum Branch {
-  ComputerScience,
-  Humanities,
-  Mathematics,
-  Mechanical,
-  Chemical,
-  ElectronicsAndInstrumentation,
-  Electrical,
-  ElectronicsAndCommunication
-}
+// enum Branch {
+//   Chemical,
+//   ElectronicsAndElectrical,
+//   ElectronicsAndInstrumentation,
+//   ElectronicsAndCommunication,
+//   Mechanical,
+//   ComputerScience,
+//   Biology,
+//   Chemistry,
+//   Economics,
+//   Mathematics,
+//   Physics,
+//   Humanities,
+//   utility
+// }
+//
+// extension BranchExt on Branch {
+//   getBranchFromName(String name) {
+//     switch (name) {
+//       case 'chemical':
+//         return Branch.Chemical;
+//       case 'eee':
+//         return Branch.ElectronicsAndElectrical;
+//       case 'eni':
+//         return Branch.ElectronicsAndInstrumentation;
+//       case 'ece':
+//         return Branch.ElectronicsAndCommunication;
+//       case 'mechanical':
+//         return Branch.Mechanical;
+//       case 'computerScience':
+//         return Branch.ComputerScience;
+//       case 'biology':
+//         return Branch.Biology;
+//       case 'chemistry':
+//         return Branch.Chemistry;
+//       case 'economics':
+//         return Branch.Economics;
+//       case 'mathematics':
+//         return Branch.Mathematics;
+//       case 'physics':
+//         return Branch.Physics;
+//       case 'humanities':
+//         return Branch.Humanities;
+//     }
+//   }
+// }
+
+// class Credits {
+//   int practicals;
+//   int lectures;
+//   int units;
+//
+//   Credits({required this.lectures, required this.practicals})
+//       : this.units = practicals + lectures;
+// }
 
 class Course {
   Professor professor;
   String title, type;
   Branch branch;
   int idNumber;
-  Course(
-      {required this.title,
-      required this.idNumber,
-      required this.branch,
-      required this.professor,
-      required this.type});
-  String getBranchName() {
-    switch (branch) {
-      case Branch.Humanities:
-        return 'Humanities';
-      default:
-        return 'Unknown';
-    }
-  }
-
-  String getIDName() {
-    switch (branch) {
-      case Branch.Humanities:
-        return 'HSS';
-      default:
-        return 'unknown';
-    }
-  }
+  Course({
+    required this.title,
+    required this.idNumber,
+    required this.branch,
+    required this.professor,
+    required this.type,
+  });
+  // String getBranchName() {
+  //   switch (branch) {
+  //     case Branch.Humanities:
+  //       return 'Humanities';
+  //     default:
+  //       return 'Unknown';
+  //   }
+  // }
+  //
+  // String getIDName() {
+  //   switch (branch) {
+  //     case Branch.Humanities:
+  //       return 'HSS';
+  //     default:
+  //       return 'unknown';
+  //   }
+  // }
 }
 
 class Tag {
   String title;
   int votes;
   Tag({required this.title, required this.votes});
+}
+
+class ApprovalType {
+  static const String createSlide = 'createSlide';
+  static const String updateSlide = 'updateSlide';
+  static const String createPaper = 'createPaper';
+  static const String updatePaper = 'updatePaper';
+  static const String addProfessor = 'addProfessor';
+  static const String addCourse = 'addCourse';
+  static const String ticket = 'ticket';
+
+  static List<String> approvalTypes = [
+    createSlide,
+    updateSlide,
+    createPaper,
+    updatePaper,
+    addProfessor,
+    addCourse,
+    ticket
+  ];
+
+  static getReferredObject(
+      {required String approvalType,
+      required Slide? slide,
+      required Paper? paper,
+      required p.Professor? professor,
+      required c.Course? course}) {
+    switch (approvalType) {
+      case createSlide:
+        return slide;
+      case updateSlide:
+        return slide;
+      case createPaper:
+        return paper;
+      case updatePaper:
+        return paper;
+      default:
+        return null;
+    }
+  }
+}
+
+class UserType {
+  static String admin = 'admin';
+  static String user = 'user';
 }

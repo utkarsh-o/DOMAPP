@@ -1,9 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:domapp/screens/Acads/helper/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../HiveDB/Course.dart' as h;
 import '../../cache/constants.dart';
 import '../../cache/local_data.dart';
 import '../../cache/models.dart';
+import '../Utilities/course_review_page.dart';
 import '../Utilities/selected_course_review_page.dart';
 import '../Utilities/selected_professor_review_page.dart';
 import '../home_page.dart';
@@ -32,13 +38,9 @@ class ChooseCoursePage extends StatefulWidget {
 }
 
 class _ChooseCoursePageState extends State<ChooseCoursePage> {
-  void pickerCallback(Course currentCourse) {
-    setState(() {
-      if (pickedCourses.contains(currentCourse))
-        pickedCourses.remove(currentCourse);
-      else
-        pickedCourses.add(currentCourse);
-    });
+  @override
+  initState() {
+    super.initState();
   }
 
   String query = '';
@@ -76,9 +78,16 @@ class _ChooseCoursePageState extends State<ChooseCoursePage> {
                 ),
               ),
               SortFilterWrapper(onChanged: searchCourse),
-              CourseListBuilder(
-                filteredCourses: filteredCourses,
-                pickerCallback: pickerCallback,
+              ValueListenableBuilder(
+                valueListenable:
+                    Hive.box('global').listenable(keys: ['allCourses']),
+                builder: (context, Box box, widget) {
+                  final List<h.Course> allCourses = Hive.box('global')
+                      .get('allCourses', defaultValue: <h.Course>[]);
+                  return CourseListBuilder(
+                    filteredCourses: allCourses,
+                  );
+                },
               )
             ],
           ),
@@ -105,108 +114,127 @@ class _ChooseCoursePageState extends State<ChooseCoursePage> {
 }
 
 class CourseListBuilder extends StatelessWidget {
-  const CourseListBuilder({
+  CourseListBuilder({
     Key? key,
     required this.filteredCourses,
-    required this.pickerCallback,
   }) : super(key: key);
 
-  final List<Course> filteredCourses;
-  final Function pickerCallback;
-
+  final List<h.Course> filteredCourses;
+  final userBox = Hive.box('userData');
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Expanded(
-      child: ListView.separated(
-          physics: BouncingScrollPhysics(),
-          itemBuilder: (context, index) {
-            Course currentCourse = filteredCourses[index];
-            return Container(
-              decoration: BoxDecoration(
-                  color: colourList[index % 3],
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 1,
-                      offset: Offset(0, 4),
-                      color: colourList[index % 3].withOpacity(0.45),
-                    )
-                  ]),
-              padding: EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    currentCourse.title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: kColorBackgroundDark.withOpacity(0.8),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: IntrinsicHeight(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: BouncingScrollPhysics(),
+      itemBuilder: (context, index) {
+        h.Course currentCourse = filteredCourses[index];
+        return Container(
+          decoration: BoxDecoration(
+              color: colourList[index % 3],
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 1,
+                  offset: Offset(0, 4),
+                  color: colourList[index % 3].withOpacity(0.45),
+                )
+              ]),
+          padding: EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                currentCourse.name,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: kColorBackgroundDark.withOpacity(0.8),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                currentCourse.professor.name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 11,
-                                  color: kColorBackgroundDark.withOpacity(0.6),
-                                ),
-                              ),
-                              Text(
-                                '${currentCourse.getIDName()} F${currentCourse.idNumber}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 11,
-                                  color: kColorBackgroundDark.withOpacity(0.6),
-                                ),
-                              )
-                            ],
+                          Text(
+                            currentCourse.ic.name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11,
+                              color: kColorBackgroundDark.withOpacity(0.6),
+                            ),
                           ),
-                          Row(
-                            children: [
-                              ListItemBottomButton(
-                                buttonType: ButtonType.professorReview,
-                              ),
-                              SizedBox(width: size.width * 0.02),
-                              ListItemBottomButton(
-                                buttonType: ButtonType.courseReview,
-                              ),
-                              SizedBox(width: size.width * 0.02),
-                              ListItemBottomButton(
-                                buttonType:
-                                    pickedCourses.contains(currentCourse)
-                                        ? ButtonType.pickedCourse
-                                        : ButtonType.unpickedCourse,
-                                callback: () => pickerCallback(currentCourse),
-                              ),
-                            ],
+                          Text(
+                            'test',
+                            // '${currentCourse.getIDName()} F${currentCourse.idNumber}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11,
+                              color: kColorBackgroundDark.withOpacity(0.6),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          ListItemBottomButton(
+                            buttonType: ButtonType.professorReview,
+                          ),
+                          SizedBox(width: size.width * 0.02),
+                          ListItemBottomButton(
+                            buttonType: ButtonType.courseReview,
+                          ),
+                          SizedBox(width: size.width * 0.02),
+                          ValueListenableBuilder(
+                            valueListenable:
+                                userBox.listenable(keys: ['pickedCourses']),
+                            builder: (context, Box box, widget) {
+                              final List<h.Course> pickedCourses =
+                                  Hive.box('userData').get('pickedCourses',
+                                      defaultValue: <
+                                          h.Course>[]).cast<h.Course>();
+                              final alreadyPicked = pickedCourses.any(
+                                  (h.Course crs) =>
+                                      crs.comCode == currentCourse.comCode);
+                              return ListItemBottomButton(
+                                buttonType: alreadyPicked
+                                    ? ButtonType.pickedCourse
+                                    : ButtonType.unpickedCourse,
+                                callback: () {
+                                  if (alreadyPicked) {
+                                    pickedCourses.removeWhere((h.Course crs) =>
+                                        crs.comCode == currentCourse.comCode);
+                                  } else {
+                                    pickedCourses.add(currentCourse);
+                                  }
+                                  userBox.put('pickedCourses', pickedCourses);
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),
-                    ),
-                  )
-                ],
-              ),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return SizedBox(
-              height: size.height * 0.02,
-            );
-          },
-          itemCount: filteredCourses.length),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return SizedBox(
+          height: size.height * 0.02,
+        );
+      },
+      itemCount: filteredCourses.length,
     );
   }
 }

@@ -16,7 +16,7 @@ class SelectedCourseReviewPage extends StatefulWidget {
 }
 
 class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
-  Course? course = getCourseByBranchAndID(branch: Branch.Mathematics, id: 213);
+  // Course? course = getCourseByBranchAndID(branch: Branch.Mathematics, id: 213);
 
   int touchedIndex = -1;
 
@@ -45,7 +45,8 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    course!.title,
+                    '',
+                    // course!.title,
                     style: TextStyle(
                       color: kWhite,
                       fontWeight: FontWeight.w800,
@@ -53,7 +54,8 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
                     ),
                   ),
                   Text(
-                    '${getBranchName(course!.branch)} F${course!.idNumber}  ||  ${course!.type}',
+                    '',
+                    // '${getBranchName(course!.branch)} F${course!.idNumber}  ||  ${course!.type}',
                     style: TextStyle(
                       color: kWhite.withOpacity(0.8),
                       fontWeight: FontWeight.w600,

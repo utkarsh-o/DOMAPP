@@ -6,6 +6,12 @@ final GlobalKey<ScaffoldMessengerState> snackbarKey =
 
 const int USER_BOX = 1;
 const int COURSE_BOX = 2;
+const int PROF_BOX = 3;
+const int SLIDE_BOX = 4;
+const int PAPER_BOX = 5;
+const int BRANCH_BOX = 6;
+const int CREDITS_BOX = 7;
+const int APPROVAL_BOX = 8;
 Color kColorBackgroundDark = Color(0XFF18171F);
 const Color kWhite = Color(0XFFE3E3E3);
 const Color kBlue = Color(0XFF0AAEE6);

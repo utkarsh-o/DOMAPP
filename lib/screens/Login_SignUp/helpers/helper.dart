@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:domapp/cache/constants.dart';
+import 'package:domapp/cache/models.dart';
 import 'package:domapp/components/custom_snack_bar.dart';
-import 'package:domapp/screens/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive/hive.dart';
+
+import '../../../HiveDB/User.dart' as h;
 
 Future signInWithEmail(
     {required String email, required String password}) async {
@@ -35,6 +41,8 @@ class GoogleSignInProvider extends ChangeNotifier {
 
   GoogleSignInAccount get user => _user!;
   Future googleLogin() async {
+    final firestore = FirebaseFirestore.instance;
+    final firebase = FirebaseAuth.instance;
     try {
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) return;
@@ -46,10 +54,32 @@ class GoogleSignInProvider extends ChangeNotifier {
         idToken: googleAuth.idToken,
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
-      // navigatorKey.currentState!.pop();
       notifyListeners();
     } catch (e) {
       showCustomSnackBar(text: e.toString());
+    }
+
+    final userBox = Hive.box('global');
+    try {
+      h.User hiveUser = h.User(
+        id: firebase.currentUser!.uid,
+        name: _user!.displayName ?? 'User',
+        photoUrl: _user!.photoUrl,
+        email: _user!.email,
+        type: UserType.user,
+      );
+      var collection = firestore.collection('Users');
+      var docSnapshot = await collection.doc(hiveUser.id).get();
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data();
+        hiveUser.collegeID = data!['collegeID'];
+        hiveUser.photoUrl = data['photoUrl'];
+      }
+
+      await userBox.put('user', hiveUser);
+      await userBox.put('user', hiveUser);
+    } on FirebaseAuthException catch (e) {
+      print(e);
     }
   }
 

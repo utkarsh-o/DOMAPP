@@ -90,9 +90,6 @@ class SigninWrapper extends StatelessWidget {
         SizedBox(height: size.height * 0.02),
         InkWell(
           onTap: () async {
-            print('test');
-            print(emailController.text);
-            print(passwordController.text);
             await signInWithEmail(
                 email: emailController.text, password: passwordController.text);
           },

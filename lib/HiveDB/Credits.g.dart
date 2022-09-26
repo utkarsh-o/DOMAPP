@@ -1,47 +1,37 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'User.dart';
+part of 'Credits.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class UserAdapter extends TypeAdapter<User> {
+class CreditsAdapter extends TypeAdapter<Credits> {
   @override
-  final int typeId = 1;
+  final int typeId = 7;
 
   @override
-  User read(BinaryReader reader) {
+  Credits read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return User(
-      id: fields[4] as String,
-      name: fields[0] as String,
-      photoUrl: fields[1] as String?,
-      email: fields[2] as String,
-      type: fields[5] as String,
-      collegeID: fields[3] as String,
-    );
+    return Credits(
+      practicals: fields[0] as int,
+      lectures: fields[1] as int,
+    )..units = fields[2] as int;
   }
 
   @override
-  void write(BinaryWriter writer, User obj) {
+  void write(BinaryWriter writer, Credits obj) {
     writer
-      ..writeByte(6)
-      ..writeByte(0)
-      ..write(obj.name)
-      ..writeByte(1)
-      ..write(obj.photoUrl)
-      ..writeByte(2)
-      ..write(obj.email)
       ..writeByte(3)
-      ..write(obj.collegeID)
-      ..writeByte(4)
-      ..write(obj.id)
-      ..writeByte(5)
-      ..write(obj.type);
+      ..writeByte(0)
+      ..write(obj.practicals)
+      ..writeByte(1)
+      ..write(obj.lectures)
+      ..writeByte(2)
+      ..write(obj.units);
   }
 
   @override
@@ -50,7 +40,7 @@ class UserAdapter extends TypeAdapter<User> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserAdapter &&
+      other is CreditsAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

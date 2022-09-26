@@ -1,31 +1,68 @@
 import 'dart:async';
 
+import 'package:domapp/HiveDB/Paper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
+import '../HiveDB/Course.dart';
+import '../HiveDB/Professor.dart';
 import '../cache/constants.dart';
 import '../cache/local_data.dart';
+import '../cache/models.dart' as m;
+import 'Acads/helper/helper.dart';
 
-String selectedSession = sessionList.first;
-String selectedEvaluative = evaluativeList.first;
 DateTime pickedDate = DateTime.now();
-final avController = TextEditingController();
-final totalController = TextEditingController();
-final highestController = TextEditingController();
 
 class UploadQuestionPaperPage extends StatefulWidget {
   static const String route = 'UploadQuestionPaper';
+  final Course? course;
+
+  const UploadQuestionPaperPage({Key? key, this.course}) : super(key: key);
   @override
   _UploadQuestionPaperPageState createState() =>
       _UploadQuestionPaperPageState();
 }
 
 class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
+  late List<Professor> professors;
+  late ValueNotifier<Professor> selectedProfessor;
+  final ValueNotifier<String> selectedPaperType =
+      ValueNotifier<String>(m.PaperType.paperTypes.first);
+  final selectedSession = ValueNotifier<m.Session>(m.Session.sessions.last);
+  final averageController = TextEditingController();
+  final totalController = TextEditingController();
+  final highestController = TextEditingController();
+
+  _UploadQuestionPaperPageState() {
+    professors = Hive.box('global')
+        .get('professors', defaultValue: <Professor>[]).cast<Professor>();
+    selectedProfessor = ValueNotifier<Professor>(professors.first);
+  }
+
+  createPaperHelper() async {
+    final paper = Paper(
+      paperUrl: 'paperUrl',
+      sem: selectedSession.value.sem,
+      course: widget.course!,
+      professor: selectedProfessor.value,
+      paperType: selectedPaperType.value,
+      solutionUrl: 'solutionUrl',
+      date: selectedSession.value.date,
+      uid: '',
+      average: int.parse(averageController.text.toString()),
+      highest: int.parse(highestController.text.toString()),
+      total: int.parse(
+        totalController.text.toString(),
+      ),
+    );
+    await createPaperApproval(paper: paper);
+  }
+
   Timer? _timer;
   int progress = 0;
-
   void startTimer() {
     progress = 0;
     const oneSec = const Duration(milliseconds: 100);
@@ -88,7 +125,7 @@ class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Dynamics of Social Change',
+                      widget.course!.name,
                       style: TextStyle(
                           fontSize: 30,
                           color: kWhite.withOpacity(0.8),
@@ -97,8 +134,17 @@ class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
                   ],
                 ),
                 SizedBox(height: 20),
-                SessionTypeWrapper(),
-                DatePickerWrapper(),
+                SessionTypeWrapper(
+                  selectedSession: selectedSession,
+                  professors: professors,
+                  selectedProfessor: selectedProfessor,
+                ),
+                DatePickerWrapper(
+                  selectedPaperType: selectedPaperType,
+                  averageController: averageController,
+                  totalController: totalController,
+                  highestController: highestController,
+                ),
                 // SizedBox(height: 20),
                 PickPDFButton(
                   callback: startTimer,
@@ -106,7 +152,7 @@ class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
                 SizedBox(height: 20),
                 PickedFileProgressBarWrapper(
                     progress: progress / 100.toDouble()),
-                ConfirmButtonWrapper(),
+                ConfirmButtonWrapper(callback: createPaperHelper),
               ],
             ),
           ),
@@ -195,6 +241,10 @@ class PickedFileProgressBarWrapper extends StatelessWidget {
 }
 
 class ConfirmButtonWrapper extends StatelessWidget {
+  final VoidCallback callback;
+
+  const ConfirmButtonWrapper({Key? key, required this.callback})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -244,7 +294,7 @@ class ConfirmButtonWrapper extends StatelessWidget {
             ),
           ),
           InkWell(
-            // onTap: () => Navigator.pushNamed(context, HomePage.route),
+            onTap: () => callback(),
             child: Container(
               // margin: EdgeInsets.only(bottom: size.height * 0.1),
               padding: EdgeInsets.symmetric(vertical: 20),
@@ -321,12 +371,19 @@ class PickPDFButton extends StatelessWidget {
   }
 }
 
-class DatePickerWrapper extends StatefulWidget {
-  @override
-  _DatePickerWrapperState createState() => _DatePickerWrapperState();
-}
-
-class _DatePickerWrapperState extends State<DatePickerWrapper> {
+class DatePickerWrapper extends StatelessWidget {
+  final selectedPaperType;
+  final List<String> paperTypes = m.PaperType.paperTypes;
+  final averageController;
+  final totalController;
+  final highestController;
+  DatePickerWrapper(
+      {Key? key,
+      required this.selectedPaperType,
+      required this.averageController,
+      required this.totalController,
+      required this.highestController})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -337,11 +394,7 @@ class _DatePickerWrapperState extends State<DatePickerWrapper> {
         firstDate: DateTime(DateTime.now().year - 1),
         lastDate: DateTime(DateTime.now().year + 1),
       );
-      if (date != null) {
-        setState(() {
-          pickedDate = date;
-        });
-      }
+      if (date != null) {}
     }
 
     return Container(
@@ -349,7 +402,67 @@ class _DatePickerWrapperState extends State<DatePickerWrapper> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          DatePicker(callback: datePicker),
+          // DatePicker(callback: datePicker),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Type',
+                style: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w600,
+                  color: kInactiveText,
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                width: size.width * 0.4,
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(
+                    width: 2,
+                    color: Color(0XFF413F49),
+                  ),
+                  color: Color(0XFF1D1C23),
+                ),
+                margin: EdgeInsets.symmetric(vertical: 8),
+                child: ValueListenableBuilder(
+                    valueListenable: selectedPaperType,
+                    builder: (context, String _selectedPaperType, _widget) {
+                      return DropdownButton<String>(
+                        dropdownColor: kColorBackgroundDark,
+                        icon: SvgPicture.asset(
+                          'assets/icons/expand_down.svg',
+                          color: kWhite,
+                        ),
+                        iconSize: 20,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: kWhite,
+                        ),
+                        isExpanded: true,
+                        isDense: true,
+                        value: selectedPaperType.value,
+                        items: paperTypes.map((String paperType) {
+                          return DropdownMenuItem<String>(
+                            child: Text(paperType),
+                            value: paperType,
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          selectedPaperType.value = value!;
+                        },
+                        underline: Container(
+                          height: 0,
+                        ),
+                      );
+                    }),
+              ),
+            ],
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -367,7 +480,7 @@ class _DatePickerWrapperState extends State<DatePickerWrapper> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     AvTotalHighestTextField(
-                      controller: avController,
+                      controller: averageController,
                       hintText: 33,
                     ),
                     AvTotalHighestTextField(
@@ -487,12 +600,16 @@ class DatePicker extends StatelessWidget {
   }
 }
 
-class SessionTypeWrapper extends StatefulWidget {
-  @override
-  _SessionTypeWrapperState createState() => _SessionTypeWrapperState();
-}
+class SessionTypeWrapper extends StatelessWidget {
+  late List<Professor> professors;
+  late ValueNotifier<Professor> selectedProfessor;
+  final sessionList = m.Session.sessions;
+  final selectedSession;
+  SessionTypeWrapper(
+      {required this.selectedSession,
+      required this.professors,
+      required this.selectedProfessor});
 
-class _SessionTypeWrapperState extends State<SessionTypeWrapper> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -512,7 +629,7 @@ class _SessionTypeWrapperState extends State<SessionTypeWrapper> {
             ),
             Container(
               alignment: Alignment.center,
-              width: size.width * 0.3,
+              width: size.width * 0.4,
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
@@ -523,99 +640,128 @@ class _SessionTypeWrapperState extends State<SessionTypeWrapper> {
                 color: Color(0XFF1D1C23),
               ),
               margin: EdgeInsets.symmetric(vertical: 8),
-              child: DropdownButton(
-                dropdownColor: kColorBackgroundDark,
-                icon: SvgPicture.asset(
-                  'assets/icons/expand_down.svg',
-                  color: kWhite,
-                ),
-                iconSize: 20,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: kWhite,
-                ),
-                isExpanded: true,
-                isDense: true,
-                value: selectedSession,
-                items: sessionList.map((value) {
-                  return DropdownMenuItem<String>(
-                    child: Text(value),
-                    value: value,
-                  );
-                }).toList(),
-                onChanged: (String? value) {
-                  setState(() {
-                    selectedSession = value.toString();
-                  });
-                },
-                underline: Container(
-                  height: 0,
-                ),
-              ),
+              child: ValueListenableBuilder(
+                  valueListenable: selectedSession,
+                  builder: (context, m.Session session, _widget) {
+                    return DropdownButton<m.Session>(
+                      dropdownColor: kColorBackgroundDark,
+                      icon: SvgPicture.asset(
+                        'assets/icons/expand_down.svg',
+                        color: kWhite,
+                      ),
+                      iconSize: 20,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: kWhite,
+                      ),
+                      isExpanded: true,
+                      isDense: true,
+                      value: session,
+                      items: sessionList.reversed
+                          .toList()
+                          .map(
+                            (m.Session value) => DropdownMenuItem<m.Session>(
+                              child: Text(
+                                value.toString(),
+                              ),
+                              value: value,
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (m.Session? ssn) =>
+                          selectedSession.value = ssn,
+                      underline: Container(
+                        height: 0,
+                      ),
+                    );
+                  }),
             ),
           ],
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Type',
-              style: TextStyle(
-                fontSize: 15.0,
-                fontWeight: FontWeight.w600,
-                color: kInactiveText,
-              ),
-            ),
-            Container(
-              alignment: Alignment.center,
-              width: size.width * 0.5,
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(
-                  width: 2,
-                  color: Color(0XFF413F49),
-                ),
-                color: Color(0XFF1D1C23),
-              ),
-              margin: EdgeInsets.symmetric(vertical: 8),
-              child: DropdownButton(
-                dropdownColor: kColorBackgroundDark,
-                icon: SvgPicture.asset(
-                  'assets/icons/expand_down.svg',
-                  color: kWhite,
-                ),
-                iconSize: 20,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: kWhite,
-                ),
-                isExpanded: true,
-                isDense: true,
-                value: selectedEvaluative,
-                items: evaluativeList.map((value) {
-                  return DropdownMenuItem<String>(
-                    child: Text(value),
-                    value: value,
-                  );
-                }).toList(),
-                onChanged: (String? value) {
-                  setState(() {
-                    selectedEvaluative = value.toString();
-                  });
-                },
-                underline: Container(
-                  height: 0,
-                ),
-              ),
-            ),
-          ],
+        ProfessorWrapper(
+          professors: professors,
+          selectedProfessor: selectedProfessor,
         ),
       ],
+    );
+  }
+}
+
+class ProfessorWrapper extends StatelessWidget {
+  final List<Professor> professors;
+  final ValueNotifier<Professor> selectedProfessor;
+  const ProfessorWrapper(
+      {Key? key, required this.professors, required this.selectedProfessor})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Professor',
+            style: TextStyle(
+              fontSize: 15.0,
+              fontWeight: FontWeight.w600,
+              color: kInactiveText,
+            ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            width: size.width * 0.4,
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(
+                width: 2,
+                color: Color(0XFF413F49),
+              ),
+              color: Color(0XFF1D1C23),
+            ),
+            margin: EdgeInsets.symmetric(vertical: 8),
+            child: ValueListenableBuilder(
+                valueListenable: selectedProfessor,
+                builder: (context, Professor selectedProf, _widget) {
+                  return DropdownButton(
+                    dropdownColor: kColorBackgroundDark,
+                    icon: SvgPicture.asset(
+                      'assets/icons/expand_down.svg',
+                      color: kWhite,
+                    ),
+                    iconSize: 20,
+                    style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      fontFamily: 'Montserrat',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: kWhite,
+                    ),
+                    isExpanded: true,
+                    isDense: true,
+                    value: selectedProfessor.value,
+                    items: professors.map((Professor prof) {
+                      return DropdownMenuItem<Professor>(
+                        child: Text(
+                          prof.name,
+                        ),
+                        value: prof,
+                      );
+                    }).toList(),
+                    onChanged: (Professor? prof) {
+                      selectedProfessor.value = prof!;
+                    },
+                    underline: Container(
+                      height: 0,
+                    ),
+                  );
+                }),
+          ),
+        ],
+      ),
     );
   }
 }

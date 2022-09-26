@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 
 import '../cache/constants.dart';
@@ -18,10 +19,27 @@ class User extends HiveObject {
   @HiveField(3)
   String collegeID;
 
+  @HiveField(4)
+  String id;
+
+  @HiveField(5)
+  String type;
+
   User({
+    required this.id,
     required this.name,
     required this.photoUrl,
     required this.email,
-    required this.collegeID,
+    required this.type,
+    this.collegeID = '',
   });
+
+  factory User.fromJSON(DocumentSnapshot snapshot) {
+    return User(
+        id: snapshot.id,
+        name: snapshot.get('name'),
+        photoUrl: snapshot.get('photoUrl'),
+        type: snapshot.get('type'),
+        email: snapshot.get('email'));
+  }
 }

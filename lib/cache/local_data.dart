@@ -67,7 +67,7 @@ List<User> userList = [
     userName: 'akSingh',
   ),
   User(
-    firstName: 'Vaani',
+    firstName: 'Rohit',
     lastName: 'Mishra',
     type: 'member',
     avatarID: 2,
@@ -275,10 +275,10 @@ getProfessorByUID(String uid) {
   }
 }
 
-Course? getCourseByBranchAndID({required Branch branch, required int id}) {
-  return courseList
-      .firstWhere((Course c) => c.branch == branch && c.idNumber == id);
-}
+// Course? getCourseByBranchAndID({required Branch branch, required int id}) {
+//   return courseList
+//       .firstWhere((Course c) => c.branch == branch && c.idNumber == id);
+// }
 
 List<String> branchList = [
   'All',
@@ -294,107 +294,109 @@ List<String> sessionList = [
   '2020-21',
   '2021-22',
   '2022-23',
+  '2021 (I)'
 ];
+
 List<String> evaluativeList = ['Compre', 'Mid-Sem', 'Test-1', 'Test-2'];
-String getBranchName(Branch branch) {
-  switch (branch) {
-    case Branch.Mathematics:
-      return 'M.Sc. Math';
-    case Branch.Humanities:
-      return 'Humanities';
-    case Branch.Chemical:
-      return 'M.Sc. Chemical';
-    case Branch.Electrical:
-      return 'B.E. Electrical';
-    case Branch.ElectronicsAndCommunication:
-      return 'B.E. ECE';
-    case Branch.ElectronicsAndInstrumentation:
-      return 'B.E. ENI';
-    case Branch.ComputerScience:
-      return 'B.E. CSE';
-    case Branch.Mechanical:
-      return 'B.E. Mech';
-    default:
-      return 'invalid';
-  }
-}
+// String getBranchName(Branch branch) {
+//   switch (branch) {
+//     case Branch.Mathematics:
+//       return 'M.Sc. Math';
+//     case Branch.Humanities:
+//       return 'Humanities';
+//     case Branch.Chemical:
+//       return 'M.Sc. Chemical';
+//     case Branch.ElectronicsAndElectrical:
+//       return 'B.E. Electrical';
+//     case Branch.ElectronicsAndCommunication:
+//       return 'B.E. ECE';
+//     case Branch.ElectronicsAndInstrumentation:
+//       return 'B.E. ENI';
+//     case Branch.ComputerScience:
+//       return 'B.E. CSE';
+//     case Branch.Mechanical:
+//       return 'B.E. Mech';
+//     default:
+//       return 'invalid';
+//   }
+// }
 
-List<Course> courseList = [
-  Course(
-    title: 'Main Trends In Indian History',
-    professor: getProfessorByUID('9'),
-    branch: Branch.Humanities,
-    type: 'Elective',
-    idNumber: 233,
-  ),
-  Course(
-    title: 'Urban Modernity and Renewal of Paris',
-    professor: getProfessorByUID('5'),
-    branch: Branch.Humanities,
-    idNumber: 374,
-    type: 'Elective',
-  ),
-  Course(
-    title: 'International Relations',
-    professor: getProfessorByUID('6'),
-    branch: Branch.Humanities,
-    idNumber: 365,
-    type: 'Elective',
-  ),
-  Course(
-    title: 'Ecocriticism',
-    professor: getProfessorByUID('7'),
-    branch: Branch.Humanities,
-    idNumber: 420,
-    type: 'Elective',
-  ),
-  Course(
-    title: 'Discrete Mathematics',
-    professor: getProfessorByUID('1'),
-    branch: Branch.Mathematics,
-    idNumber: 213,
-    type: 'CDC 2 - 1',
-  ),
-  Course(
-    title: 'Mathematical Methods',
-    professor: getProfessorByUID('2'),
-    branch: Branch.Mathematics,
-    idNumber: 241,
-    type: 'CDC 2 - 2',
-  ),
-  Course(
-    title: 'Graphs and Networks',
-    professor: getProfessorByUID('3'),
-    branch: Branch.Mathematics,
-    idNumber: 234,
-    type: 'CDC 2 - 2',
-  ),
-  Course(
-    title: 'Statistical Inference',
-    professor: getProfessorByUID('4'),
-    branch: Branch.Mathematics,
-    idNumber: 353,
-    type: 'DEL',
-  ),
-  Course(
-    title: 'Algebra 1',
-    professor: getProfessorByUID('5'),
-    branch: Branch.Mathematics,
-    idNumber: 215,
-    type: 'CDC 2 - 1',
-  ),
-  Course(
-    title: 'Elementary Real Analysis',
-    professor: getProfessorByUID('6'),
-    branch: Branch.Mathematics,
-    idNumber: 214,
-    type: 'CDC 2 - 1',
-  ),
-];
+// List<Course> courseList = [
+//   Course(
+//     title: 'Main Trends In Indian History',
+//     professor: getProfessorByUID('9'),
+//     branch: Branch.Humanities,
+//     type: 'Elective',
+//     idNumber: 233,
+//   ),
+//   Course(
+//     title: 'Urban Modernity and Renewal of Paris',
+//     professor: getProfessorByUID('5'),
+//     branch: Branch.Humanities,
+//     idNumber: 374,
+//     type: 'Elective',
+//   ),
+//   Course(
+//     title: 'International Relations',
+//     professor: getProfessorByUID('6'),
+//     branch: Branch.Humanities,
+//     idNumber: 365,
+//     type: 'Elective',
+//   ),
+//   Course(
+//     title: 'Ecocriticism',
+//     professor: getProfessorByUID('7'),
+//     branch: Branch.Humanities,
+//     idNumber: 420,
+//     type: 'Elective',
+//   ),
+//   Course(
+//     title: 'Discrete Mathematics',
+//     professor: getProfessorByUID('1'),
+//     branch: Branch.Mathematics,
+//     idNumber: 213,
+//     type: 'CDC 2 - 1',
+//   ),
+//   Course(
+//     title: 'Mathematical Methods',
+//     professor: getProfessorByUID('2'),
+//     branch: Branch.Mathematics,
+//     idNumber: 241,
+//     type: 'CDC 2 - 2',
+//   ),
+//   Course(
+//     title: 'Graphs and Networks',
+//     professor: getProfessorByUID('3'),
+//     branch: Branch.Mathematics,
+//     idNumber: 234,
+//     type: 'CDC 2 - 2',
+//   ),
+//   Course(
+//     title: 'Statistical Inference',
+//     professor: getProfessorByUID('4'),
+//     branch: Branch.Mathematics,
+//     idNumber: 353,
+//     type: 'DEL',
+//   ),
+//   Course(
+//     title: 'Algebra 1',
+//     professor: getProfessorByUID('5'),
+//     branch: Branch.Mathematics,
+//     idNumber: 215,
+//     type: 'CDC 2 - 1',
+//   ),
+//   Course(
+//     title: 'Elementary Real Analysis',
+//     professor: getProfessorByUID('6'),
+//     branch: Branch.Mathematics,
+//     idNumber: 214,
+//     type: 'CDC 2 - 1',
+//   ),
+// ];
 
-List<Course?> pickedCourses = [
-  getCourseByBranchAndID(branch: Branch.Humanities, id: 233)
-];
+// List<Course?> pickedCourses = [
+//   getCourseByBranchAndID(branch: Branch.Humanities, id: 233)
+// ];
 
 List<Tag> pickedTags1 = [
   Tag(

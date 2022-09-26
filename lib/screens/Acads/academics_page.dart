@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../HiveDB/Course.dart';
 import '../../cache/local_data.dart';
 import 'choose_course_page.dart';
+import 'helper/helper.dart';
 import 'previous_years_papers_page.dart';
 import '../slides_page.dart';
 import '../../cache/constants.dart';
 
 class AcademicsPage extends StatefulWidget {
   static const String route = 'AcademicsPage';
-
   @override
   _AcademicsPageState createState() => _AcademicsPageState();
 }
 
 class _AcademicsPageState extends State<AcademicsPage> {
+  @override
+  initState() {
+    super.initState();
+    getAllCourses();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -24,7 +33,10 @@ class _AcademicsPageState extends State<AcademicsPage> {
         Container(
           margin: EdgeInsets.symmetric(vertical: 30),
           child: InkWell(
-            onTap: () => Navigator.of(context).pop,
+            onTap: () async {
+              Hive.box('papers').delete('LLo9Uq3r2D8yNobxCwEu');
+              Hive.box('papers').delete('yWzScYHOTVlBAc8CTNAs');
+            },
             child: SvgPicture.asset(
               'assets/icons/options_button_titlebar.svg',
               color: kWhite,
@@ -45,135 +57,159 @@ class SelectedCoursesList extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return Expanded(
-      child: ListView.separated(
-        physics: BouncingScrollPhysics(),
-        separatorBuilder: (BuildContext context, int index) {
-          return SizedBox(height: 15);
-        },
-        itemBuilder: (context, index) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-            // height: 50,
-            decoration: BoxDecoration(
-              color: colourList[index % 3],
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                    color: colourList[index % 3].withOpacity(0.65),
-                    offset: Offset(0, 3),
-                    blurRadius: 1),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  pickedCourses[index]!.title,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: kColorBackgroundDark.withOpacity(0.8),
-                      fontSize: 16),
-                ),
-                SizedBox(height: size.height * 0.01),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InkWell(
-                      onTap: () =>
-                          Navigator.pushNamed(context, SlidesPage.route),
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 6, horizontal: 15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: kWhite,
-                          boxShadow: [
-                            BoxShadow(
-                                color: kColorBackgroundDark.withOpacity(0.45),
-                                offset: Offset(0, 4),
-                                blurRadius: 1),
-                          ],
-                        ),
-                        child: Text(
-                          'Slides',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
+    return ValueListenableBuilder(
+        valueListenable:
+            Hive.box('userData').listenable(keys: ['pickedCourses']),
+        builder: (context, Box box, widget) {
+          final List<Course> pickedCourses =
+              box.get('pickedCourses', defaultValue: <Course>[]).cast<Course>();
+          return Expanded(
+            child: ListView.separated(
+              physics: BouncingScrollPhysics(),
+              separatorBuilder: (BuildContext context, int index) {
+                return SizedBox(height: 15);
+              },
+              itemBuilder: (context, index) {
+                return Container(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                  // height: 50,
+                  decoration: BoxDecoration(
+                    color: colourList[index % 3],
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                          color: colourList[index % 3].withOpacity(0.65),
+                          offset: Offset(0, 3),
+                          blurRadius: 1),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        pickedCourses[index].name,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: kColorBackgroundDark.withOpacity(0.8),
+                            fontSize: 16),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () => Navigator.pushNamed(
-                          (context), PreviousYearsPapersPage.route),
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 6, horizontal: 15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: kWhite,
-                          boxShadow: [
-                            BoxShadow(
-                                color: kColorBackgroundDark.withOpacity(0.45),
-                                offset: Offset(0, 4),
-                                blurRadius: 1),
-                          ],
-                        ),
-                        child: Text(
-                          'Previous Year Papers',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(height: size.height * 0.02),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 6, horizontal: 15),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: kWhite,
-                        boxShadow: [
-                          BoxShadow(
-                              color: kColorBackgroundDark.withOpacity(0.45),
-                              offset: Offset(0, 4),
-                              blurRadius: 1),
+                      SizedBox(height: size.height * 0.01),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SlidesPage(
+                                  course: pickedCourses[index],
+                                ),
+                              ),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: kWhite,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: kColorBackgroundDark
+                                          .withOpacity(0.45),
+                                      offset: Offset(0, 4),
+                                      blurRadius: 1),
+                                ],
+                              ),
+                              child: Text(
+                                'Slides',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PreviousYearsPapersPage(
+                                      course: pickedCourses[index]),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: kWhite,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: kColorBackgroundDark
+                                          .withOpacity(0.45),
+                                      offset: Offset(0, 4),
+                                      blurRadius: 1),
+                                ],
+                              ),
+                              child: Text(
+                                'Previous Year Papers',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          )
                         ],
                       ),
-                      child: Text(
-                        'Related Books',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 6, horizontal: 15),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: kWhite,
-                        boxShadow: [
-                          BoxShadow(
-                              color: kColorBackgroundDark.withOpacity(0.45),
-                              offset: Offset(0, 4),
-                              blurRadius: 1),
+                      SizedBox(height: size.height * 0.02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 6, horizontal: 15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: kWhite,
+                              boxShadow: [
+                                BoxShadow(
+                                    color:
+                                        kColorBackgroundDark.withOpacity(0.45),
+                                    offset: Offset(0, 4),
+                                    blurRadius: 1),
+                              ],
+                            ),
+                            child: Text(
+                              'Related Books',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 6, horizontal: 15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: kWhite,
+                              boxShadow: [
+                                BoxShadow(
+                                    color:
+                                        kColorBackgroundDark.withOpacity(0.45),
+                                    offset: Offset(0, 4),
+                                    blurRadius: 1),
+                              ],
+                            ),
+                            child: Text(
+                              'Notes & more',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
                         ],
                       ),
-                      child: Text(
-                        'Notes & more',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                );
+              },
+              itemCount: pickedCourses.length,
             ),
           );
-        },
-        itemCount: pickedCourses.length,
-      ),
-    );
+        });
   }
 }
 
@@ -239,7 +275,6 @@ class _SortAddWrapperState extends State<SortAddWrapper> {
                 }).toList(),
                 onChanged: (String? value) {
                   setState(() {
-                    print('value is $value');
                     selectedSort = value;
                   });
                 },

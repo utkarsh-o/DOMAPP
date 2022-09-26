@@ -1,15 +1,47 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:domapp/screens/Admin/add_course_page.dart';
 import 'package:domapp/screens/Admin/add_professor_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../HiveDB/Approval.dart';
+import '../../HiveDB/User.dart' as u;
 import '../../cache/constants.dart';
 import '../../cache/models.dart';
 import '../../cache/local_data.dart';
 import '../Utilities/course_review_page.dart';
 
-class AdminPanelPage extends StatelessWidget {
+class AdminPanelPage extends StatefulWidget {
   static const String route = 'AdminPanelPage';
+
+  @override
+  State<AdminPanelPage> createState() => _AdminPanelPageState();
+}
+
+class _AdminPanelPageState extends State<AdminPanelPage> {
+  late Stream<List<Approval>> approvalStream;
+  Future<Approval> generateApproval(snapshot) async {
+    final userReference = snapshot['user'];
+    final userSnapshot =
+        await FirebaseFirestore.instance.doc('Users/$userReference').get();
+    final user = u.User.fromJSON(userSnapshot);
+    return Approval.fromJson(snapshot, user);
+  }
+
+  @override
+  void initState() {
+    approvalStream = FirebaseFirestore.instance
+        .collection('Approvals')
+        .snapshots()
+        .asyncMap((QuerySnapshot snapshot) {
+      return Future.wait(
+          [for (var snpst in snapshot.docs) generateApproval(snpst)]);
+    });
+
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -139,16 +171,28 @@ class AdminPanelPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              Expanded(
-                child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return AdminActionsListBuilder(
-                        currentAction: adminActionsList[index],
-                        index: index,
-                      );
-                    },
-                    itemCount: adminActionsList.length),
+              StreamBuilder(
+                stream: approvalStream,
+                builder: (context, AsyncSnapshot<List<Approval>> snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: kWhite,
+                      ),
+                    );
+                  }
+                  return Expanded(
+                    child: ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return AdminApprovalListBuilder(
+                            approval: snapshot.data![index],
+                            index: index,
+                          );
+                        },
+                        itemCount: snapshot.data!.length),
+                  );
+                },
               )
             ],
           ),
@@ -158,10 +202,10 @@ class AdminPanelPage extends StatelessWidget {
   }
 }
 
-class AdminActionsListBuilder extends StatelessWidget {
-  final AdminAction currentAction;
+class AdminApprovalListBuilder extends StatelessWidget {
+  final Approval approval;
   final int index;
-  AdminActionsListBuilder({required this.currentAction, required this.index});
+  AdminApprovalListBuilder({required this.approval, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +220,7 @@ class AdminActionsListBuilder extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                constraints: BoxConstraints(minHeight: size.height * 0.1),
+                height: 80,
                 width: 10,
                 color: colourList[index % 3],
               ),
@@ -187,21 +231,21 @@ class AdminActionsListBuilder extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      currentAction.title,
+                      approval.description,
                       style: TextStyle(
                           fontFamily: 'Satisfy', fontSize: 18, color: kWhite),
                     ),
                     SizedBox(height: 5),
                     Row(
                       children: [
-                        currentAction.user.type == 'admin'
+                        approval.user.type == UserType.admin
                             ? SvgPicture.asset('assets/icons/admin.svg',
                                 height: 15)
                             : SvgPicture.asset('assets/icons/member.svg',
                                 height: 15),
                         SizedBox(width: 8),
                         Text(
-                          currentAction.user.fullName,
+                          approval.user.name,
                           style: TextStyle(fontSize: 12, color: kWhite),
                         ),
                       ],
@@ -232,7 +276,7 @@ class AdminActionsListBuilder extends StatelessWidget {
                         ),
                         SizedBox(width: size.width * 0.02),
                         Text(
-                          currentAction.reports.toString(),
+                          approval.rejects.toString(),
                           style: TextStyle(
                               color: kRed,
                               fontWeight: FontWeight.w600,
@@ -241,7 +285,7 @@ class AdminActionsListBuilder extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 20),
                   Container(
                     padding: EdgeInsets.all(6),
                     decoration: BoxDecoration(
@@ -263,7 +307,7 @@ class AdminActionsListBuilder extends StatelessWidget {
                         ),
                         SizedBox(width: size.width * 0.02),
                         Text(
-                          currentAction.approvals.toString(),
+                          approval.accepts.toString(),
                           style: TextStyle(
                               color: kGreen,
                               fontWeight: FontWeight.w600,

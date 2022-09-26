@@ -1,17 +1,44 @@
 import 'package:domapp/cache/constants.dart';
+import 'package:domapp/screens/Acads/helper/helper.dart';
 import 'package:domapp/screens/solution_discussion_page.dart';
 import 'package:domapp/screens/upload_question_paper_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../HiveDB/Course.dart';
+import '../../HiveDB/Paper.dart';
 import '../../cache/local_data.dart';
+import '../../cache/models.dart' as m;
 
-class PreviousYearsPapersPage extends StatelessWidget {
+class PreviousYearsPapersPage extends StatefulWidget {
+  final Course? course;
+  PreviousYearsPapersPage({this.course});
   static const String route = 'PreviousYearsPage';
+
+  @override
+  State<PreviousYearsPapersPage> createState() =>
+      _PreviousYearsPapersPageState();
+}
+
+class _PreviousYearsPapersPageState extends State<PreviousYearsPapersPage> {
+  late List<Paper> papers;
+  late ValueNotifier<List<Paper>> filteredPapers;
+  @override
+  void initState() {
+    super.initState();
+    getPapersFromCourse(courseID: widget.course!.uid);
+    // papers = Hive.box('papers')
+    //     .get(widget.course!.uid, defaultValue: <Paper>[]).cast<Paper>();
+    // filteredPapers = ValueNotifier(papers
+    //   ..sort((Paper a, Paper b) =>
+    //       b.date.year.toString().compareTo(a.date.year.toString())));
+  }
+
   @override
   Widget build(BuildContext context) {
-    String? selectedEvaluative = evaluativeList.first;
-    String? selectedSession = sessionList.first;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -39,24 +66,81 @@ class PreviousYearsPapersPage extends StatelessWidget {
                   fontSize: 30,
                 ),
               ),
-              Stack(
-                alignment: Alignment.bottomLeft,
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(
-                      bottom: -100,
-                      width: size.width * 0.845,
-                      child: YellowContainer(index: 1)),
-                  Positioned(
-                      bottom: -50,
-                      width: size.width * 0.845,
-                      child: YellowContainer(index: 0)),
-                  GreenContainer(
-                      selectedYear: selectedSession,
-                      yearList: sessionList,
-                      selectedEvaluative: selectedEvaluative,
-                      evaluativesList: evaluativeList),
-                ],
+              ValueListenableBuilder(
+                valueListenable:
+                    Hive.box('papers').listenable(keys: [widget.course!.uid]),
+                builder: (context, Box box, _widget) {
+                  final List<Paper> papers = box.get(widget.course!.uid,
+                      defaultValue: <Paper>[]).cast<Paper>();
+                  final ValueNotifier<List<Paper>> filteredPapers =
+                      ValueNotifier(papers
+                        ..sort((Paper a, Paper b) => b.date.year
+                            .toString()
+                            .compareTo(a.date.year.toString())));
+                  final List<String> evaluativeList = ['all'] +
+                      papers.map((Paper p) => p.paperType).toSet().toList();
+                  final List<String> sessionList = papers
+                      .map((Paper p) => p.date.year.toString())
+                      .toSet()
+                      .toList();
+                  if (papers.length == 0) {
+                    return Center(
+                        child: CircularProgressIndicator(
+                      color: kWhite,
+                    ));
+                  }
+                  return Column(
+                    children: [
+                      GreenContainer(
+                        course: widget.course!,
+                        papers: papers,
+                        filteredPapers: filteredPapers,
+                        yearList: sessionList,
+                        evaluativesList: evaluativeList,
+                      ),
+                      ValueListenableBuilder(
+                          valueListenable: filteredPapers,
+                          builder:
+                              (context, List<Paper> filteredPapers, widget) {
+                            return Column(
+                              children: [
+                                for (int i = 0; i < filteredPapers.length; i++)
+                                  InkWell(
+                                    onTap: () async {
+                                      await launchUrlString(
+                                        filteredPapers[i].paperUrl,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    },
+                                    child: YellowContainer(
+                                      index: i % 3,
+                                      paper: filteredPapers[i],
+                                    ),
+                                  )
+                              ],
+                            );
+                          }),
+                      // for (int i = 0; i < papers.length; i++)
+                      //   // Positioned(
+                      //   //   bottom: -50 - i * 50,
+                      //   //   width: size.width * 0.845,
+                      //   //   child:
+                      //   InkWell(
+                      //     onTap: () async {
+                      //       await launchUrlString(
+                      //         papers[i].paperUrl,
+                      //         mode: LaunchMode.externalApplication,
+                      //       );
+                      //     },
+                      //     child: YellowContainer(
+                      //       index: i % 3,
+                      //       paper: papers[i],
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
+                  );
+                },
               ),
               Center(
                 child: Container(
@@ -119,11 +203,13 @@ class PreviousYearsPapersPage extends StatelessWidget {
 
 class YellowContainer extends StatelessWidget {
   final int index;
-  YellowContainer({required this.index});
+  final Paper paper;
+  YellowContainer({required this.index, required this.paper});
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
+      width: 358,
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
         color: kYellow,
@@ -136,16 +222,16 @@ class YellowContainer extends StatelessWidget {
             offset: Offset(0, 4),
           )
         ],
-        borderRadius: BorderRadius.circular(10),
+        // borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         children: [
-          SizedBox(height: size.height * 0.03),
+          // SizedBox(height: size.height * 0.03),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                index == 1 ? 'Test - 1' : 'Mid - Sem',
+                paper.professor.name,
                 style: TextStyle(
                     color: kColorBackgroundDark.withOpacity(0.8),
                     fontWeight: FontWeight.bold,
@@ -154,26 +240,35 @@ class YellowContainer extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    index == 1 ? 'Feburary 2,2021' : 'March 7, 2021',
+                    DateFormat.y().format(paper.date) +
+                        ' (${paper.sem == 1 ? 'I' : 'II'})',
                     style: TextStyle(
                         color: kColorBackgroundDark.withOpacity(0.8),
                         fontWeight: FontWeight.bold,
                         fontSize: 15),
                   ),
                   SizedBox(width: size.width * 0.04),
-                  Container(
-                    padding: EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7),
-                      color: kWhite,
-                      boxShadow: [
-                        BoxShadow(
-                            color: kColorBackgroundDark.withOpacity(0.45),
-                            offset: Offset(0, 4),
-                            blurRadius: 1),
-                      ],
+                  InkWell(
+                    onTap: () async {
+                      await launchUrlString(
+                        paper.paperUrl,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(7),
+                        color: kWhite,
+                        boxShadow: [
+                          BoxShadow(
+                              color: kColorBackgroundDark.withOpacity(0.45),
+                              offset: Offset(0, 4),
+                              blurRadius: 1),
+                        ],
+                      ),
+                      child: SvgPicture.asset('assets/icons/expand_right.svg'),
                     ),
-                    child: SvgPicture.asset('assets/icons/expand_right.svg'),
                   ),
                 ],
               ),
@@ -186,19 +281,22 @@ class YellowContainer extends StatelessWidget {
 }
 
 class GreenContainer extends StatelessWidget {
-  const GreenContainer({
+  GreenContainer({
     Key? key,
-    required this.selectedYear,
+    required this.course,
+    required this.filteredPapers,
     required this.yearList,
-    required this.selectedEvaluative,
     required this.evaluativesList,
-  }) : super(key: key);
-
-  final String? selectedYear;
+    required this.papers,
+  })  : selectedEvaluative = ValueNotifier(evaluativesList.first),
+        selectedYear = ValueNotifier(yearList.first);
+  final Course course;
+  final List<Paper> papers;
+  final ValueNotifier<List<Paper>> filteredPapers;
   final List<String> yearList;
-  final String? selectedEvaluative;
   final List<String> evaluativesList;
-
+  ValueNotifier<String?> selectedYear;
+  ValueNotifier<String?> selectedEvaluative;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -214,13 +312,16 @@ class GreenContainer extends StatelessWidget {
             offset: Offset(0, 4),
           )
         ],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Supra Molecular Structures',
+            course.name,
             style: TextStyle(
                 color: kColorBackgroundDark.withOpacity(0.8),
                 fontWeight: FontWeight.bold,
@@ -230,47 +331,52 @@ class GreenContainer extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                width: size.width * 0.25,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: kWhite,
-                  boxShadow: [
-                    BoxShadow(
-                        color: kColorBackgroundDark.withOpacity(0.45),
-                        offset: Offset(0, 4),
-                        blurRadius: 1),
-                  ],
-                ),
-                child: DropdownButton(
-                  icon: SvgPicture.asset(
-                    'assets/icons/expand_down.svg',
-                  ),
-                  iconSize: 20,
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: kColorBackgroundDark,
-                      fontFamily: 'Montserrat'),
-                  isExpanded: true,
-                  isDense: true,
-                  value: selectedYear,
-                  items: yearList.map((value) {
-                    return DropdownMenuItem<String>(
-                      child: Text(value),
-                      value: value,
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    // setState(() {
-                    //   print('value is $value');
-                    //   selectedYear = value;
-                    // });
-                  },
-                  underline: Container(height: 0),
-                ),
-              ),
+              // Container(
+              //   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              //   width: size.width * 0.25,
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(10),
+              //     color: kWhite,
+              //     boxShadow: [
+              //       BoxShadow(
+              //           color: kColorBackgroundDark.withOpacity(0.45),
+              //           offset: Offset(0, 4),
+              //           blurRadius: 1),
+              //     ],
+              //   ),
+              //   child: ValueListenableBuilder(
+              //       valueListenable: selectedYear,
+              //       builder: (context, String? value, child) {
+              //         return DropdownButton(
+              //           icon: SvgPicture.asset(
+              //             'assets/icons/expand_down.svg',
+              //           ),
+              //           iconSize: 20,
+              //           style: TextStyle(
+              //               fontSize: 14,
+              //               fontWeight: FontWeight.w600,
+              //               color: kColorBackgroundDark,
+              //               fontFamily: 'Montserrat'),
+              //           isExpanded: true,
+              //           isDense: true,
+              //           value: value,
+              //           items: yearList.map((value) {
+              //             return DropdownMenuItem<String>(
+              //               child: Text(value),
+              //               value: value,
+              //             );
+              //           }).toList(),
+              //           onChanged: (String? year) {
+              //             selectedYear.value = year;
+              //             filteredPapers.value = papers.where((Paper ppr) {
+              //               return ppr.date.year.toString() == year &&
+              //                   ppr.paperType == selectedEvaluative.value;
+              //             }).toList();
+              //           },
+              //           underline: Container(height: 0),
+              //         );
+              //       }),
+              // ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 width: size.width * 0.35,
@@ -284,33 +390,51 @@ class GreenContainer extends StatelessWidget {
                         blurRadius: 1),
                   ],
                 ),
-                child: DropdownButton(
-                  icon: SvgPicture.asset(
-                    'assets/icons/expand_down.svg',
-                  ),
-                  iconSize: 20,
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: kColorBackgroundDark,
-                      fontFamily: 'Montserrat'),
-                  isExpanded: true,
-                  isDense: true,
-                  value: selectedEvaluative,
-                  items: evaluativesList.map((value) {
-                    return DropdownMenuItem<String>(
-                      child: Text(value),
-                      value: value,
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    // setState(() {
-                    //   print('value is $value');
-                    //   selectedYear = value;
-                    // });
-                  },
-                  underline: Container(height: 0),
-                ),
+                child: ValueListenableBuilder(
+                    valueListenable: selectedEvaluative,
+                    builder: (context, value, widget) {
+                      return DropdownButton(
+                        icon: SvgPicture.asset(
+                          'assets/icons/expand_down.svg',
+                        ),
+                        iconSize: 20,
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: kColorBackgroundDark,
+                            fontFamily: 'Montserrat'),
+                        isExpanded: true,
+                        isDense: true,
+                        value: selectedEvaluative.value,
+                        items: evaluativesList.map((value) {
+                          return DropdownMenuItem<String>(
+                            child: Text(value),
+                            value: value,
+                          );
+                        }).toList(),
+                        onChanged: (String? paperType) {
+                          selectedEvaluative.value = paperType;
+                          if (paperType == m.PaperType.all)
+                            filteredPapers.value = papers
+                              ..sort((Paper a, Paper b) => b.date.year
+                                  .toString()
+                                  .compareTo(a.date.year.toString()));
+                          else {
+                            filteredPapers.value = papers
+                                .where((Paper ppr) => ppr.paperType == paperType
+                                    //     &&
+                                    // ppr.date.year.toString() ==
+                                    //     selectedYear.value
+                                    )
+                                .toList()
+                              ..sort((Paper a, Paper b) => b.date.year
+                                  .toString()
+                                  .compareTo(a.date.year.toString()));
+                          }
+                        },
+                        underline: Container(height: 0),
+                      );
+                    }),
               ),
               Container(
                 padding: EdgeInsets.all(6),
@@ -354,8 +478,16 @@ class GreenContainer extends StatelessWidget {
                       ),
                       SizedBox(width: size.width * 0.04),
                       InkWell(
-                        onTap: () => Navigator.pushNamed(
-                            context, UploadQuestionPaperPage.route),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UploadQuestionPaperPage(
+                                course: course,
+                              ),
+                            ),
+                          );
+                        },
                         child: Container(
                           padding: EdgeInsets.all(6),
                           decoration: BoxDecoration(

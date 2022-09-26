@@ -1,15 +1,49 @@
-import 'package:domapp/cache/local_data.dart';
+import 'dart:io';
+
 import 'package:domapp/cache/models.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../HiveDB/Slide.dart';
 import '../cache/constants.dart';
-
-String selectedProfessor = 'Basavadatta Mitra';
-String selectedSession = sessionList.last;
+import '../HiveDB/Course.dart' as c;
+import '../HiveDB/Professor.dart' as p;
+import 'Acads/helper/helper.dart';
+import '../GlobalHelpers/GoogleDrive.dart';
 
 class UploadSlidePage extends StatelessWidget {
   static const String route = 'UploadSlidePage';
+  final c.Course? course;
+  UploadSlidePage({Key? key, this.course}) {
+    professors = Hive.box('global')
+        .get('professors', defaultValue: <p.Professor>[]).cast<p.Professor>();
+    selectedProfessor = ValueNotifier<p.Professor>(professors.first);
+  }
+  final titleController = TextEditingController();
+  final slideNoController = TextEditingController();
+  final sectionController = TextEditingController();
+  final selectedType = ValueNotifier<String>(SlideType.lecture);
+  final selectedSession = ValueNotifier<Session>(Session.sessions.last);
+  late List<p.Professor> professors;
+  late ValueNotifier<p.Professor> selectedProfessor;
+
+  createSlideHelper() async {
+    final slide = Slide(
+        url: '',
+        date: selectedSession.value.date,
+        sem: selectedSession.value.sem,
+        section: int.parse(sectionController.value.text),
+        course: course!,
+        professor: selectedProfessor.value,
+        slideType: selectedType.value,
+        number: int.parse(slideNoController.value.text),
+        uid: '');
+    await createSlideApproval(slide: slide);
+    print('createSlideHelper passed');
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -53,7 +87,7 @@ class UploadSlidePage extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Technical Report Writing',
+                      course!.name,
                       style: TextStyle(
                           fontSize: 30,
                           color: kWhite.withOpacity(0.8),
@@ -77,6 +111,7 @@ class UploadSlidePage extends StatelessWidget {
                       width: size.width * 0.9,
                       margin: EdgeInsets.symmetric(vertical: 8),
                       child: TextFormField(
+                        controller: titleController,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -102,7 +137,7 @@ class UploadSlidePage extends StatelessWidget {
                           ),
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 20),
-                          hintText: 'Tarkeshwar Singh',
+                          hintText: 'How to raise a buffalo',
                           hintStyle: TextStyle(
                             fontSize: 15.0,
                             fontWeight: FontWeight.w600,
@@ -114,17 +149,162 @@ class UploadSlidePage extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 10),
-                ProfessorWrapper(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SlideNoField(
+                      title: 'Slide No',
+                      controller: slideNoController,
+                      hintText: 33,
+                    ),
+                    SlideNoField(
+                      title: 'Section',
+                      controller: sectionController,
+                      hintText: 33,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Slide Type',
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w600,
+                            color: kInactiveText,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: size.width * 0.4,
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                              width: 2,
+                              color: Color(0XFF413F49),
+                            ),
+                            color: Color(0XFF1D1C23),
+                          ),
+                          margin: EdgeInsets.symmetric(vertical: 8),
+                          child: ValueListenableBuilder(
+                              valueListenable: selectedType,
+                              builder: (context, String value, widget) {
+                                return DropdownButton(
+                                  dropdownColor: kColorBackgroundDark,
+                                  icon: SvgPicture.asset(
+                                    'assets/icons/expand_down.svg',
+                                    color: kWhite,
+                                  ),
+                                  iconSize: 20,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: kWhite,
+                                  ),
+                                  isExpanded: true,
+                                  isDense: true,
+                                  value: selectedType.value,
+                                  items:
+                                      SlideType.slideTypes.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      child: Text(
+                                        value,
+                                      ),
+                                      value: value,
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? value) =>
+                                      selectedType.value = value!,
+                                  underline: Container(
+                                    height: 0,
+                                  ),
+                                );
+                              }),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
                 SizedBox(height: 10),
-                SessionUploadButtonWrapper(),
+                ProfessorWrapper(
+                  professors: professors,
+                  selectedProfessor: selectedProfessor,
+                ),
+                SizedBox(height: 10),
+                SessionUploadButtonWrapper(
+                  selectedSession: selectedSession,
+                ),
                 SizedBox(height: 20),
                 PickedFileProgressBarWrapper(progress: 0.4),
-                ConfirmButtonWrapper(),
+                ConfirmButtonWrapper(callback: createSlideHelper),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class SlideNoField extends StatelessWidget {
+  final controller, hintText, title;
+  SlideNoField({required this.controller, this.hintText, required this.title});
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Column(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 15.0,
+            fontWeight: FontWeight.w600,
+            color: kInactiveText,
+          ),
+        ),
+        Container(
+          width: size.width * 0.1,
+          margin: EdgeInsets.symmetric(vertical: 8),
+          child: TextFormField(
+            cursorColor: kWhite,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: kWhite,
+            ),
+            controller: controller,
+            maxLength: 3,
+            decoration: InputDecoration(
+                counterText: '',
+                fillColor: Color(0XFF1D1C23),
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(
+                    color: Color(0XFF413F49),
+                    width: 2.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(
+                    color: Color(0XFF413F49),
+                    width: 2.0,
+                  ),
+                ),
+                contentPadding: EdgeInsets.all(10),
+                hintText: hintText.toString(),
+                hintStyle: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w600,
+                  color: kInactiveText,
+                )),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -250,32 +430,30 @@ class PickPDFButton extends StatelessWidget {
   }
 }
 
-class SessionUploadButtonWrapper extends StatefulWidget {
-  @override
-  _SessionUploadButtonWrapperState createState() =>
-      _SessionUploadButtonWrapperState();
-}
+class SessionUploadButtonWrapper extends StatelessWidget {
+  final sessionList = Session.sessions;
+  final selectedSession;
 
-class _SessionUploadButtonWrapperState
-    extends State<SessionUploadButtonWrapper> {
+  SessionUploadButtonWrapper({Key? key, required this.selectedSession})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            'Professor',
-            style: TextStyle(
-              fontSize: 15.0,
-              fontWeight: FontWeight.w600,
-              color: kInactiveText,
-            ),
-          ),
-          Row(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Session',
+                style: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w600,
+                  color: kInactiveText,
+                ),
+              ),
               Container(
                 alignment: Alignment.center,
                 width: size.width * 0.4,
@@ -289,44 +467,56 @@ class _SessionUploadButtonWrapperState
                   color: Color(0XFF1D1C23),
                 ),
                 margin: EdgeInsets.symmetric(vertical: 8),
-                child: DropdownButton(
-                  dropdownColor: kColorBackgroundDark,
-                  icon: SvgPicture.asset(
-                    'assets/icons/expand_down.svg',
-                    color: kWhite,
-                  ),
-                  iconSize: 20,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: kWhite,
-                  ),
-                  isExpanded: true,
-                  isDense: true,
-                  value: selectedSession,
-                  items: sessionList.map((String value) {
-                    return DropdownMenuItem<String>(
-                      child: Text(
-                        value,
-                      ),
-                      value: value,
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      selectedSession = value.toString();
-                    });
-                  },
-                  underline: Container(
-                    height: 0,
-                  ),
-                ),
+                child: ValueListenableBuilder(
+                    valueListenable: selectedSession,
+                    builder: (context, Session session, _widget) {
+                      return DropdownButton<Session>(
+                        dropdownColor: kColorBackgroundDark,
+                        icon: SvgPicture.asset(
+                          'assets/icons/expand_down.svg',
+                          color: kWhite,
+                        ),
+                        iconSize: 20,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: kWhite,
+                        ),
+                        isExpanded: true,
+                        isDense: true,
+                        value: session,
+                        items: sessionList.reversed
+                            .toList()
+                            .map(
+                              (Session value) => DropdownMenuItem<Session>(
+                                child: Text(
+                                  value.toString(),
+                                ),
+                                value: value,
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (Session? ssn) =>
+                            selectedSession.value = ssn,
+                        underline: Container(
+                          height: 0,
+                        ),
+                      );
+                    }),
               ),
-              SizedBox(width: size.width * 0.1),
-              PickPDFButton(callback: () {}),
             ],
           ),
+          SizedBox(width: size.width * 0.1),
+          PickPDFButton(callback: () async {
+            final result = await FilePicker.platform
+                .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+            if (result == null)
+              //TODO: implement toast
+              return;
+            final gd = GoogleDrive();
+            gd.uploadFileToGoogleDrive(File(result.files.first.path!));
+          }),
         ],
       ),
     );
@@ -334,6 +524,10 @@ class _SessionUploadButtonWrapperState
 }
 
 class ConfirmButtonWrapper extends StatelessWidget {
+  final VoidCallback callback;
+
+  const ConfirmButtonWrapper({Key? key, required this.callback})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -342,48 +536,48 @@ class ConfirmButtonWrapper extends StatelessWidget {
       alignment: Alignment.center,
       child: Column(
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            width: size.width * 0.8,
-            decoration: BoxDecoration(
-                color: kWhite.withOpacity(0.2),
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(10),
-                    topLeft: Radius.circular(10))),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7),
-                    color: kWhite,
-                    boxShadow: [
-                      BoxShadow(
-                          color: kWhite.withOpacity(0.45),
-                          offset: Offset(0, 4),
-                          blurRadius: 1),
-                    ],
-                  ),
-                  child: SvgPicture.asset(
-                    'assets/icons/verify_filled.svg',
-                    color: kColorBackgroundDark.withOpacity(0.8),
-                    height: 20,
-                  ),
-                ),
-                SizedBox(width: 16),
-                Container(
-                  child: Flexible(
-                    child: Text(
-                      uploadDisclaimer,
-                      style: TextStyle(fontSize: 11, color: kWhite),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
+          // Container(
+          //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          //   width: size.width * 0.8,
+          //   decoration: BoxDecoration(
+          //       color: kWhite.withOpacity(0.2),
+          //       borderRadius: BorderRadius.only(
+          //           topRight: Radius.circular(10),
+          //           topLeft: Radius.circular(10))),
+          //   child: Row(
+          //     children: [
+          //       Container(
+          //         padding: EdgeInsets.all(6),
+          //         decoration: BoxDecoration(
+          //           borderRadius: BorderRadius.circular(7),
+          //           color: kWhite,
+          //           boxShadow: [
+          //             BoxShadow(
+          //                 color: kWhite.withOpacity(0.45),
+          //                 offset: Offset(0, 4),
+          //                 blurRadius: 1),
+          //           ],
+          //         ),
+          //         child: SvgPicture.asset(
+          //           'assets/icons/verify_filled.svg',
+          //           color: kColorBackgroundDark.withOpacity(0.8),
+          //           height: 20,
+          //         ),
+          //       ),
+          //       SizedBox(width: 16),
+          //       Container(
+          //         child: Flexible(
+          //           child: Text(
+          //             uploadDisclaimer,
+          //             style: TextStyle(fontSize: 11, color: kWhite),
+          //           ),
+          //         ),
+          //       )
+          //     ],
+          //   ),
+          // ),
           InkWell(
-            // onTap: () => Navigator.pushNamed(context, HomePage.route),
+            onTap: () => callback(),
             child: Container(
               // margin: EdgeInsets.only(bottom: size.height * 0.1),
               padding: EdgeInsets.symmetric(vertical: 20),
@@ -398,9 +592,7 @@ class ConfirmButtonWrapper extends StatelessWidget {
                   )
                 ],
                 color: kWhite,
-                borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(10)),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 'Confirm',
@@ -417,12 +609,12 @@ class ConfirmButtonWrapper extends StatelessWidget {
   }
 }
 
-class ProfessorWrapper extends StatefulWidget {
-  @override
-  _ProfessorWrapperState createState() => _ProfessorWrapperState();
-}
-
-class _ProfessorWrapperState extends State<ProfessorWrapper> {
+class ProfessorWrapper extends StatelessWidget {
+  final List<p.Professor> professors;
+  final ValueNotifier<p.Professor> selectedProfessor;
+  const ProfessorWrapper(
+      {Key? key, required this.professors, required this.selectedProfessor})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -451,39 +643,41 @@ class _ProfessorWrapperState extends State<ProfessorWrapper> {
               color: Color(0XFF1D1C23),
             ),
             margin: EdgeInsets.symmetric(vertical: 8),
-            child: DropdownButton(
-              dropdownColor: kColorBackgroundDark,
-              icon: SvgPicture.asset(
-                'assets/icons/expand_down.svg',
-                color: kWhite,
-              ),
-              iconSize: 20,
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: kWhite,
-              ),
-              isExpanded: true,
-              isDense: true,
-              value: selectedProfessor,
-              items: professorList.map((Professor value) {
-                return DropdownMenuItem<String>(
-                  child: Text(
-                    value.name,
-                  ),
-                  value: value.name,
-                );
-              }).toList(),
-              onChanged: (String? value) {
-                setState(() {
-                  selectedProfessor = value.toString();
-                });
-              },
-              underline: Container(
-                height: 0,
-              ),
-            ),
+            child: ValueListenableBuilder(
+                valueListenable: selectedProfessor,
+                builder: (context, p.Professor selectedProf, _widget) {
+                  return DropdownButton(
+                    dropdownColor: kColorBackgroundDark,
+                    icon: SvgPicture.asset(
+                      'assets/icons/expand_down.svg',
+                      color: kWhite,
+                    ),
+                    iconSize: 20,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: kWhite,
+                    ),
+                    isExpanded: true,
+                    isDense: true,
+                    value: selectedProfessor.value,
+                    items: professors.map((p.Professor prof) {
+                      return DropdownMenuItem<p.Professor>(
+                        child: Text(
+                          prof.name,
+                        ),
+                        value: prof,
+                      );
+                    }).toList(),
+                    onChanged: (p.Professor? prof) {
+                      selectedProfessor.value = prof!;
+                    },
+                    underline: Container(
+                      height: 0,
+                    ),
+                  );
+                }),
           ),
         ],
       ),

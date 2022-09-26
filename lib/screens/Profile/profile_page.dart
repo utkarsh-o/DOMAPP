@@ -1,11 +1,13 @@
-import 'package:domapp/cache/local_data.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:domapp/cache/local_data.dart' as ld;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../HiveDB/User.dart';
 import '../../cache/constants.dart';
-import '../landing_page.dart';
 import '../../screens/Login_SignUp/helpers/helper.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -13,69 +15,78 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        TitleBarWrapper(),
-        Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: kWhite,
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(0, 4),
-                    blurRadius: 1,
-                    color: kWhite.withOpacity(0.45),
-                  )
-                ],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: SvgPicture.asset(
-                user.avatar,
-                height: size.height * 0.16,
-              ),
-            ),
-            SizedBox(height: size.height * 0.01),
-            Column(
-              children: [
-                Text(
-                  user.fullName,
-                  style: TextStyle(
-                      fontFamily: 'Satisfy', fontSize: 36, color: kWhite),
-                ),
-                Text(
-                  '@${user.userName}',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: kWhite.withOpacity(0.6),
-                    fontWeight: FontWeight.w600,
+    return ValueListenableBuilder(
+        valueListenable: Hive.box('global').listenable(),
+        builder: (context, Box box, widget) {
+          User user = box.get('user');
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TitleBarWrapper(),
+              Column(
+                children: [
+                  Container(
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: kWhite,
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 4),
+                            blurRadius: 1,
+                            color: kWhite.withOpacity(0.45),
+                          )
+                        ],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: user.photoUrl!,
+                        height: size.height * 0.16,
+                      )
+                      // child: SvgPicture.asset(
+                      //   ld.user.avatar,
+                      //   height: size.height * 0.16,
+                      // ),
+                      ),
+                  SizedBox(height: size.height * 0.01),
+                  Column(
+                    children: [
+                      Text(
+                        user.name,
+                        style: TextStyle(
+                            fontFamily: 'Satisfy', fontSize: 36, color: kWhite),
+                      ),
+                      Text(
+                        '@${user.collegeID + ' ' + user.email}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: kWhite.withOpacity(0.6),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            BottomButton(
-              title: 'FeedBack',
-              color: kGreen,
-            ),
-            BottomButton(
-              title: 'Starred',
-              color: kYellow,
-            ),
-            BottomButton(
-              title: 'Activities',
-              color: kRed,
-            ),
-          ],
-        ),
-      ],
-    );
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  BottomButton(
+                    title: 'FeedBack',
+                    color: kGreen,
+                  ),
+                  BottomButton(
+                    title: 'Starred',
+                    color: kYellow,
+                  ),
+                  BottomButton(
+                    title: 'Activities',
+                    color: kRed,
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }
 
