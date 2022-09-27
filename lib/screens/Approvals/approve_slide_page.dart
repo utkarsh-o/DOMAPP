@@ -12,7 +12,6 @@ import '../../HiveDB/Slide.dart';
 import '../../cache/constants.dart';
 import '../../HiveDB/Course.dart' as c;
 import '../../HiveDB/Professor.dart' as p;
-import '../Acads/helper/helper.dart';
 import '../../GlobalHelpers/GoogleDrive.dart';
 
 class ApproveSlidePage extends StatelessWidget {
@@ -22,12 +21,13 @@ class ApproveSlidePage extends StatelessWidget {
     allProfessors = Hive.box('global')
         .get('professors', defaultValue: <p.Professor>[]).cast<p.Professor>();
     allCourses = Hive.box('global').get('allCourses').cast<c.Course>();
-    getSlideByUID(approval.reference);
+    getSlideByUID();
   }
 
-  getSlideByUID(String uid) async {
+  getSlideByUID() async {
     final firestore = FirebaseFirestore.instance;
-    DocumentSnapshot slideSnapshot = await firestore.doc('Slides/$uid').get();
+    DocumentSnapshot slideSnapshot =
+        await firestore.doc('Slides/${approval.reference}').get();
     final courseUID = slideSnapshot.get('course');
     final professorUID = slideSnapshot.get('professor');
 

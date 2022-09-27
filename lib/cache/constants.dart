@@ -41,5 +41,5 @@ String uploadDisclaimer =
     'I have double checked the uploaded file, and all the relevant information provided in the form is true to the best of my knowledge. ';
 
 const String FOLDER_ID = "1ELCztD7t7QFKhdYqwRCwHOjulo6g6B-7";
-const String GDRIVE_LINK_PREFIX = "drive.google.com/file/d/";
+const String GDRIVE_LINK_PREFIX = "http://drive.google.com/file/d/";
 const String GDRIVE_LINK_POSTFIX = "";

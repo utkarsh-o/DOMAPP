@@ -1,8 +1,6 @@
 import 'package:domapp/cache/local_data.dart';
-import 'package:hive/hive.dart';
 import '../HiveDB/Paper.dart';
 import '../HiveDB/Slide.dart';
-import '../HiveDB/User.dart' as u;
 import '../HiveDB/Course.dart' as c;
 import '../HiveDB/Professor.dart' as p;
 
@@ -189,6 +187,9 @@ class Session {
   ];
   @override
   String toString() => '${this.year} (${this.sem == 1 ? 'I' : 'II'})';
+
+  factory Session.fromDate(DateTime date) =>
+      Session(year: date.year, sem: date.month == 8 ? 1 : 2);
 
 //  USE-CASE EXAMPLES
 //  1. SESSION DROPDOWN FOR UPLOAD-SLIDE PAGE

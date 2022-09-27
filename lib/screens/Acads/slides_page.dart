@@ -129,7 +129,6 @@ class _SlidesPageState extends State<SlidesPage> {
                                       SizedBox(width: size.width * 0.04),
                                       InkWell(
                                         onTap: () async {
-                                          print(slide.url);
                                           await launchUrlString(
                                             slide.url,
                                             mode:

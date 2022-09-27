@@ -1,37 +1,34 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:domapp/HiveDB/Paper.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../HiveDB/Approval.dart';
 import '../../HiveDB/Course.dart';
 import '../../HiveDB/Professor.dart';
 import '../../cache/constants.dart';
+import '../../cache/local_data.dart';
 import '../../cache/models.dart' as m;
 import '../../components/custom_snack_bar.dart';
 import '../Acads/helper/helper.dart';
 import 'helpers.dart';
+import '../../HiveDB/Course.dart' as c;
+import '../../HiveDB/Professor.dart' as p;
 
 DateTime pickedDate = DateTime.now();
 
-class UploadQuestionPaperPage extends StatefulWidget {
-  static const String route = 'UploadQuestionPaper';
-  final Course? course;
-
-  const UploadQuestionPaperPage({Key? key, this.course}) : super(key: key);
-  @override
-  _UploadQuestionPaperPageState createState() =>
-      _UploadQuestionPaperPageState();
-}
-
-class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
-  late List<Professor> professors;
+class ApproveQuestionPaperPage extends StatelessWidget {
+  final Approval approval;
   late ValueNotifier<Professor> selectedProfessor;
-  final ValueNotifier<String> selectedPaperType =
+  late final ValueNotifier<String> selectedPaperType =
       ValueNotifier<String>(m.PaperType.paperTypes.first);
   final selectedSession = ValueNotifier<m.Session>(m.Session.sessions.last);
   final averageController = TextEditingController();
@@ -41,102 +38,59 @@ class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
   final _highestKey = GlobalKey<FormState>();
   final _totalKey = GlobalKey<FormState>();
   final declaration = ValueNotifier<bool>(false);
-
-  _UploadQuestionPaperPageState() {
-    professors = Hive.box('global')
+  late List<p.Professor> allProfessors;
+  late List<c.Course> allCourses;
+  late final c.Course course;
+  late final p.Professor professor;
+  final isLoading = ValueNotifier<bool>(true);
+  late Paper paper;
+  ApproveQuestionPaperPage({required this.approval}) {
+    allProfessors = Hive.box('global')
         .get('professors', defaultValue: <Professor>[]).cast<Professor>();
-    selectedProfessor = ValueNotifier<Professor>(professors.first);
-  }
-  final fileName = ValueNotifier<String?>(null);
-  String pdfUrl = '';
-  FilePickerResult? file;
-  pickPDF() async {
-    try {
-      file = await pickFile();
-      fileName.value = file!.files.first.name;
-    } on PickFileExceptions catch (e, stackTrace) {
-      String message = e.toString();
-      switch (message) {
-        case ExceptionTypes.fileNotPicked:
-          message = 'Please pick a valid file';
-          break;
-      }
-      showCustomSnackBar(text: message, color: kRed);
-      print(e);
-      print(stackTrace.toString());
-    } catch (e, stackTrace) {
-      print(ExceptionTypes.unhandled + e.toString());
-      print(stackTrace.toString());
-    }
+    allCourses = Hive.box('global').get('allCourses').cast<c.Course>();
+    getPaperByUID();
   }
 
-  createPaperHelper() async {
-    try {
-      if (!_averageKey.currentState!.validate() ||
-          !_highestKey.currentState!.validate() ||
-          !_totalKey.currentState!.validate()) return;
-      if (file == null) {
-        showCustomSnackBar(text: 'Please select a the file');
-        return;
-      }
-      if (!declaration.value) {
-        showCustomSnackBar(text: 'Please confirm declaration check');
-        return;
-      }
-      pdfUrl = await uploadFile(file!);
-      final paper = Paper(
-        paperUrl: pdfUrl,
-        sem: selectedSession.value.sem,
-        course: widget.course!,
-        professor: selectedProfessor.value,
-        paperType: selectedPaperType.value,
-        solutionUrl: 'solutionUrl',
-        date: selectedSession.value.date,
-        uid: '',
-        average: int.parse(averageController.text.toString()),
-        highest: int.parse(highestController.text.toString()),
-        total: int.parse(
-          totalController.text.toString(),
-        ),
-      );
-      await createPaperApproval(paper: paper);
-    } on PickFileExceptions catch (e, stackTrace) {
-      String message = e.toString();
-      switch (message) {
-        case ExceptionTypes.linkNotGenerated:
-          message =
-              'Unable to upload the file, please try again or pick another file to continue';
-          break;
-      }
-      showCustomSnackBar(text: message, color: kRed);
-      print(e);
-      print(stackTrace.toString());
-    } catch (e, stackTrace) {
-      print(ExceptionTypes.unhandled + e.toString());
-      print(stackTrace.toString());
-    }
+  getPaperByUID() async {
+    final firestore = FirebaseFirestore.instance;
+    DocumentSnapshot paperSnapshot =
+        await firestore.doc('Papers/${approval.reference}').get();
+    final courseUID = paperSnapshot.get('course');
+    final professorUID = paperSnapshot.get('professor');
+    course = allCourses.firstWhere((element) => element.uid == courseUID);
+    professor =
+        allProfessors.firstWhere((element) => element.uid == professorUID);
+    selectedProfessor = ValueNotifier<p.Professor>(professor);
+    paper = Paper.fromSnapshot(paperSnapshot, professor, course);
+    selectedPaperType.value = paper.paperType;
+    selectedSession.value = m.Session.fromDate(paper.date);
+    averageController.text = paper.average.toString();
+    highestController.text = paper.highest.toString();
+    totalController.text = paper.total.toString();
+    isLoading.value = false;
+    print(selectedSession);
   }
 
-  Timer? _timer;
-  int progress = 0;
-  void startTimer() {
-    progress = 0;
-    const oneSec = const Duration(milliseconds: 100);
-    _timer = Timer.periodic(
-      oneSec,
-      (Timer timer) {
-        if (progress == 100) {
-          setState(() {
-            timer.cancel();
-          });
-        } else {
-          setState(() {
-            progress++;
-          });
-        }
-      },
-    );
-  }
+  // Timer? _timer;
+  // int progress = 0;
+  // void startTimer() {
+  //   progress = 0;
+  //   const oneSec = const Duration(milliseconds: 100);
+  //   _timer = Timer.periodic(
+  //     oneSec,
+  //     (Timer timer) {
+  //       if (progress == 100) {
+  //         setState(() {
+  //           timer.cancel();
+  //         });
+  //       } else {
+  //         setState(() {
+  //           progress++;
+  //         });
+  //       }
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -145,77 +99,90 @@ class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
       body: SafeArea(
         child: Padding(
           padding: kOuterPadding,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 30),
-                  child: InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: SvgPicture.asset(
-                      'assets/icons/back_button_title_bar.svg',
+          child: ValueListenableBuilder(
+              valueListenable: isLoading,
+              builder: (context, bool _isLoading, _widget) {
+                if (_isLoading)
+                  return Center(
+                    child: CircularProgressIndicator(
                       color: kWhite,
                     ),
-                  ),
-                ),
-                Text(
-                  'Upload Question Paper',
-                  style: TextStyle(
-                    color: kWhite,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 30,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Course Title',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w600,
-                        color: kInactiveText,
+                  );
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 30),
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: SvgPicture.asset(
+                            'assets/icons/back_button_title_bar.svg',
+                            color: kWhite,
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      widget.course!.name,
-                      style: TextStyle(
+                      Text(
+                        'Approve Question Paper',
+                        style: TextStyle(
+                          color: kWhite,
+                          fontWeight: FontWeight.w800,
                           fontSize: 30,
-                          color: kWhite.withOpacity(0.8),
-                          fontFamily: 'Satisfy'),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                SessionProfessorWrapper(
-                  selectedSession: selectedSession,
-                  professors: professors,
-                  selectedProfessor: selectedProfessor,
-                ),
-                TypeAvTotHighestWrapper(
-                  selectedPaperType: selectedPaperType,
-                  averageController: averageController,
-                  totalController: totalController,
-                  highestController: highestController,
-                  totalKey: _totalKey,
-                  averageKey: _averageKey,
-                  highestKey: _highestKey,
-                ),
-                // SizedBox(height: 20),
-                PickPDFButton(
-                  callback: pickPDF,
-                ),
-                SizedBox(height: 20),
-                PickedFileProgressBarWrapper(
-                    progress: progress / 100.toDouble(), fileName: fileName),
-                ConfirmButtonWrapper(
-                    callback: createPaperHelper, declaration: declaration),
-              ],
-            ),
-          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Course Title',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w600,
+                              color: kInactiveText,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            course.name,
+                            style: TextStyle(
+                                fontSize: 30,
+                                color: kWhite.withOpacity(0.8),
+                                fontFamily: 'Satisfy'),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      SessionProfessorWrapper(
+                        selectedSession: selectedSession,
+                        professors: allProfessors,
+                        selectedProfessor: selectedProfessor,
+                      ),
+                      TypeAvTotHighestWrapper(
+                        selectedPaperType: selectedPaperType,
+                        averageController: averageController,
+                        totalController: totalController,
+                        highestController: highestController,
+                        totalKey: _totalKey,
+                        averageKey: _averageKey,
+                        highestKey: _highestKey,
+                      ),
+                      // SizedBox(height: 20),
+                      ViewPDFButton(
+                        callback: () async {
+                          await launchUrlString(
+                            paper.paperUrl,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      ConfirmButtonWrapper(
+                          callback: () {}, declaration: declaration),
+                    ],
+                  ),
+                );
+              }),
         ),
       ),
     );
@@ -223,89 +190,78 @@ class _UploadQuestionPaperPageState extends State<UploadQuestionPaperPage> {
 }
 
 class PickedFileProgressBarWrapper extends StatelessWidget {
-  const PickedFileProgressBarWrapper({
+  PickedFileProgressBarWrapper({
     Key? key,
-    required this.progress,
-    required this.fileName,
+    required String this.fileName,
   }) : super(key: key);
-
-  final double progress;
-  final ValueNotifier<String?> fileName;
-
+  final String fileName;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     final progressBarWidth = size.width * 0.5;
 
-    return ValueListenableBuilder(
-        valueListenable: fileName,
-        builder: (context, String? _fileName, _widget) {
-          if (_fileName == null) {
-            return SizedBox();
-          }
-          return Center(
-            child: Container(
-              margin: EdgeInsets.only(bottom: 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
+    return Center(
+      child: Container(
+        margin: EdgeInsets.only(bottom: 30),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            SvgPicture.asset(
+              'assets/icons/pdf.svg',
+              color: kWhite,
+              height: 20,
+            ),
+            SizedBox(width: 25),
+            SizedBox(
+              width: progressBarWidth,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset(
-                    'assets/icons/pdf.svg',
-                    color: kWhite,
-                    height: 20,
-                  ),
-                  SizedBox(width: 25),
-                  SizedBox(
-                    width: progressBarWidth,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _fileName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: kWhite,
-                            fontSize: 16,
-                          ),
-                        ),
-                        // SizedBox(height: 10),
-                        // Stack(
-                        //   clipBehavior: Clip.none,
-                        //   children: [
-                        //     Visibility(
-                        //       visible: progress < 1,
-                        //       child: Positioned(
-                        //         right: -60,
-                        //         top: -7,
-                        //         child: Text(
-                        //           '${(progress * 100).toStringAsFixed(1)}%',
-                        //           style: TextStyle(
-                        //             color: kWhite,
-                        //             fontWeight: FontWeight.bold,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     Container(
-                        //       width: progressBarWidth * progress,
-                        //       decoration: BoxDecoration(
-                        //           border: Border.all(
-                        //               color: progress == 1 ? kGreen : kWhite,
-                        //               width: 2),
-                        //           borderRadius: BorderRadius.circular(10)),
-                        //     ),
-                        //     SizedBox(width: 5),
-                        //   ],
-                        // )
-                      ],
+                  Text(
+                    fileName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: kWhite,
+                      fontSize: 16,
                     ),
-                  )
+                  ),
+                  // SizedBox(height: 10),
+                  // Stack(
+                  //   clipBehavior: Clip.none,
+                  //   children: [
+                  //     Visibility(
+                  //       visible: progress < 1,
+                  //       child: Positioned(
+                  //         right: -60,
+                  //         top: -7,
+                  //         child: Text(
+                  //           '${(progress * 100).toStringAsFixed(1)}%',
+                  //           style: TextStyle(
+                  //             color: kWhite,
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     Container(
+                  //       width: progressBarWidth * progress,
+                  //       decoration: BoxDecoration(
+                  //           border: Border.all(
+                  //               color: progress == 1 ? kGreen : kWhite,
+                  //               width: 2),
+                  //           borderRadius: BorderRadius.circular(10)),
+                  //     ),
+                  //     SizedBox(width: 5),
+                  //   ],
+                  // )
                 ],
               ),
-            ),
-          );
-        });
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -409,9 +365,9 @@ class ConfirmButtonWrapper extends StatelessWidget {
   }
 }
 
-class PickPDFButton extends StatelessWidget {
+class ViewPDFButton extends StatelessWidget {
   VoidCallback callback;
-  PickPDFButton({required this.callback});
+  ViewPDFButton({required this.callback});
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -433,14 +389,19 @@ class PickPDFButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
-                'assets/icons/upload.svg',
-                height: 20,
+              Icon(
+                Icons.open_in_new,
+                size: 20,
                 color: Colors.white,
               ),
+              // SvgPicture.asset(
+              //   'assets/icons/upload.svg',
+              //   height: 20,
+              //   color: Colors.white,
+              // ),
               SizedBox(width: size.width * 0.015),
               Text(
-                'Pick PDF',
+                'View PDF',
                 style:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
               )
@@ -515,6 +476,7 @@ class TypeAvTotHighestWrapper extends StatelessWidget {
                 child: ValueListenableBuilder(
                     valueListenable: selectedPaperType,
                     builder: (context, String _selectedPaperType, _widget) {
+                      print(_selectedPaperType);
                       return DropdownButton<String>(
                         dropdownColor: kColorBackgroundDark,
                         icon: SvgPicture.asset(
@@ -531,15 +493,19 @@ class TypeAvTotHighestWrapper extends StatelessWidget {
                         isExpanded: true,
                         isDense: true,
                         value: selectedPaperType.value,
-                        items: paperTypes.map((String paperType) {
-                          return DropdownMenuItem<String>(
-                            child: Text(paperType),
-                            value: paperType,
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          selectedPaperType.value = value!;
-                        },
+                        items: [
+                          DropdownMenuItem<String>(
+                            child: Text(_selectedPaperType,
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: kWhite,
+                                )),
+                            value: _selectedPaperType,
+                          )
+                        ],
+                        onChanged: null,
                         underline: Container(
                           height: 0,
                         ),
@@ -603,6 +569,7 @@ class AvTotalHighestTextField extends StatelessWidget {
       child: Form(
         key: testKey,
         child: TextFormField(
+          enabled: false,
           validator: (String? value) {
             if (value == null || value.isEmpty) {
               return '';
@@ -645,6 +612,13 @@ class AvTotalHighestTextField extends StatelessWidget {
             fillColor: Color(0XFF1D1C23),
             filled: true,
             enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(
+                color: Color(0XFF413F49),
+                width: 2.0,
+              ),
+            ),
+            disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide(
                 color: Color(0XFF413F49),
@@ -781,19 +755,21 @@ class SessionProfessorWrapper extends StatelessWidget {
                       isExpanded: true,
                       isDense: true,
                       value: session,
-                      items: sessionList.reversed
-                          .toList()
-                          .map(
-                            (m.Session value) => DropdownMenuItem<m.Session>(
-                              child: Text(
-                                value.toString(),
-                              ),
-                              value: value,
+                      items: [
+                        DropdownMenuItem<m.Session>(
+                          child: Text(
+                            selectedSession.value.toString(),
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: kWhite,
                             ),
-                          )
-                          .toList(),
-                      onChanged: (m.Session? ssn) =>
-                          selectedSession.value = ssn,
+                          ),
+                          value: selectedSession.value,
+                        )
+                      ],
+                      onChanged: null,
                       underline: Container(
                         height: 0,
                       ),
@@ -867,15 +843,17 @@ class ProfessorWrapper extends StatelessWidget {
                     value: selectedProfessor.value,
                     items: professors.map((Professor prof) {
                       return DropdownMenuItem<Professor>(
-                        child: Text(
-                          prof.name,
-                        ),
+                        child: Text(prof.name,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: kWhite,
+                            )),
                         value: prof,
                       );
                     }).toList(),
-                    onChanged: (Professor? prof) {
-                      selectedProfessor.value = prof!;
-                    },
+                    onChanged: null,
                     underline: Container(
                       height: 0,
                     ),

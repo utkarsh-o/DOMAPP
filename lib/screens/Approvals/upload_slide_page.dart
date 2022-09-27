@@ -63,7 +63,6 @@ class UploadSlidePage extends StatelessWidget {
         return;
       }
       pdfUrl = await uploadFile(file!);
-      titleController;
       final slide = Slide(
           url: pdfUrl,
           date: selectedSession.value.date,

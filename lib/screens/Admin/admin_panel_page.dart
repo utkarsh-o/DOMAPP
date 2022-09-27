@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:domapp/screens/Admin/add_course_page.dart';
 import 'package:domapp/screens/Admin/add_professor_page.dart';
+import 'package:domapp/screens/Approvals/approve_question_paper_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -225,7 +226,15 @@ class AdminApprovalListBuilder extends StatelessWidget {
                 builder: (context) => ApproveSlidePage(approval: approval),
               ),
             )
-          : {},
+          : approval.approvalType == ApprovalType.createPaper
+              ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ApproveQuestionPaperPage(approval: approval),
+                  ),
+                )
+              : {},
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: IntrinsicHeight(
