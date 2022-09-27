@@ -341,6 +341,43 @@ class ApprovalType {
         return null;
     }
   }
+
+  static String getDescription(String approvalType) {
+    switch (approvalType) {
+      case ApprovalType.createSlide:
+        return 'Added Slide';
+      case ApprovalType.updateSlide:
+        return 'Updated Slide';
+      case ApprovalType.createPaper:
+        return 'Added Paper';
+      case ApprovalType.updatePaper:
+        return 'Updated Paper';
+      case ApprovalType.addCourse:
+        return 'Added Course';
+      case ApprovalType.addProfessor:
+        return 'Added Professor';
+      default:
+        return '{{ $approvalType }}';
+    }
+  }
+
+  static String? getFirestoreCollection(String approvalType) {
+    switch (approvalType) {
+      case ApprovalType.createSlide:
+        return 'Slides';
+      case ApprovalType.updateSlide:
+        return 'Slides';
+      case ApprovalType.createPaper:
+        return 'Papers';
+      case ApprovalType.updatePaper:
+        return 'Papers';
+      case ApprovalType.addCourse:
+        return 'Courses';
+      case ApprovalType.addProfessor:
+        return 'Professors';
+    }
+    return null;
+  }
 }
 
 class UserType {

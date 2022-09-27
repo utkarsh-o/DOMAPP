@@ -18,7 +18,6 @@ Future<dynamic> readJson() async {
   final String response =
       await rootBundle.loadString('assets/keys/domapp-45ddd-6dc12d568bca.json');
   final data = await json.decode(response);
-  print(data);
   final serviceAccountCredentials =
       new ServiceAccountCredentials.fromJson(data);
   return serviceAccountCredentials;
@@ -35,7 +34,6 @@ class GoogleDrive {
     //Get Credentials
     if (authClient == null) {
       // final serviceAccountCredentials = new ServiceAccountCredentials.fromJson({__JSON__HERE__});
-
       // Read credentials from assets
       final serviceAccountCredentials = await readJson();
       authClient =
@@ -65,7 +63,7 @@ class GoogleDrive {
       uploadMedia: ga.Media(file.openRead(), file.lengthSync()),
     );
 
-    if (response == null || response.id == null) {
+    if (response.id == null) {
       print("File upload failed!");
       return null;
     }

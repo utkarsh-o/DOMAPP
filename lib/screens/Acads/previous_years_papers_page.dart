@@ -1,7 +1,7 @@
 import 'package:domapp/cache/constants.dart';
 import 'package:domapp/screens/Acads/helper/helper.dart';
 import 'package:domapp/screens/solution_discussion_page.dart';
-import 'package:domapp/screens/upload_question_paper_page.dart';
+import 'package:domapp/screens/Approvals/upload_question_paper_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';

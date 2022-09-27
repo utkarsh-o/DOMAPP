@@ -7,12 +7,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
-import '../HiveDB/Course.dart';
-import '../HiveDB/Professor.dart';
-import '../cache/constants.dart';
-import '../cache/local_data.dart';
-import '../cache/models.dart' as m;
-import 'Acads/helper/helper.dart';
+import '../../HiveDB/Course.dart';
+import '../../HiveDB/Professor.dart';
+import '../../cache/constants.dart';
+import '../../cache/local_data.dart';
+import '../../cache/models.dart' as m;
+import '../Acads/helper/helper.dart';
 
 DateTime pickedDate = DateTime.now();
 

@@ -1,13 +1,13 @@
 import 'package:domapp/screens/Acads/helper/helper.dart';
-import 'package:domapp/screens/upload_slide_page.dart';
+import 'package:domapp/screens/Approvals/upload_slide_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../HiveDB/Course.dart';
-import '../HiveDB/Slide.dart';
-import '../cache/constants.dart';
+import '../../HiveDB/Course.dart';
+import '../../HiveDB/Slide.dart';
+import '../../cache/constants.dart';
 
 List<String> lessonNames = [
   'Lt-1\tIntroduction to life',

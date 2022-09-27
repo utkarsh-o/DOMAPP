@@ -70,7 +70,6 @@ class Approval extends HiveObject {
         snapshot.get('acceptedBy').cast<String>();
     final List<String> rejectedUserUIDs =
         snapshot.get('rejectedBy').cast<String>();
-    print(acceptedUserUIDs.runtimeType);
     return Approval(
       uid: snapshot.id,
       accepts: snapshot.get('accepts'),
@@ -92,7 +91,7 @@ class Approval extends HiveObject {
     return {
       'user': user.id,
       'accepts': 0,
-      'description': '',
+      'description': ApprovalType.getDescription(approvalType),
       'reference': reference,
       'rejects': 0,
       'status': 'pending',
