@@ -1,6 +1,7 @@
 # domapp
 
 A new Flutter project.
+Add domapp-45ddd-6dc12d568bca.json to assets/keys
 
 ## Getting Started
 

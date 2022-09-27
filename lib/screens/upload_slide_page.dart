@@ -515,7 +515,10 @@ class SessionUploadButtonWrapper extends StatelessWidget {
               //TODO: implement toast
               return;
             final gd = GoogleDrive();
-            gd.uploadFileToGoogleDrive(File(result.files.first.path!));
+
+            //TODO: Use this linkToFile
+            final String linkToFile =
+                gd.uploadFileToGoogleDrive(File(result.files.first.path!));
           }),
         ],
       ),
