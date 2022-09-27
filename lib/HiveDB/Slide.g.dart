@@ -26,13 +26,14 @@ class SlideAdapter extends TypeAdapter<Slide> {
       slideType: fields[6] as String,
       number: fields[7] as int,
       uid: fields[8] as String,
+      title: fields[9] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Slide obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.url)
       ..writeByte(1)
@@ -50,7 +51,9 @@ class SlideAdapter extends TypeAdapter<Slide> {
       ..writeByte(7)
       ..write(obj.number)
       ..writeByte(8)
-      ..write(obj.uid);
+      ..write(obj.uid)
+      ..writeByte(9)
+      ..write(obj.title);
   }
 
   @override

@@ -1,9 +1,7 @@
 import 'package:domapp/screens/Acads/helper/helper.dart';
 import 'package:domapp/screens/upload_slide_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -131,6 +129,7 @@ class _SlidesPageState extends State<SlidesPage> {
                                       SizedBox(width: size.width * 0.04),
                                       InkWell(
                                         onTap: () async {
+                                          print(slide.url);
                                           await launchUrlString(
                                             slide.url,
                                             mode:

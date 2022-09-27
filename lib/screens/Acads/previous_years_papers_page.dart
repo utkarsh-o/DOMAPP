@@ -107,6 +107,7 @@ class _PreviousYearsPapersPageState extends State<PreviousYearsPapersPage> {
                                 for (int i = 0; i < filteredPapers.length; i++)
                                   InkWell(
                                     onTap: () async {
+                                      print(filteredPapers[i].paperUrl);
                                       await launchUrlString(
                                         filteredPapers[i].paperUrl,
                                         mode: LaunchMode.externalApplication,

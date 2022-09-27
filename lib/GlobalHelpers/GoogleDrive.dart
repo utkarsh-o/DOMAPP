@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:domapp/GlobalHelpers/globalConstants.dart' as globalConstants;
+
+import '../cache/constants.dart';
 
 // !!! Add 'domapp-45ddd-6dc12d568bca.json' to 'assets/keys/' !!!
 // Generate this from service account keys section
@@ -43,7 +44,7 @@ class GoogleDrive {
     return authClient;
   }
 
-  uploadFileToGoogleDrive(File file) async {
+  Future<String?> uploadFileToGoogleDrive(File file) async {
     var client = await getHttpClient();
     var drive = ga.DriveApi(client);
 
@@ -55,7 +56,7 @@ class GoogleDrive {
       * All uploaded files will be in this folder
     */
 
-    String folderId = globalConstants.FOLDER_ID;
+    String folderId = FOLDER_ID;
     ga.File fileToUpload = ga.File();
     fileToUpload.parents = [folderId];
     fileToUpload.name = p.basename(file.absolute.path);
@@ -68,9 +69,7 @@ class GoogleDrive {
       print("File upload failed!");
       return null;
     }
-
-    return globalConstants.GDRIVE_LINK_PREFIX +
-        response.id! +
-        globalConstants.GDRIVE_LINK_POSTFIX;
+    String link = GDRIVE_LINK_PREFIX + response.id! + GDRIVE_LINK_POSTFIX;
+    return link;
   }
 }

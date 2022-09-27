@@ -9,6 +9,7 @@ import '../../HiveDB/User.dart' as u;
 import '../../cache/constants.dart';
 import '../../cache/models.dart';
 import '../../cache/local_data.dart';
+import '../Approvals/approve_slide_page.dart';
 import '../Utilities/course_review_page.dart';
 import 'helpers.dart';
 
@@ -217,7 +218,14 @@ class AdminApprovalListBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return InkWell(
-      // onTap: () => Navigator.pushNamed(context, SelectedCourseReviewPage.route),
+      onTap: () => approval.approvalType == ApprovalType.createSlide
+          ? Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ApproveSlidePage(approval: approval),
+              ),
+            )
+          : {},
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: IntrinsicHeight(
