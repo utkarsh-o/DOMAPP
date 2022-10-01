@@ -1,10 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:domapp/screens/Utilities/selected_professor_review_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 
+import '../../HiveDB/Professor.dart';
 import '../../cache/constants.dart';
 import '../../cache/local_data.dart';
-import '../../cache/models.dart';
+import '../../cache/models.dart' as m;
+import '../Acads/helper/helper.dart';
 
 List<Color> colorList = [kRed, kYellow, kGreen];
 List<String> sortMethods = [
@@ -16,57 +20,116 @@ String? selectedBranch = branchList.first;
 String? selectedSort = sortMethods.first;
 TextEditingController filterController = TextEditingController();
 
-class ProfessorOpinionsPage extends StatefulWidget {
-  static const String route = 'ProfessorOpinionsPage';
-
+class ProfDisplayMeta {
+  Professor professor;
+  int like, dislike;
+  Map<String, int> tags = {};
+  ProfDisplayMeta(
+      {required this.professor, required this.like, required this.dislike});
   @override
-  _ProfessorOpinionsPageState createState() => _ProfessorOpinionsPageState();
+  String toString() {
+    return 'ProfDisplayMeta{professor: $professor, like: $like, dislike: $dislike, tags: $tags}';
+  }
 }
 
-class _ProfessorOpinionsPageState extends State<ProfessorOpinionsPage> {
+class ProfessorReviewPage extends StatefulWidget {
+  static const String route = 'ProfessorReviewPage';
+
+  @override
+  _ProfessorReviewPageState createState() => _ProfessorReviewPageState();
+}
+
+class _ProfessorReviewPageState extends State<ProfessorReviewPage> {
   String query = '';
-  List<Professor> filteredProfessors = professorList;
+  List<m.Professor> filteredProfessors = professorList;
+  final globalBox = Hive.box('global');
+  late List<Professor> allProfessors;
+  final reviews = ValueNotifier<List<m.Review>>([]);
+  final isLoading = ValueNotifier<bool>(true);
+  _getData() async {
+    final firestore = FirebaseFirestore.instance;
+    await getAllProfessors();
+    allProfessors =
+        await globalBox.get('professors', defaultValue: <Professor>[]);
+    for (var _professor in allProfessors) {
+      final profRef = await firestore.doc('Professors/${_professor.uid}').get();
+      List<String> likedBy = profRef.get('likedBy').cast<String>();
+      List<String> dislikedBy = profRef.get('dislikedBy').cast<String>();
+      Map<String, List<dynamic>> tags =
+          Map<String, List<dynamic>>.from(profRef.get('tags'));
+      reviews.value.add(
+        m.Review(
+          reviewType: m.InstanceType.professor,
+          instance: _professor,
+          likedBy: likedBy,
+          dislikedBy: dislikedBy,
+          tags: tags,
+        ),
+      );
+    }
+    isLoading.value = false;
+  }
+
+  _ProfessorReviewPageState() {
+    _getData();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: kOuterPadding,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 30),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(context),
-                  child: SvgPicture.asset(
-                    'assets/icons/back_button_title_bar.svg',
+          child: ValueListenableBuilder(
+            valueListenable: isLoading,
+            builder: (context, bool _isLoading, _widget) {
+              if (_isLoading)
+                return Center(
+                  child: CircularProgressIndicator(
                     color: kWhite,
                   ),
-                ),
-              ),
-              Text(
-                'Professor Opinions',
-                style: TextStyle(
-                  color: kWhite,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 30,
-                ),
-              ),
-              SortFilterWrapper(onChanged: searchProfessor),
-              Expanded(
-                child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return professorListBuilder(
-                        filteredProfessors: filteredProfessors,
-                        index: index,
+                );
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 30),
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop(context),
+                      child: SvgPicture.asset(
+                        'assets/icons/back_button_title_bar.svg',
+                        color: kWhite,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Professor Review',
+                    style: TextStyle(
+                      color: kWhite,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 30,
+                    ),
+                  ),
+                  SortFilterWrapper(onChanged: searchProfessor),
+                  ValueListenableBuilder(
+                    valueListenable: reviews,
+                    builder: (context, List<m.Review> _reviews, _widget) {
+                      return Expanded(
+                        child: ListView.builder(
+                            physics: BouncingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return ProfessorListBuilder(
+                                review: _reviews[index],
+                                index: index,
+                              );
+                            },
+                            itemCount: _reviews.length),
                       );
                     },
-                    itemCount: filteredProfessors.length),
-              )
-            ],
+                  )
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -90,21 +153,25 @@ class _ProfessorOpinionsPageState extends State<ProfessorOpinionsPage> {
   }
 }
 
-class professorListBuilder extends StatelessWidget {
-  const professorListBuilder({
+class ProfessorListBuilder extends StatelessWidget {
+  const ProfessorListBuilder({
     Key? key,
-    required this.filteredProfessors,
+    required this.review,
     required this.index,
   }) : super(key: key);
 
-  final List<Professor> filteredProfessors;
+  final m.Review review;
   final int index;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () =>
-          Navigator.pushNamed(context, SelectedProfessorReviewPage.route),
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return SelectedProfessorReviewPage(
+          review: review,
+        );
+      })),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: IntrinsicHeight(
@@ -124,13 +191,13 @@ class professorListBuilder extends StatelessWidget {
                   children: [
                     SizedBox(height: 10),
                     Text(
-                      filteredProfessors[index].name,
+                      review.item.name,
                       style: TextStyle(
                           fontFamily: 'Satisfy', fontSize: 18, color: kWhite),
                     ),
                     SizedBox(height: 5),
                     Text(
-                      filteredProfessors[index].branches.join(' || '),
+                      review.item.branch,
                       style: TextStyle(fontSize: 12, color: kWhite),
                     ),
                   ],
@@ -149,7 +216,7 @@ class professorListBuilder extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        ' 41',
+                        ' ${review.likes}',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: colorList[index % 3]),
@@ -159,7 +226,7 @@ class professorListBuilder extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 5),
                     child: Text(
-                      '96 %',
+                      '${review.percentage.toStringAsFixed(2)} %',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white.withOpacity(0.6),
@@ -167,11 +234,11 @@ class professorListBuilder extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    child:
-                        SvgPicture.asset('assets/icons/thumbs_down_hollow.svg'),
-                  )
+                  // Container(
+                  //   margin: EdgeInsets.only(bottom: 10),
+                  //   child:
+                  //       SvgPicture.asset('assets/icons/thumbs_down_hollow.svg'),
+                  // )
                 ],
               )
             ],

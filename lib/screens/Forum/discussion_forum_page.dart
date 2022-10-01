@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../cache/constants.dart';
 import '../../cache/local_data.dart';
 import '../../cache/models.dart';
-import '../Utilities/professor_opinions_page.dart';
+import '../Utilities/professor_review_page.dart';
 import 'discussion_thread_page.dart';
 
 List<String> sortMethods = [

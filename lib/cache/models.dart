@@ -385,3 +385,54 @@ class UserType {
   static String admin = 'admin';
   static String user = 'user';
 }
+
+class Reviewable {
+  dynamic item;
+  List<String> likedBy = [];
+  List<String> dislikedBy = [];
+  Map<String, List<dynamic>> tags = {};
+  InstanceType? reviewType;
+}
+
+enum InstanceType { course, professor }
+
+extension InstanceTypeExtension on InstanceType {
+  String getMetadataPath() {
+    switch (this) {
+      case InstanceType.course:
+        return 'Metadata/CourseReviews';
+      case InstanceType.professor:
+        return 'Metadata/ProfessorReviews';
+      default:
+        return 'unhandled-case';
+    }
+  }
+}
+
+class Review implements Reviewable {
+  dynamic item;
+  List<String> likedBy = [];
+  List<String> dislikedBy = [];
+  Map<String, List<dynamic>> tags = {};
+  InstanceType? reviewType;
+  int likes, dislikes;
+  late double percentage;
+  Review({
+    required instance,
+    required this.likedBy,
+    required this.dislikedBy,
+    required this.tags,
+    required this.reviewType,
+  })  : item = reviewType == InstanceType.professor
+            ? instance as p.Professor
+            : instance as c.Course,
+        likes = likedBy.length,
+        dislikes = dislikedBy.length {
+    percentage = (likes + dislikes) > 0 ? likes / (likes + dislikes) * 100 : 0;
+  }
+
+  @override
+  String toString() {
+    return 'Review{likedBy: $likedBy, dislikedBy: $dislikedBy, tags: $tags, reviewType: $reviewType}';
+  }
+}
