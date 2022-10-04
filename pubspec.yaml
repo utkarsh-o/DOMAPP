@@ -72,6 +72,7 @@ flutter:
       - assets/vectors/
       - assets/icons/
       - assets/avatars/
+      - assets/keys/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

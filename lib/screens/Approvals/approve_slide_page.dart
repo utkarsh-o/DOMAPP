@@ -1,49 +1,60 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:domapp/cache/models.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../HiveDB/Slide.dart';
-import '../cache/constants.dart';
-import '../HiveDB/Course.dart' as c;
-import '../HiveDB/Professor.dart' as p;
-import 'Acads/helper/helper.dart';
-import '../GlobalHelpers/GoogleDrive.dart';
+import '../../HiveDB/Approval.dart';
+import '../../HiveDB/Slide.dart';
+import '../../cache/constants.dart';
+import '../../HiveDB/Course.dart' as c;
+import '../../HiveDB/Professor.dart' as p;
+import '../../GlobalHelpers/GoogleDrive.dart';
 
-class UploadSlidePage extends StatelessWidget {
-  static const String route = 'UploadSlidePage';
-  final c.Course? course;
-  UploadSlidePage({Key? key, this.course}) {
-    professors = Hive.box('global')
+class ApproveSlidePage extends StatelessWidget {
+  static const String route = 'ApproveSlidePage';
+  final Approval approval;
+  ApproveSlidePage({Key? key, required this.approval}) {
+    allProfessors = Hive.box('global')
         .get('professors', defaultValue: <p.Professor>[]).cast<p.Professor>();
-    selectedProfessor = ValueNotifier<p.Professor>(professors.first);
+    allCourses = Hive.box('global').get('allCourses').cast<c.Course>();
+    getSlideByUID();
   }
+
+  getSlideByUID() async {
+    final firestore = FirebaseFirestore.instance;
+    DocumentSnapshot slideSnapshot =
+        await firestore.doc('Slides/${approval.reference}').get();
+    final courseUID = slideSnapshot.get('course');
+    final professorUID = slideSnapshot.get('professor');
+
+    course = allCourses.firstWhere((element) => element.uid == courseUID);
+    professor =
+        allProfessors.firstWhere((element) => element.uid == professorUID);
+    selectedProfessor = ValueNotifier<p.Professor>(professor);
+    final slide = Slide.fromSnapshot(slideSnapshot, professor, course);
+    sectionController.text = slide.section.toString();
+    slideNoController.text = slide.number.toString();
+    titleController.text = slide.title;
+    isLoading.value = false;
+  }
+
   final titleController = TextEditingController();
   final slideNoController = TextEditingController();
   final sectionController = TextEditingController();
   final selectedType = ValueNotifier<String>(SlideType.lecture);
   final selectedSession = ValueNotifier<Session>(Session.sessions.last);
-  late List<p.Professor> professors;
+  late List<p.Professor> allProfessors;
   late ValueNotifier<p.Professor> selectedProfessor;
+  late List<c.Course> allCourses;
+  late final c.Course course;
+  late final p.Professor professor;
+  late Slide slide;
 
-  createSlideHelper() async {
-    final slide = Slide(
-        url: '',
-        date: selectedSession.value.date,
-        sem: selectedSession.value.sem,
-        section: int.parse(sectionController.value.text),
-        course: course!,
-        professor: selectedProfessor.value,
-        slideType: selectedType.value,
-        number: int.parse(slideNoController.value.text),
-        uid: '');
-    await createSlideApproval(slide: slide);
-    print('createSlideHelper passed');
-  }
-
+  final isLoading = ValueNotifier<bool>(true);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -51,197 +62,211 @@ class UploadSlidePage extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: kOuterPadding,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 30),
-                  child: InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: SvgPicture.asset(
-                      'assets/icons/back_button_title_bar.svg',
+          child: ValueListenableBuilder(
+              valueListenable: isLoading,
+              builder: (context, bool _isLoading, _widget) {
+                if (_isLoading)
+                  return Center(
+                    child: CircularProgressIndicator(
                       color: kWhite,
                     ),
-                  ),
-                ),
-                Text(
-                  'Upload Slide',
-                  style: TextStyle(
-                    color: kWhite,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 30,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Course Title',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w600,
-                        color: kInactiveText,
+                  );
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 30),
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: SvgPicture.asset(
+                            'assets/icons/back_button_title_bar.svg',
+                            color: kWhite,
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      course!.name,
-                      style: TextStyle(
-                          fontSize: 30,
-                          color: kWhite.withOpacity(0.8),
-                          fontFamily: 'Satisfy'),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Slide Title',
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w600,
-                        color: kInactiveText,
-                      ),
-                    ),
-                    Container(
-                      width: size.width * 0.9,
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      child: TextFormField(
-                        controller: titleController,
+                      Text(
+                        'Approve Slide',
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
                           color: kWhite,
-                        ),
-                        // controller: courseTitleController,
-                        decoration: InputDecoration(
-                          fillColor: Color(0XFF1D1C23),
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(
-                              color: Color(0XFF413F49),
-                              width: 2.0,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(
-                              color: Color(0XFF413F49),
-                              width: 2.0,
-                            ),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          hintText: 'How to raise a buffalo',
-                          hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w600,
-                            color: kInactiveText,
-                          ),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 30,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SlideNoField(
-                      title: 'Slide No',
-                      controller: slideNoController,
-                      hintText: 33,
-                    ),
-                    SlideNoField(
-                      title: 'Section',
-                      controller: sectionController,
-                      hintText: 33,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Slide Type',
-                          style: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w600,
-                            color: kInactiveText,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: size.width * 0.4,
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              width: 2,
-                              color: Color(0XFF413F49),
+                      SizedBox(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Course Title',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w600,
+                              color: kInactiveText,
                             ),
-                            color: Color(0XFF1D1C23),
                           ),
-                          margin: EdgeInsets.symmetric(vertical: 8),
-                          child: ValueListenableBuilder(
-                              valueListenable: selectedType,
-                              builder: (context, String value, widget) {
-                                return DropdownButton(
-                                  dropdownColor: kColorBackgroundDark,
-                                  icon: SvgPicture.asset(
-                                    'assets/icons/expand_down.svg',
-                                    color: kWhite,
+                          SizedBox(height: 10),
+                          Text(
+                            course.name,
+                            style: TextStyle(
+                                fontSize: 30,
+                                color: kWhite.withOpacity(0.8),
+                                fontFamily: 'Satisfy'),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Slide Title',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w600,
+                              color: kInactiveText,
+                            ),
+                          ),
+                          Container(
+                            width: size.width * 0.9,
+                            margin: EdgeInsets.symmetric(vertical: 8),
+                            child: TextFormField(
+                              enabled: false,
+                              controller: titleController,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: kWhite,
+                              ),
+                              // controller: courseTitleController,
+                              decoration: InputDecoration(
+                                fillColor: Color(0XFF1D1C23),
+                                filled: true,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: BorderSide(
+                                    color: Color(0XFF413F49),
+                                    width: 2.0,
                                   ),
-                                  iconSize: 20,
-                                  style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    color: kWhite,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: BorderSide(
+                                    color: Color(0XFF413F49),
+                                    width: 2.0,
                                   ),
-                                  isExpanded: true,
-                                  isDense: true,
-                                  value: selectedType.value,
-                                  items:
-                                      SlideType.slideTypes.map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      child: Text(
-                                        value,
-                                      ),
-                                      value: value,
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? value) =>
-                                      selectedType.value = value!,
-                                  underline: Container(
-                                    height: 0,
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                hintText: 'How to raise a buffalo',
+                                hintStyle: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: kInactiveText,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SlideNoField(
+                            title: 'Slide No',
+                            controller: slideNoController,
+                            hintText: 33,
+                          ),
+                          SlideNoField(
+                            title: 'Section',
+                            controller: sectionController,
+                            hintText: 33,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Slide Type',
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: kInactiveText,
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                width: size.width * 0.4,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                    width: 2,
+                                    color: Color(0XFF413F49),
                                   ),
-                                );
-                              }),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                ProfessorWrapper(
-                  professors: professors,
-                  selectedProfessor: selectedProfessor,
-                ),
-                SizedBox(height: 10),
-                SessionUploadButtonWrapper(
-                  selectedSession: selectedSession,
-                ),
-                SizedBox(height: 20),
-                PickedFileProgressBarWrapper(progress: 0.4),
-                ConfirmButtonWrapper(callback: createSlideHelper),
-              ],
-            ),
-          ),
+                                  color: Color(0XFF1D1C23),
+                                ),
+                                margin: EdgeInsets.symmetric(vertical: 8),
+                                child: ValueListenableBuilder(
+                                    valueListenable: selectedType,
+                                    builder: (context, String value, widget) {
+                                      return DropdownButton(
+                                        dropdownColor: kColorBackgroundDark,
+                                        icon: SvgPicture.asset(
+                                          'assets/icons/expand_down.svg',
+                                          color: kWhite,
+                                        ),
+                                        iconSize: 20,
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: kWhite,
+                                        ),
+                                        isExpanded: true,
+                                        isDense: true,
+                                        value: selectedType.value,
+                                        items: SlideType.slideTypes
+                                            .map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            child: Text(value,
+                                                style: TextStyle(
+                                                  fontFamily: 'Montserrat',
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: kWhite,
+                                                )),
+                                            value: value,
+                                          );
+                                        }).toList(),
+                                        onChanged: null,
+                                        underline: Container(
+                                          height: 0,
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      ProfessorWrapper(
+                        professors: allProfessors,
+                        selectedProfessor: selectedProfessor,
+                      ),
+                      SizedBox(height: 10),
+                      SessionUploadButtonWrapper(
+                        selectedSession: selectedSession,
+                      ),
+                      SizedBox(height: 20),
+                      PickedFileProgressBarWrapper(progress: 0.4),
+                      ConfirmButtonWrapper(callback: () {}),
+                    ],
+                  ),
+                );
+              }),
         ),
       ),
     );
@@ -268,6 +293,7 @@ class SlideNoField extends StatelessWidget {
           width: size.width * 0.1,
           margin: EdgeInsets.symmetric(vertical: 8),
           child: TextFormField(
+            enabled: false,
             cursorColor: kWhite,
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -411,14 +437,19 @@ class PickPDFButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
-                'assets/icons/upload.svg',
-                height: 20,
+              Icon(
+                Icons.open_in_new,
+                size: 20,
                 color: Colors.white,
               ),
+              // SvgPicture.asset(
+              //   'assets/icons/upload.svg',
+              //   height: 20,
+              //   color: Colors.white,
+              // ),
               SizedBox(width: size.width * 0.015),
               Text(
-                'Pick PDF',
+                'View PDF',
                 style:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
               )
@@ -490,15 +521,18 @@ class SessionUploadButtonWrapper extends StatelessWidget {
                             .toList()
                             .map(
                               (Session value) => DropdownMenuItem<Session>(
-                                child: Text(
-                                  value.toString(),
-                                ),
+                                child: Text(value.toString(),
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: kWhite,
+                                    )),
                                 value: value,
                               ),
                             )
                             .toList(),
-                        onChanged: (Session? ssn) =>
-                            selectedSession.value = ssn,
+                        onChanged: null,
                         underline: Container(
                           height: 0,
                         ),
@@ -666,13 +700,17 @@ class ProfessorWrapper extends StatelessWidget {
                       return DropdownMenuItem<p.Professor>(
                         child: Text(
                           prof.name,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: kWhite,
+                          ),
                         ),
                         value: prof,
                       );
                     }).toList(),
-                    onChanged: (p.Professor? prof) {
-                      selectedProfessor.value = prof!;
-                    },
+                    onChanged: null,
                     underline: Container(
                       height: 0,
                     ),

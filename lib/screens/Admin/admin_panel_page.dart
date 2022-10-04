@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:domapp/screens/Admin/add_course_page.dart';
 import 'package:domapp/screens/Admin/add_professor_page.dart';
+import 'package:domapp/screens/Approvals/approve_question_paper_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -9,6 +10,7 @@ import '../../HiveDB/User.dart' as u;
 import '../../cache/constants.dart';
 import '../../cache/models.dart';
 import '../../cache/local_data.dart';
+import '../Approvals/approve_slide_page.dart';
 import '../Utilities/course_review_page.dart';
 import 'helpers.dart';
 
@@ -217,7 +219,22 @@ class AdminApprovalListBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return InkWell(
-      // onTap: () => Navigator.pushNamed(context, SelectedCourseReviewPage.route),
+      onTap: () => approval.approvalType == ApprovalType.createSlide
+          ? Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ApproveSlidePage(approval: approval),
+              ),
+            )
+          : approval.approvalType == ApprovalType.createPaper
+              ? Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ApproveQuestionPaperPage(approval: approval),
+                  ),
+                )
+              : {},
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: IntrinsicHeight(

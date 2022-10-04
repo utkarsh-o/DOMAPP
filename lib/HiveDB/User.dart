@@ -45,7 +45,6 @@ class User extends HiveObject {
 
   Map<String, dynamic> toJSON() {
     return {
-      'user': id,
       'collegeID': collegeID,
       'email': email,
       'name': name,

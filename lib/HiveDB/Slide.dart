@@ -37,6 +37,9 @@ class Slide extends HiveObject {
   @HiveField(8)
   String uid;
 
+  @HiveField(9)
+  String title;
+
   Slide({
     required this.url,
     required this.date,
@@ -47,24 +50,25 @@ class Slide extends HiveObject {
     required this.slideType,
     required this.number,
     required this.uid,
+    required this.title,
   });
 
   factory Slide.fromSnapshot(
       DocumentSnapshot data, p.Professor prof, c.Course crs) {
     Timestamp date = data.get('date');
     return Slide(
-      uid: data.id,
-      sem: data.get('sem'),
-      course: crs,
-      url: data.get('url'),
-      date: DateTime.fromMillisecondsSinceEpoch(date.millisecondsSinceEpoch),
-      number: data.get('number'),
-      professor: prof,
-      section: data.get('section'),
-      slideType: SlideType.getPaperTypeFromString(
-        data.get('slideType'),
-      ),
-    );
+        uid: data.id,
+        sem: data.get('sem'),
+        course: crs,
+        url: data.get('url'),
+        date: DateTime.fromMillisecondsSinceEpoch(date.millisecondsSinceEpoch),
+        number: data.get('number'),
+        professor: prof,
+        section: data.get('section'),
+        slideType: SlideType.getPaperTypeFromString(
+          data.get('slideType'),
+        ),
+        title: data.get('title'));
   }
 
   Map<String, dynamic> toJSON() => {
@@ -75,8 +79,9 @@ class Slide extends HiveObject {
         'section': section,
         'sem': sem,
         'slideType': slideType,
-        'url': 'TODO',
+        'url': url,
         'status': 'pending',
+        'title': title
       };
 
   @override

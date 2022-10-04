@@ -70,6 +70,7 @@ getSlidesFromCourse({required String courseID}) async {
   QuerySnapshot slideSnapshot = await firestore
       .collection('Slides')
       .where('course', isEqualTo: courseID)
+      .where('status', isEqualTo: 'accepted')
       .get();
   final List<Slide> slides = slideSnapshot.docs.map((data) {
     final profUID = data.get('professor');

@@ -1,11 +1,10 @@
 import 'package:domapp/screens/Admin/admin_panel_page.dart';
 import 'package:domapp/screens/Utilities/course_review_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../cache/constants.dart';
-import 'professor_opinions_page.dart';
+import 'professor_review_page.dart';
 
 class UtilitiesPage extends StatelessWidget {
   static const String route = 'UtilitiesPage';
@@ -63,8 +62,7 @@ class UtilitiesPage extends StatelessWidget {
           ],
         ),
         InkWell(
-          onTap: () =>
-              Navigator.pushNamed(context, ProfessorOpinionsPage.route),
+          onTap: () => Navigator.pushNamed(context, ProfessorReviewPage.route),
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             decoration: BoxDecoration(
@@ -81,7 +79,7 @@ class UtilitiesPage extends StatelessWidget {
                 SvgPicture.asset('assets/icons/professor.svg'),
                 SizedBox(width: size.width * 0.06),
                 Text(
-                  'Professor Opinions',
+                  'Professor Review',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,

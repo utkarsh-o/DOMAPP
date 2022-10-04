@@ -12,8 +12,8 @@ import 'package:provider/provider.dart';
 
 import 'HiveDB/Credits.dart';
 import 'screens/register_page.dart';
-import 'screens/upload_question_paper_page.dart';
-import 'screens/upload_slide_page.dart';
+import 'screens/Approvals/upload_question_paper_page.dart';
+import 'screens/Approvals/upload_slide_page.dart';
 import 'screens/Admin/add_course_page.dart';
 import 'screens/Admin/add_professor_page.dart';
 import 'screens/solution_discussion_page.dart';
@@ -23,9 +23,9 @@ import 'screens/Admin/admin_panel_page.dart';
 import 'screens/Utilities/selected_course_review_page.dart';
 import 'screens/home_page.dart';
 import 'screens/Acads/previous_years_papers_page.dart';
-import 'screens/Utilities/professor_opinions_page.dart';
+import 'screens/Utilities/professor_review_page.dart';
 import 'screens/Login_SignUp/sign_in_page.dart';
-import 'screens/slides_page.dart';
+import 'screens/Acads/slides_page.dart';
 import 'cache/constants.dart';
 import 'screens/landing_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -71,7 +71,7 @@ class Domapp extends StatelessWidget {
           SignInPage.route: (context) => SignInPage(),
           SlidesPage.route: (context) => SlidesPage(),
           PreviousYearsPapersPage.route: (context) => PreviousYearsPapersPage(),
-          ProfessorOpinionsPage.route: (context) => ProfessorOpinionsPage(),
+          ProfessorReviewPage.route: (context) => ProfessorReviewPage(),
           ChooseCoursePage.route: (context) => ChooseCoursePage(),
           CourseReviewPage.route: (context) => CourseReviewPage(),
           SelectedCourseReviewPage.route: (context) =>

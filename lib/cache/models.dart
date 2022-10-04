@@ -1,8 +1,6 @@
 import 'package:domapp/cache/local_data.dart';
-import 'package:hive/hive.dart';
 import '../HiveDB/Paper.dart';
 import '../HiveDB/Slide.dart';
-import '../HiveDB/User.dart' as u;
 import '../HiveDB/Course.dart' as c;
 import '../HiveDB/Professor.dart' as p;
 
@@ -190,6 +188,9 @@ class Session {
   @override
   String toString() => '${this.year} (${this.sem == 1 ? 'I' : 'II'})';
 
+  factory Session.fromDate(DateTime date) =>
+      Session(year: date.year, sem: date.month == 8 ? 1 : 2);
+
 //  USE-CASE EXAMPLES
 //  1. SESSION DROPDOWN FOR UPLOAD-SLIDE PAGE
 //      Session.sessions.forEach((Session ssn) => print(ssn));
@@ -341,9 +342,97 @@ class ApprovalType {
         return null;
     }
   }
+
+  static String getDescription(String approvalType) {
+    switch (approvalType) {
+      case ApprovalType.createSlide:
+        return 'Added Slide';
+      case ApprovalType.updateSlide:
+        return 'Updated Slide';
+      case ApprovalType.createPaper:
+        return 'Added Paper';
+      case ApprovalType.updatePaper:
+        return 'Updated Paper';
+      case ApprovalType.addCourse:
+        return 'Added Course';
+      case ApprovalType.addProfessor:
+        return 'Added Professor';
+      default:
+        return '{{ $approvalType }}';
+    }
+  }
+
+  static String? getFirestoreCollection(String approvalType) {
+    switch (approvalType) {
+      case ApprovalType.createSlide:
+        return 'Slides';
+      case ApprovalType.updateSlide:
+        return 'Slides';
+      case ApprovalType.createPaper:
+        return 'Papers';
+      case ApprovalType.updatePaper:
+        return 'Papers';
+      case ApprovalType.addCourse:
+        return 'Courses';
+      case ApprovalType.addProfessor:
+        return 'Professors';
+    }
+    return null;
+  }
 }
 
 class UserType {
   static String admin = 'admin';
   static String user = 'user';
+}
+
+class Reviewable {
+  dynamic item;
+  List<String> likedBy = [];
+  List<String> dislikedBy = [];
+  Map<String, List<dynamic>> tags = {};
+  InstanceType? reviewType;
+}
+
+enum InstanceType { course, professor }
+
+extension InstanceTypeExtension on InstanceType {
+  String getMetadataPath() {
+    switch (this) {
+      case InstanceType.course:
+        return 'Metadata/CourseReviews';
+      case InstanceType.professor:
+        return 'Metadata/ProfessorReviews';
+      default:
+        return 'unhandled-case';
+    }
+  }
+}
+
+class Review implements Reviewable {
+  dynamic item;
+  List<String> likedBy = [];
+  List<String> dislikedBy = [];
+  Map<String, List<dynamic>> tags = {};
+  InstanceType? reviewType;
+  int likes, dislikes;
+  late double percentage;
+  Review({
+    required instance,
+    required this.likedBy,
+    required this.dislikedBy,
+    required this.tags,
+    required this.reviewType,
+  })  : item = reviewType == InstanceType.professor
+            ? instance as p.Professor
+            : instance as c.Course,
+        likes = likedBy.length,
+        dislikes = dislikedBy.length {
+    percentage = (likes + dislikes) > 0 ? likes / (likes + dislikes) * 100 : 0;
+  }
+
+  @override
+  String toString() {
+    return 'Review{likedBy: $likedBy, dislikedBy: $dislikedBy, tags: $tags, reviewType: $reviewType}';
+  }
 }

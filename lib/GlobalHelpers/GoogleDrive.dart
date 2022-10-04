@@ -3,95 +3,71 @@ import 'package:googleapis/drive/v3.dart' as ga;
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
-import 'package:url_launcher/url_launcher.dart';
-import 'SecureStorage.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 
-const _clientId =
-    "575924446241-r6a7g6toldjs7nof4nlbepkrp5n0l9u3.apps.googleusercontent.com";
-const _scopes = ['https://www.googleapis.com/auth/◘.file'];
+import '../cache/constants.dart';
+
+// !!! Add 'domapp-45ddd-6dc12d568bca.json' to 'assets/keys/' !!!
+// Generate this from service account keys section
+
+// REFERENCE: https://stackoverflow.com/questions/65784077/how-do-i-upload-a-file-to-google-drive-using-flutter
+
+// Fetch content from the json file
+Future<dynamic> readJson() async {
+  final String response =
+      await rootBundle.loadString('assets/keys/domapp-45ddd-6dc12d568bca.json');
+  final data = await json.decode(response);
+  final serviceAccountCredentials =
+      new ServiceAccountCredentials.fromJson(data);
+  return serviceAccountCredentials;
+}
+
+const _scopes = ['https://www.googleapis.com/auth/drive.file'];
+
+//TODO: change this var to AutoRefreshingAuthClient
+var authClient;
 
 class GoogleDrive {
-  final storage = SecureStorage();
   //Get Authenticated Http Client
   Future<http.Client> getHttpClient() async {
     //Get Credentials
-    var credentials = await storage.getCredentials();
-    if (credentials == null) {
-      //Needs user authentication
-      var authClient =
-          await clientViaUserConsent(ClientId(_clientId), _scopes, (url) {
-        //Open Url in Browser
-        launch(url);
-      });
-      //Save Credentials
-      await storage.saveCredentials(authClient.credentials.accessToken,
-          authClient.credentials.refreshToken!);
-      return authClient;
-    } else {
-      print(credentials["expiry"]);
-      //Already authenticated
-      return authenticatedClient(
-          http.Client(),
-          AccessCredentials(
-              AccessToken(credentials["type"], credentials["data"],
-                  DateTime.tryParse(credentials["expiry"])!),
-              credentials["refreshToken"],
-              _scopes));
+    if (authClient == null) {
+      // final serviceAccountCredentials = new ServiceAccountCredentials.fromJson({__JSON__HERE__});
+      // Read credentials from assets
+      final serviceAccountCredentials = await readJson();
+      authClient =
+          await clientViaServiceAccount(serviceAccountCredentials, _scopes);
     }
+    return authClient;
   }
 
-// check if the directory forlder is already available in drive , if available return its id
-// if not available create a folder in drive and return id
-//   if not able to create id then it means user authetication has failed
-  Future<String?> _getFolderId(ga.DriveApi driveApi) async {
-    final mimeType = "application/vnd.google-apps.folder";
-    String folderName = "DOMAPP Files";
-
-    try {
-      final found = await driveApi.files.list(
-        q: "mimeType = '$mimeType' and name = '$folderName'",
-        $fields: "files(id, name)",
-      );
-      final files = found.files;
-      if (files == null) {
-        print("Sign-in first Error");
-        return null;
-      }
-
-      // The folder already exists
-      if (files.isNotEmpty) {
-        return files.first.id;
-      }
-
-      // Create a folder
-      ga.File folder = ga.File();
-      folder.name = folderName;
-      folder.mimeType = mimeType;
-      final folderCreation = await driveApi.files.create(folder);
-      print("Folder ID: ${folderCreation.id}");
-
-      return folderCreation.id;
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
-
-  uploadFileToGoogleDrive(File file) async {
+  Future<String?> uploadFileToGoogleDrive(File file) async {
     var client = await getHttpClient();
     var drive = ga.DriveApi(client);
-    String? folderId = await _getFolderId(drive);
-    if (folderId == null) {
-      print("Sign-in first Error");
-    } else {
-      ga.File fileToUpload = ga.File();
-      fileToUpload.parents = [folderId];
-      fileToUpload.name = p.basename(file.absolute.path);
-      var response = await drive.files.create(
-        fileToUpload,
-        uploadMedia: ga.Media(file.openRead(), file.lengthSync()),
-      );
-      print(response);
+
+    /*
+      * Create folder from any google account
+      * Permissions: View all
+      * Give edit access to firebase-adminsdk-jd6l9@domapp-45ddd.iam.gserviceaccount.com
+      * Paste folder ID here
+      * All uploaded files will be in this folder
+    */
+
+    String folderId = FOLDER_ID;
+    ga.File fileToUpload = ga.File();
+    fileToUpload.parents = [folderId];
+    fileToUpload.name = p.basename(file.absolute.path);
+    var response = await drive.files.create(
+      fileToUpload,
+      uploadMedia: ga.Media(file.openRead(), file.lengthSync()),
+    );
+
+    if (response.id == null) {
+      print("File upload failed!");
+      return null;
     }
+    String link = GDRIVE_LINK_PREFIX + response.id! + GDRIVE_LINK_POSTFIX;
+    return link;
   }
 }

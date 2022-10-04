@@ -5,11 +5,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../HiveDB/Course.dart';
 import '../../cache/local_data.dart';
-import '../Admin/helpers.dart';
 import 'choose_course_page.dart';
 import 'helper/helper.dart';
 import 'previous_years_papers_page.dart';
-import '../slides_page.dart';
+import 'slides_page.dart';
 import '../../cache/constants.dart';
 
 class AcademicsPage extends StatefulWidget {

@@ -50,6 +50,12 @@ updateAcceptsRejects(
       await firestore.doc('Approvals/${approval.uid}').update({
         'status': 'accepted',
       });
+      await firestore
+          .doc(
+              '${ApprovalType.getFirestoreCollection(approval.approvalType) ?? ''}/${approval.reference}')
+          .update({
+        'status': 'accepted',
+      });
     }
   } else if (approvalUpdateType == ApprovalUpdateType.rejects) {
     if (approval.alreadyAccepted) {
@@ -71,6 +77,12 @@ updateAcceptsRejects(
     });
     if (updatedValue >= (0.5 * numAdmins).ceil()) {
       await firestore.doc('Approvals/${approval.uid}').update({
+        'status': 'rejected',
+      });
+      await firestore
+          .doc(
+              '${ApprovalType.getFirestoreCollection(approval.approvalType) ?? ''}/${approval.reference}')
+          .update({
         'status': 'rejected',
       });
     }

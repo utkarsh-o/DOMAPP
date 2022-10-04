@@ -1,12 +1,14 @@
-import 'package:domapp/screens/Acads/academics_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:domapp/screens/Acads/helper/helper.dart';
 import 'package:domapp/screens/Utilities/selected_course_review_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 
+import '../../HiveDB/Course.dart';
 import '../../cache/constants.dart';
 import '../../cache/local_data.dart';
-import '../../cache/models.dart';
+import '../../cache/models.dart' as m;
 
 List<String> sortMethods = [
   'Rating',
@@ -25,52 +27,98 @@ class CourseReviewPage extends StatefulWidget {
   _CourseReviewPageState createState() => _CourseReviewPageState();
 }
 
-List<Course> courseList = [];
+List<m.Course> courseList = [];
 
 class _CourseReviewPageState extends State<CourseReviewPage> {
   String query = '';
-  List<Course> filteredCourses = courseList;
+  List<m.Course> filteredCourses = courseList;
+  final reviews = ValueNotifier<List<m.Review>>([]);
+  final globalBox = Hive.box('global');
+  final isLoading = ValueNotifier<bool>(true);
+  late List<Course> allCourses;
+  _getData() async {
+    final firestore = FirebaseFirestore.instance;
+    await getAllCourses();
+    allCourses = await globalBox.get('allCourses', defaultValue: <Course>[]);
+    for (var _course in allCourses) {
+      final courseRef = await firestore.doc('Courses/${_course.uid}').get();
+      List<String> likedBy = courseRef.get('likedBy').cast<String>();
+      List<String> dislikedBy = courseRef.get('dislikedBy').cast<String>();
+      Map<String, List<dynamic>> tags =
+          Map<String, List<dynamic>>.from(courseRef.get('tags'));
+      reviews.value.add(
+        m.Review(
+          reviewType: m.InstanceType.course,
+          instance: _course,
+          likedBy: likedBy,
+          dislikedBy: dislikedBy,
+          tags: tags,
+        ),
+      );
+    }
+    isLoading.value = false;
+  }
 
+  _CourseReviewPageState() {
+    _getData();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: kOuterPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 30),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(context),
-                  child: SvgPicture.asset(
-                    'assets/icons/back_button_title_bar.svg',
+          child: ValueListenableBuilder(
+            valueListenable: isLoading,
+            builder: (context, bool _isLoading, _widget) {
+              if (_isLoading)
+                return Center(
+                  child: CircularProgressIndicator(
                     color: kWhite,
                   ),
-                ),
-              ),
-              Text(
-                'Course Reviews',
-                style: TextStyle(
-                  color: kWhite,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 30,
-                ),
-              ),
-              SortFilterWrapper(onChanged: searchCourses),
-              Expanded(
-                child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return CourseListBuilder(
-                        currentCourse: filteredCourses[index],
-                        index: index,
+                );
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 30),
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop(context),
+                      child: SvgPicture.asset(
+                        'assets/icons/back_button_title_bar.svg',
+                        color: kWhite,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Course Reviews',
+                    style: TextStyle(
+                      color: kWhite,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 30,
+                    ),
+                  ),
+                  SortFilterWrapper(onChanged: searchCourses),
+                  ValueListenableBuilder(
+                    valueListenable: reviews,
+                    builder: (context, List<m.Review> _reviews, _widget) {
+                      return Expanded(
+                        child: ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return CourseListBuilder(
+                              review: _reviews[index],
+                              index: index,
+                            );
+                          },
+                          itemCount: _reviews.length,
+                        ),
                       );
                     },
-                    itemCount: filteredCourses.length),
-              )
-            ],
+                  )
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -96,14 +144,20 @@ class _CourseReviewPageState extends State<CourseReviewPage> {
 }
 
 class CourseListBuilder extends StatelessWidget {
-  final Course currentCourse;
+  final m.Review review;
   final int index;
-  CourseListBuilder({required this.currentCourse, required this.index});
+  CourseListBuilder({required this.review, required this.index});
 
   @override
   Widget build(BuildContext context) {
+    final course = review.item as Course;
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, SelectedCourseReviewPage.route),
+      onTap: () =>
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return SelectedCourseReviewPage(
+          review: review,
+        );
+      })),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: IntrinsicHeight(
@@ -113,29 +167,31 @@ class CourseListBuilder extends StatelessWidget {
             children: [
               Container(
                 width: 10,
+                constraints: BoxConstraints(minHeight: 80),
                 color: colourList[index % 3],
               ),
               SizedBox(width: 20),
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 10),
                     Text(
-                      currentCourse.title,
+                      course.name,
                       style: TextStyle(
                           fontFamily: 'Satisfy', fontSize: 18, color: kWhite),
                     ),
                     SizedBox(height: 5),
                     Text(
-                      '${currentCourse.branch} || ${currentCourse.type}',
+                      course.branch,
                       style: TextStyle(fontSize: 12, color: kWhite),
                     ),
                   ],
                 ),
               ),
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -148,7 +204,7 @@ class CourseListBuilder extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        ' 41',
+                        ' ${review.likes}',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: colourList[index % 3]),
@@ -158,7 +214,7 @@ class CourseListBuilder extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 5),
                     child: Text(
-                      '96 %',
+                      '${review.percentage.toStringAsFixed(2)} %',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white.withOpacity(0.6),
@@ -166,11 +222,11 @@ class CourseListBuilder extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    child:
-                        SvgPicture.asset('assets/icons/thumbs_down_hollow.svg'),
-                  )
+                  // Container(
+                  //   margin: EdgeInsets.only(bottom: 10),
+                  //   child:
+                  //       SvgPicture.asset('assets/icons/thumbs_down_hollow.svg'),
+                  // )
                 ],
               )
             ],

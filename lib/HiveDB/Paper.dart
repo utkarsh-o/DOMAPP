@@ -79,10 +79,10 @@ class Paper extends HiveObject {
         'date': date,
         'highest': highest,
         'paperType': paperType,
-        'paperUrl': 'TODO',
+        'paperUrl': paperUrl,
         'professor': professor.uid,
         'sem': sem,
-        'solutionUrl': 'TODO',
+        'solutionUrl': solutionUrl,
         'total': total,
         'status': 'pending',
       };
