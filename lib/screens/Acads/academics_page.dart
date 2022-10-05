@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../HiveDB/Course.dart';
@@ -34,6 +33,8 @@ class _AcademicsPageState extends State<AcademicsPage> {
           margin: EdgeInsets.symmetric(vertical: 30),
           child: InkWell(
             onTap: () async {
+              // ExamSchedule.test();
+              // Hive.box('global').delete('allCourses');
               // Hive.box('papers').delete('LLo9Uq3r2D8yNobxCwEu');
               // Hive.box('papers').delete('yWzScYHOTVlBAc8CTNAs');
             },

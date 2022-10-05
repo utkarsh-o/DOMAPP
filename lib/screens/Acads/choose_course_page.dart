@@ -1,14 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:domapp/screens/Acads/helper/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../HiveDB/Course.dart' as h;
+import '../../HiveDB/Course.dart';
 import '../../cache/constants.dart';
 import '../../cache/local_data.dart';
-import '../../cache/models.dart';
+import '../../cache/models.dart' as m;
 import '../Utilities/course_review_page.dart';
 import '../Utilities/selected_course_review_page.dart';
 import '../Utilities/selected_professor_review_page.dart';
@@ -20,9 +17,6 @@ List<String> sortMethods = [
   'Joining Year',
 ];
 
-String? selectedBranch = branchList.first;
-String? selectedSort = sortMethods.first;
-
 enum ButtonType {
   professorReview,
   courseReview,
@@ -30,25 +24,23 @@ enum ButtonType {
   unpickedCourse,
 }
 
-class ChooseCoursePage extends StatefulWidget {
+//ignore: must_be_immutable
+class ChooseCoursePage extends StatelessWidget {
   static const String route = 'ChooseCoursePage';
-
-  @override
-  _ChooseCoursePageState createState() => _ChooseCoursePageState();
-}
-
-class _ChooseCoursePageState extends State<ChooseCoursePage> {
-  @override
-  initState() {
-    super.initState();
+  ChooseCoursePage() {
+    allCourses = Hive.box('global')
+        .get('allCourses', defaultValue: <Course>[]).cast<Course>();
+    displayCourseList.value = allCourses
+      ..sort((a, b) => a.name.compareTo(b.name));
   }
 
-  String query = '';
-  List<Course> filteredCourses = courseList;
+  late List<Course> allCourses;
+  ValueNotifier<List<Course>> displayCourseList = ValueNotifier([]);
+  String selectedBranch = 'all';
+  String searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -77,15 +69,18 @@ class _ChooseCoursePageState extends State<ChooseCoursePage> {
                   fontSize: 30,
                 ),
               ),
-              SortFilterWrapper(onChanged: searchCourse),
-              ValueListenableBuilder(
-                valueListenable:
-                    Hive.box('global').listenable(keys: ['allCourses']),
-                builder: (context, Box box, widget) {
-                  final List<h.Course> allCourses = Hive.box('global')
-                      .get('allCourses', defaultValue: <h.Course>[]);
+              SortFilterWrapper(onSearchQuery: (String value) {
+                searchQuery = value;
+                updateCourseList();
+              }, filterBranch: (String value) {
+                selectedBranch = value;
+                updateCourseList();
+              }),
+              ValueListenableBuilder<List<Course>>(
+                valueListenable: displayCourseList,
+                builder: (context, List<Course> _courses, widget) {
                   return CourseListBuilder(
-                    filteredCourses: allCourses,
+                    filteredCourses: _courses,
                   );
                 },
               )
@@ -96,20 +91,23 @@ class _ChooseCoursePageState extends State<ChooseCoursePage> {
     );
   }
 
-  void searchCourse(String query) {
-    final result = courseList.where((course) {
-      final titleLower = course.title.toLowerCase();
-      final professorLower = course.professor.name.toLowerCase();
-      final searchLower = query.toLowerCase();
+  void updateCourseList() {
+    List<Course> tempList;
+    if (selectedBranch == 'all')
+      tempList = allCourses;
+    else {
+      tempList = allCourses
+          .where((Course course) => course.branch == selectedBranch)
+          .toList();
+    }
+    displayCourseList.value = tempList.where((Course course) {
+      final titleLower = course.name.toLowerCase();
+      final professorLower = course.ic.name.toLowerCase();
+      final searchLower = searchQuery.toLowerCase();
 
       return titleLower.contains(searchLower) ||
           professorLower.contains(searchLower);
     }).toList();
-
-    setState(() {
-      this.query = query;
-      this.filteredCourses = result;
-    });
   }
 }
 
@@ -119,122 +117,125 @@ class CourseListBuilder extends StatelessWidget {
     required this.filteredCourses,
   }) : super(key: key);
 
-  final List<h.Course> filteredCourses;
+  final List<Course> filteredCourses;
   final userBox = Hive.box('userData');
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        h.Course currentCourse = filteredCourses[index];
-        return Container(
-          decoration: BoxDecoration(
-              color: colourList[index % 3],
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 1,
-                  offset: Offset(0, 4),
-                  color: colourList[index % 3].withOpacity(0.45),
-                )
-              ]),
-          padding: EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                currentCourse.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: kColorBackgroundDark.withOpacity(0.8),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: IntrinsicHeight(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            currentCourse.ic.name,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11,
-                              color: kColorBackgroundDark.withOpacity(0.6),
-                            ),
-                          ),
-                          Text(
-                            'test',
-                            // '${currentCourse.getIDName()} F${currentCourse.idNumber}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11,
-                              color: kColorBackgroundDark.withOpacity(0.6),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          ListItemBottomButton(
-                            buttonType: ButtonType.professorReview,
-                          ),
-                          SizedBox(width: size.width * 0.02),
-                          ListItemBottomButton(
-                            buttonType: ButtonType.courseReview,
-                          ),
-                          SizedBox(width: size.width * 0.02),
-                          ValueListenableBuilder(
-                            valueListenable:
-                                userBox.listenable(keys: ['pickedCourses']),
-                            builder: (context, Box box, widget) {
-                              final List<h.Course> pickedCourses =
-                                  Hive.box('userData').get('pickedCourses',
-                                      defaultValue: <
-                                          h.Course>[]).cast<h.Course>();
-                              final alreadyPicked = pickedCourses.any(
-                                  (h.Course crs) =>
-                                      crs.comCode == currentCourse.comCode);
-                              return ListItemBottomButton(
-                                buttonType: alreadyPicked
-                                    ? ButtonType.pickedCourse
-                                    : ButtonType.unpickedCourse,
-                                callback: () {
-                                  if (alreadyPicked) {
-                                    pickedCourses.removeWhere((h.Course crs) =>
-                                        crs.comCode == currentCourse.comCode);
-                                  } else {
-                                    pickedCourses.add(currentCourse);
-                                  }
-                                  userBox.put('pickedCourses', pickedCourses);
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+    return Expanded(
+      child: ListView.separated(
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          Course currentCourse = filteredCourses[index];
+          return Container(
+            decoration: BoxDecoration(
+                color: colourList[index % 3],
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 1,
+                    offset: Offset(0, 4),
+                    color: colourList[index % 3].withOpacity(0.45),
+                  )
+                ]),
+            padding: EdgeInsets.all(15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  currentCourse.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: kColorBackgroundDark.withOpacity(0.8),
                   ),
                 ),
-              )
-            ],
-          ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return SizedBox(
-          height: size.height * 0.02,
-        );
-      },
-      itemCount: filteredCourses.length,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              currentCourse.ic.name.length > 15
+                                  ? currentCourse.ic.name.substring(0, 15)
+                                  : currentCourse.ic.name,
+                              style: TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 11,
+                                color: kColorBackgroundDark.withOpacity(0.6),
+                              ),
+                            ),
+                            Text(
+                              currentCourse.ic.branch,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 11,
+                                color: kColorBackgroundDark.withOpacity(0.6),
+                              ),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            ListItemBottomButton(
+                              buttonType: ButtonType.professorReview,
+                            ),
+                            SizedBox(width: size.width * 0.02),
+                            ListItemBottomButton(
+                              buttonType: ButtonType.courseReview,
+                            ),
+                            SizedBox(width: size.width * 0.02),
+                            ValueListenableBuilder(
+                              valueListenable:
+                                  userBox.listenable(keys: ['pickedCourses']),
+                              builder: (context, Box box, widget) {
+                                final List<Course> pickedCourses =
+                                    Hive.box('userData').get('pickedCourses',
+                                        defaultValue: <
+                                            Course>[]).cast<Course>();
+                                final alreadyPicked = pickedCourses.any(
+                                    (Course crs) =>
+                                        crs.comCode == currentCourse.comCode);
+                                return ListItemBottomButton(
+                                  buttonType: alreadyPicked
+                                      ? ButtonType.pickedCourse
+                                      : ButtonType.unpickedCourse,
+                                  callback: () {
+                                    if (alreadyPicked) {
+                                      pickedCourses.removeWhere((Course crs) =>
+                                          crs.comCode == currentCourse.comCode);
+                                    } else {
+                                      pickedCourses.add(currentCourse);
+                                    }
+                                    userBox.put('pickedCourses', pickedCourses);
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return SizedBox(
+            height: size.height * 0.02,
+          );
+        },
+        itemCount: filteredCourses.length,
+      ),
     );
   }
 }
@@ -303,19 +304,19 @@ class ListItemBottomButton extends StatelessWidget {
   }
 }
 
-class SortFilterWrapper extends StatefulWidget {
-  final ValueChanged<String> onChanged;
-  SortFilterWrapper({required this.onChanged});
-  @override
-  _SortFilterWrapperState createState() => _SortFilterWrapperState();
-}
-
-class _SortFilterWrapperState extends State<SortFilterWrapper> {
+class SortFilterWrapper extends StatelessWidget {
+  SortFilterWrapper({required this.onSearchQuery, required this.filterBranch}) {
+    branchList = ['all'] + m.Branch.branches;
+    selectedFilter.value = branchList.first;
+  }
+  final ValueChanged<String> onSearchQuery;
+  final Function filterBranch;
+  late final List<String> branchList;
   TextEditingController filterController = TextEditingController();
+  late final ValueNotifier<String> selectedFilter = ValueNotifier('');
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
     return Container(
       margin: EdgeInsets.symmetric(vertical: size.height * 0.025),
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
@@ -360,17 +361,15 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                     isExpanded: true,
                     isDense: true,
                     value: selectedSort,
-                    items: sortMethods.map((value) {
-                      return DropdownMenuItem<String>(
-                        child: Text(value),
-                        value: value,
-                      );
-                    }).toList(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedSort = value;
-                      });
-                    },
+                    items: sortMethods
+                        .map(
+                          (value) => DropdownMenuItem<String>(
+                            child: Text(value),
+                            value: value,
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (String? value) => filterBranch,
                     underline: Container(height: 0),
                   ),
                 ),
@@ -390,32 +389,39 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                           blurRadius: 1),
                     ],
                   ),
-                  child: DropdownButton(
-                    icon: SvgPicture.asset(
-                      'assets/icons/expand_down.svg',
-                    ),
-                    iconSize: 20,
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: kColorBackgroundDark,
-                        fontFamily: 'Montserrat'),
-                    isExpanded: true,
-                    isDense: true,
-                    value: selectedBranch,
-                    items: branchList.map((value) {
-                      return DropdownMenuItem<String>(
-                        child: Text(value),
-                        value: value,
-                      );
-                    }).toList(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedBranch = value;
-                      });
-                    },
-                    underline: Container(height: 0),
-                  ),
+                  child: ValueListenableBuilder<String>(
+                      valueListenable: selectedFilter,
+                      builder: (context, String _filter, _widget) {
+                        return DropdownButton<String>(
+                          icon: SvgPicture.asset(
+                            'assets/icons/expand_down.svg',
+                          ),
+                          iconSize: 20,
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: kColorBackgroundDark,
+                              fontFamily: 'Montserrat'),
+                          isExpanded: true,
+                          isDense: true,
+                          value: _filter,
+                          items: branchList.map((value) {
+                            return DropdownMenuItem<String>(
+                              child: Text(
+                                value,
+                                style:
+                                    TextStyle(overflow: TextOverflow.ellipsis),
+                              ),
+                              value: value,
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            selectedFilter.value = value!;
+                            filterBranch(value);
+                          },
+                          underline: Container(height: 0),
+                        );
+                      }),
                 ),
               ),
               Container(
@@ -480,7 +486,6 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                         ),
                         onTap: () {
                           filterController.clear();
-                          widget.onChanged('');
                           FocusScope.of(context).requestFocus(FocusNode());
                         },
                       )
@@ -497,7 +502,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
               ),
-              onChanged: widget.onChanged,
+              onChanged: onSearchQuery,
             ),
           ),
         ],

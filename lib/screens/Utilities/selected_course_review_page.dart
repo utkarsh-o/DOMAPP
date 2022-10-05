@@ -111,6 +111,7 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
                               Text(
                                 course.name,
                                 style: TextStyle(
+                                  overflow: TextOverflow.ellipsis,
                                   color: kWhite,
                                   fontWeight: FontWeight.w800,
                                   fontSize: 30,
@@ -156,7 +157,7 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
                             ),
                           ),
                           // ChartIndicatorsWrapper(touchedIndex: touchedIndex),
-                          const SizedBox(height: 18),
+                          // const SizedBox(height: 10),
                           Expanded(
                             child: PieChart(
                               PieChartData(
@@ -182,7 +183,7 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
                                   }),
                                   startDegreeOffset: 180,
                                   borderData: FlBorderData(show: false),
-                                  sectionsSpace: 10,
+                                  sectionsSpace: 7,
                                   centerSpaceRadius: 0,
                                   sections: getSections(
                                       tags: tags, sortedTags: sortedTags),
@@ -219,7 +220,7 @@ class _SelectedCourseReviewPageState extends State<SelectedCourseReviewPage> {
         sortedTags.map((tag) => tags[tag].length).cast<int>().toList();
     int otherTotal =
         values.length > 3 ? values.sublist(3).fold(0, (p, c) => p + c) : 0;
-    double multiplier = 120.0;
+    double multiplier = 100.0;
     return List.generate(
       min(4, tags.keys.length),
       (i) {

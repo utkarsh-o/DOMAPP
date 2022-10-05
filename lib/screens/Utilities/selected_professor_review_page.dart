@@ -183,7 +183,7 @@ class _SelectedProfessorReviewPageState
                                   }),
                                   startDegreeOffset: 180,
                                   borderData: FlBorderData(show: false),
-                                  sectionsSpace: 10,
+                                  sectionsSpace: 7,
                                   centerSpaceRadius: 0,
                                   sections: getSections(
                                       tags: tags, sortedTags: sortedTags),
@@ -220,7 +220,7 @@ class _SelectedProfessorReviewPageState
         sortedTags.map((tag) => tags[tag].length).cast<int>().toList();
     int otherTotal =
         values.length > 3 ? values.sublist(3).fold(0, (p, c) => p + c) : 0;
-    double multiplier = 120.0;
+    double multiplier = 100.0;
     return List.generate(
       min(4, tags.keys.length),
       (i) {

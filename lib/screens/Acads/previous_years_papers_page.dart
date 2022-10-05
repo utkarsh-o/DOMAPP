@@ -1,6 +1,5 @@
 import 'package:domapp/cache/constants.dart';
 import 'package:domapp/screens/Acads/helper/helper.dart';
-import 'package:domapp/screens/solution_discussion_page.dart';
 import 'package:domapp/screens/Approvals/upload_question_paper_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,7 +9,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../HiveDB/Course.dart';
 import '../../HiveDB/Paper.dart';
-import '../../cache/local_data.dart';
 import '../../cache/models.dart' as m;
 
 class PreviousYearsPapersPage extends StatefulWidget {
@@ -30,170 +28,174 @@ class _PreviousYearsPapersPageState extends State<PreviousYearsPapersPage> {
   void initState() {
     super.initState();
     getPapersFromCourse(courseID: widget.course!.uid);
-    // papers = Hive.box('papers')
-    //     .get(widget.course!.uid, defaultValue: <Paper>[]).cast<Paper>();
-    // filteredPapers = ValueNotifier(papers
-    //   ..sort((Paper a, Paper b) =>
-    //       b.date.year.toString().compareTo(a.date.year.toString())));
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: kOuterPadding,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 30),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(context),
-                  child: SvgPicture.asset(
-                    'assets/icons/back_button_title_bar.svg',
-                    color: kWhite,
-                  ),
-                ),
-              ),
-              Text(
-                'Previous Years Papers',
-                style: TextStyle(
-                  color: kWhite,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 30,
-                ),
-              ),
-              ValueListenableBuilder(
-                valueListenable:
-                    Hive.box('papers').listenable(keys: [widget.course!.uid]),
-                builder: (context, Box box, _widget) {
-                  final List<Paper> papers = box.get(widget.course!.uid,
-                      defaultValue: <Paper>[]).cast<Paper>();
-                  final ValueNotifier<List<Paper>> filteredPapers =
-                      ValueNotifier(papers
-                        ..sort((Paper a, Paper b) => b.date.year
-                            .toString()
-                            .compareTo(a.date.year.toString())));
-                  final List<String> evaluativeList = ['all'] +
-                      papers.map((Paper p) => p.paperType).toSet().toList();
-                  final List<String> sessionList = papers
-                      .map((Paper p) => p.date.year.toString())
-                      .toSet()
-                      .toList();
-                  if (papers.length == 0) {
-                    return Center(
-                        child: CircularProgressIndicator(
-                      color: kWhite,
-                    ));
-                  }
-                  return Column(
-                    children: [
-                      GreenContainer(
-                        course: widget.course!,
-                        papers: papers,
-                        filteredPapers: filteredPapers,
-                        yearList: sessionList,
-                        evaluativesList: evaluativeList,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 30),
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop(context),
+                      child: SvgPicture.asset(
+                        'assets/icons/back_button_title_bar.svg',
+                        color: kWhite,
                       ),
-                      ValueListenableBuilder(
-                          valueListenable: filteredPapers,
-                          builder:
-                              (context, List<Paper> filteredPapers, widget) {
-                            return Column(
-                              children: [
-                                for (int i = 0; i < filteredPapers.length; i++)
-                                  InkWell(
-                                    onTap: () async {
-                                      print(filteredPapers[i].paperUrl);
-                                      await launchUrlString(
-                                        filteredPapers[i].paperUrl,
-                                        mode: LaunchMode.externalApplication,
-                                      );
-                                    },
-                                    child: YellowContainer(
-                                      index: i % 3,
-                                      paper: filteredPapers[i],
-                                    ),
-                                  )
-                              ],
-                            );
-                          }),
-                      // for (int i = 0; i < papers.length; i++)
-                      //   // Positioned(
-                      //   //   bottom: -50 - i * 50,
-                      //   //   width: size.width * 0.845,
-                      //   //   child:
-                      //   InkWell(
-                      //     onTap: () async {
-                      //       await launchUrlString(
-                      //         papers[i].paperUrl,
-                      //         mode: LaunchMode.externalApplication,
-                      //       );
-                      //     },
-                      //     child: YellowContainer(
-                      //       index: i % 3,
-                      //       paper: papers[i],
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  );
-                },
-              ),
-              Center(
-                child: Container(
-                  margin: EdgeInsets.only(
-                      bottom: size.height * 0.1, top: size.height * 0.3),
-                  width: size.width * 0.6,
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  decoration: BoxDecoration(
-                      color: kRed,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                            color: kRed.withOpacity(0.65),
-                            offset: Offset(0, 3),
-                            blurRadius: 1),
-                      ]),
-                  child: InkWell(
-                    onTap: () => Navigator.pushNamed(
-                        context, SolutionDiscussionThread.route),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Solution Discussion',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: kColorBackgroundDark),
-                        ),
-                        SizedBox(
-                          width: size.width * 0.03,
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(7),
-                            color: kWhite,
-                            boxShadow: [
-                              BoxShadow(
-                                  color: kColorBackgroundDark.withOpacity(0.45),
-                                  offset: Offset(0, 4),
-                                  blurRadius: 1),
-                            ],
-                          ),
-                          child:
-                              SvgPicture.asset('assets/icons/expand_right.svg'),
-                        ),
-                      ],
                     ),
                   ),
-                ),
+                  Text(
+                    'Previous Years Papers',
+                    style: TextStyle(
+                      color: kWhite,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 30,
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  ValueListenableBuilder(
+                    valueListenable: Hive.box('papers')
+                        .listenable(keys: [widget.course!.uid]),
+                    builder: (context, Box box, _widget) {
+                      final List<Paper> papers = box.get(widget.course!.uid,
+                          defaultValue: <Paper>[]).cast<Paper>();
+                      final ValueNotifier<List<Paper>> filteredPapers =
+                          ValueNotifier(papers
+                            ..sort((Paper a, Paper b) => b.date.year
+                                .toString()
+                                .compareTo(a.date.year.toString())));
+                      final List<String> evaluativeList = ['all'] +
+                          papers.map((Paper p) => p.paperType).toSet().toList();
+                      final List<String> sessionList = papers
+                          .map((Paper p) => p.date.year.toString())
+                          .toSet()
+                          .toList();
+                      if (papers.length == 0) {
+                        return Center(
+                            child: CircularProgressIndicator(
+                          color: kWhite,
+                        ));
+                      }
+                      return Column(
+                        children: [
+                          GreenContainer(
+                            course: widget.course!,
+                            papers: papers,
+                            filteredPapers: filteredPapers,
+                            yearList: sessionList,
+                            evaluativesList: evaluativeList,
+                          ),
+                          ValueListenableBuilder(
+                              valueListenable: filteredPapers,
+                              builder: (context, List<Paper> filteredPapers,
+                                  widget) {
+                                return ListView.separated(
+                                  itemCount: filteredPapers.length,
+                                  shrinkWrap: true,
+                                  separatorBuilder: (context, int) => Container(
+                                    color: kColorBackgroundDark,
+                                    width: 100,
+                                    height: 1,
+                                  ),
+                                  itemBuilder: (BuildContext context, int i) {
+                                    return InkWell(
+                                      onTap: () async {
+                                        print(filteredPapers[i].paperUrl);
+                                        await launchUrlString(
+                                          filteredPapers[i].paperUrl,
+                                          mode: LaunchMode.externalApplication,
+                                        );
+                                      },
+                                      child: YellowContainer(
+                                        index: i % 3,
+                                        paper: filteredPapers[i],
+                                      ),
+                                    );
+                                  },
+                                );
+                              }),
+                          // for (int i = 0; i < papers.length; i++)
+                          //   // Positioned(
+                          //   //   bottom: -50 - i * 50,
+                          //   //   width: size.width * 0.845,
+                          //   //   child:
+                          //   InkWell(
+                          //     onTap: () async {
+                          //       await launchUrlString(
+                          //         papers[i].paperUrl,
+                          //         mode: LaunchMode.externalApplication,
+                          //       );
+                          //     },
+                          //     child: YellowContainer(
+                          //       index: i % 3,
+                          //       paper: papers[i],
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
               ),
+              // Center(
+              //   child: Container(
+              //     margin: EdgeInsets.symmetric(vertical: 20),
+              //     width: size.width * 0.6,
+              //     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              //     decoration: BoxDecoration(
+              //         color: kRed,
+              //         borderRadius: BorderRadius.circular(10),
+              //         boxShadow: [
+              //           BoxShadow(
+              //               color: kRed.withOpacity(0.65),
+              //               offset: Offset(0, 3),
+              //               blurRadius: 1),
+              //         ]),
+              //     child: InkWell(
+              //       onTap: () => Navigator.pushNamed(
+              //           context, SolutionDiscussionThread.route),
+              //       child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Text(
+              //             'Solution Discussion',
+              //             style: TextStyle(
+              //                 fontWeight: FontWeight.w600,
+              //                 fontSize: 16,
+              //                 color: kColorBackgroundDark),
+              //           ),
+              //           SizedBox(
+              //             width: size.width * 0.03,
+              //           ),
+              //           Container(
+              //             padding: EdgeInsets.all(6),
+              //             decoration: BoxDecoration(
+              //               borderRadius: BorderRadius.circular(7),
+              //               color: kWhite,
+              //               boxShadow: [
+              //                 BoxShadow(
+              //                     color: kColorBackgroundDark.withOpacity(0.45),
+              //                     offset: Offset(0, 4),
+              //                     blurRadius: 1),
+              //               ],
+              //             ),
+              //             child:
+              //                 SvgPicture.asset('assets/icons/expand_right.svg'),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -210,7 +212,6 @@ class YellowContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      width: 358,
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
         color: kYellow,
@@ -302,7 +303,7 @@ class GreenContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      width: size.width * 0.845,
+      width: 500,
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
         color: kGreen,
@@ -380,7 +381,7 @@ class GreenContainer extends StatelessWidget {
               // ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                width: size.width * 0.35,
+                width: 160,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: kWhite,
@@ -400,6 +401,7 @@ class GreenContainer extends StatelessWidget {
                         ),
                         iconSize: 20,
                         style: TextStyle(
+                            overflow: TextOverflow.ellipsis,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: kColorBackgroundDark,

@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:domapp/cache/local_data.dart' as ld;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -96,9 +94,8 @@ class BottomButton extends StatelessWidget {
   BottomButton({required this.title, required this.color});
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: color,
@@ -114,9 +111,10 @@ class BottomButton extends StatelessWidget {
         title,
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: kColorBackgroundDark.withOpacity(0.8),
-            fontSize: 18),
+          fontWeight: FontWeight.bold,
+          color: kColorBackgroundDark.withOpacity(0.8),
+          fontSize: 14,
+        ),
       ),
     );
   }

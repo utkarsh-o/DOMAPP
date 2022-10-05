@@ -250,8 +250,11 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
     Size size = MediaQuery.of(context).size;
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: size.height * 0.025),
-      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+      margin: EdgeInsets.symmetric(vertical: 20),
+      padding: EdgeInsets.symmetric(
+        vertical: 15,
+        horizontal: 15,
+      ),
       decoration: BoxDecoration(
           color: kBlue,
           borderRadius: BorderRadius.circular(15),
@@ -268,7 +271,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                width: size.width * 0.4,
+                width: 140,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: kWhite,
@@ -285,6 +288,7 @@ class _SortFilterWrapperState extends State<SortFilterWrapper> {
                   ),
                   iconSize: 20,
                   style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: kColorBackgroundDark,

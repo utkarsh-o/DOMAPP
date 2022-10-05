@@ -22,13 +22,13 @@ getAllCourses() async {
   await getAllProfessors();
   final firestore = FirebaseFirestore.instance;
   final globalBox = Hive.box('global');
-  final professors =
-      await globalBox.get('professors', defaultValue: <Professor>[]);
+  final List professors = await globalBox
+      .get('professors', defaultValue: <Professor>[]).cast<Professor>();
 
   QuerySnapshot courseSnapshot = await firestore.collection('Courses').get();
   final List<Course> courses = courseSnapshot.docs.map((data) {
     final profUID = data.get('professor');
-    final prof = professors.firstWhere((Professor prof) => prof.uid == profUID);
+    final prof = professors.firstWhere((prof) => prof.uid == profUID);
     return Course.fromJson(data, prof);
   }).toList();
   await globalBox.put('allCourses', courses);

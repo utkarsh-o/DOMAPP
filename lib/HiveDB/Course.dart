@@ -53,9 +53,9 @@ class Course extends HiveObject {
       branch: Branch.getBranchFromName(snapshot.get('branch')),
       comCode: snapshot.get('comCode') as int,
       credits: Credits(
-        lectures: snapshot.get('lecture'),
-        practicals: snapshot.get('practical'),
-      ),
+          lectures: snapshot.get('lecture'),
+          practicals: 0 //TODO: fix implementation,
+          ),
       courseNo: snapshot.get('courseNo'),
       ic: professor,
       uid: snapshot.id,

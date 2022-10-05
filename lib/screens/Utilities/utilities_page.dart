@@ -19,7 +19,7 @@ class UtilitiesPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              margin: EdgeInsets.symmetric(vertical: 30),
+              margin: EdgeInsets.symmetric(vertical: 20),
               child: InkWell(
                 onTap: () => Navigator.of(context).pop,
                 child: SvgPicture.asset(
@@ -76,13 +76,16 @@ class UtilitiesPage extends StatelessWidget {
                 ]),
             child: Row(
               children: [
-                SvgPicture.asset('assets/icons/professor.svg'),
+                SvgPicture.asset(
+                  'assets/icons/professor.svg',
+                  width: 40,
+                ),
                 SizedBox(width: size.width * 0.06),
                 Text(
                   'Professor Review',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 18,
                       color: kColorBackgroundDark.withOpacity(0.7)),
                 )
               ],
@@ -102,13 +105,13 @@ class UtilitiesPage extends StatelessWidget {
               ]),
           child: Row(
             children: [
-              SvgPicture.asset('assets/icons/timetable.svg'),
+              SvgPicture.asset('assets/icons/timetable.svg', width: 40),
               SizedBox(width: size.width * 0.06),
               Text(
                 'Time Table Checker',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: 18,
                     color: kColorBackgroundDark.withOpacity(0.7)),
               )
             ],
@@ -129,13 +132,13 @@ class UtilitiesPage extends StatelessWidget {
                 ]),
             child: Row(
               children: [
-                SvgPicture.asset('assets/icons/course.svg'),
+                SvgPicture.asset('assets/icons/course.svg', width: 40),
                 SizedBox(width: size.width * 0.06),
                 Text(
                   'Course Review',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 18,
                       color: kColorBackgroundDark.withOpacity(0.7)),
                 )
               ],
@@ -155,13 +158,13 @@ class UtilitiesPage extends StatelessWidget {
               ]),
           child: Row(
             children: [
-              SvgPicture.asset('assets/icons/areaChart.svg'),
+              SvgPicture.asset('assets/icons/areaChart.svg', width: 40),
               SizedBox(width: size.width * 0.06),
               Text(
                 'SG / CG Estimator',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: 18,
                     color: kColorBackgroundDark.withOpacity(0.7)),
               )
             ],
@@ -174,7 +177,7 @@ class UtilitiesPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                width: size.width * 0.2,
+                width: 80,
                 margin: EdgeInsets.symmetric(vertical: 15),
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
                 decoration: BoxDecoration(
@@ -188,14 +191,15 @@ class UtilitiesPage extends StatelessWidget {
                     ]),
                 child: Column(
                   children: [
-                    SvgPicture.asset('assets/icons/eatery.svg', height: 40),
+                    SvgPicture.asset('assets/icons/eatery.svg', width: 32),
                     SizedBox(height: size.height * 0.01),
                     Text(
                       'Menus',
                       style: TextStyle(
-                          color: kColorBackgroundDark.withOpacity(0.7),
-                          fontWeight: FontWeight.w800,
-                          fontSize: 15),
+                        color: kColorBackgroundDark.withOpacity(0.7),
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                      ),
                     )
                   ],
                 ),
@@ -217,13 +221,12 @@ class UtilitiesPage extends StatelessWidget {
                   children: [
                     SvgPicture.asset('assets/icons/polls.svg', height: 40),
                     SizedBox(height: size.height * 0.01),
-                    Text(
-                      'Polls',
-                      style: TextStyle(
+                    Text('Polls',
+                        style: TextStyle(
                           color: kColorBackgroundDark.withOpacity(0.7),
                           fontWeight: FontWeight.w800,
-                          fontSize: 16),
-                    )
+                          fontSize: 14,
+                        ))
                   ],
                 ),
               ),
@@ -249,7 +252,7 @@ class UtilitiesPage extends StatelessWidget {
                       style: TextStyle(
                           color: kColorBackgroundDark.withOpacity(0.7),
                           fontWeight: FontWeight.w800,
-                          fontSize: 16),
+                          fontSize: 14),
                     )
                   ],
                 ),

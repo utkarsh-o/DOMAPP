@@ -74,35 +74,60 @@ class Branch {
   static String economics = 'economics';
   static String mathematics = 'mathematics';
   static String physics = 'physics';
-  static String humanities = 'humanities';
   static String utility = 'utility';
-
+  static String finance = 'finance';
+  static String gs = 'gs';
+  static String hss = 'hss';
+  static String bits = 'bits';
+  static List<String> branches = [
+    chemical,
+    eee,
+    eni,
+    ece,
+    mechanical,
+    computerScience,
+    biology,
+    chemistry,
+    economics,
+    mathematics,
+    physics,
+    finance,
+    gs,
+    hss,
+    bits
+  ];
   static String getBranchFromName(String name) {
     switch (name) {
-      case 'chemical':
+      case 'CHEM':
         return Branch.chemical;
-      case 'eee':
+      case 'EEE':
         return Branch.eee;
-      case 'eni':
+      case 'INSTR':
         return Branch.eni;
-      case 'ece':
+      case 'ECE':
         return Branch.ece;
-      case 'mechanical':
+      case 'ME':
         return Branch.mechanical;
-      case 'computerScience':
+      case 'CS':
         return Branch.computerScience;
-      case 'biology':
+      case 'BIO':
         return Branch.biology;
-      case 'chemistry':
+      case 'CHE':
         return Branch.chemistry;
-      case 'economics':
+      case 'ECON':
         return Branch.economics;
-      case 'mathematics':
+      case 'MATH':
         return Branch.mathematics;
-      case 'physics':
+      case 'PHY':
         return Branch.physics;
-      case 'humanities':
-        return Branch.humanities;
+      case 'BITS':
+        return Branch.bits;
+      case 'FIN':
+        return Branch.finance;
+      case 'GS':
+        return Branch.gs;
+      case 'HSS':
+        return Branch.hss;
       default:
         return '';
     }
